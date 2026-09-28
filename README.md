@@ -2,7 +2,7 @@
 
 Interactive architecture portfolio built with React, Vite, JavaScript, and Three.js.
 
-Live site: https://bambe-water-gallery.takashimurachan.chatgpt.site (owner-private).
+Live site: https://bambssquad.github.io/bam-studio/ (public GitHub Pages).
 
 ## Features
 
@@ -43,4 +43,4 @@ Open All projects for the filterable index. Project details, studio information,
 
 Music begins after Play. Playback and continued playback with the menu closed were verified in Chrome. Some embedded browsers block YouTube; the player reports the error and provides a direct link.
 
-`npm run build` generates `dist/`. The existing `.openai/hosting.json` is bound to the Bambe Water Gallery Site. Preserve it for updates to that Site; use a separate identity for a different Site. This repository does not automatically deploy to GitHub Pages.
+`npm run build` generates `dist/` with the `/bam-studio/` asset base. GitHub Actions builds and deploys `main` automatically to GitHub Pages. The legacy `.openai/hosting.json` belongs to the previous ChatGPT Site and is not used for GitHub Pages.
