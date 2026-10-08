@@ -118,3 +118,7 @@ export function syncBatches(prepared,sourceScene) {
  prepared.root.traverse(batch=>{if(!batch.isInstancedMesh)return;for(let i=0;i<batch.count;i++){const source=meshes[batch.userData.sourceIndices[i]];if(!source)throw new Error('Sumber animasi tidak cocok dengan batch.');matrix.copy(source.matrixWorld);if(batch.userData.reflected)matrix.multiply(reflection);batch.setMatrixAt(i,matrix);const values=normal.getNormalMatrix(matrix).elements;for(let c=0;c<3;c++)batch.geometry.attributes['instanceNormal'+c].setXYZ(i,values[c*3],values[c*3+1],values[c*3+2]);}
  batch.instanceMatrix.needsUpdate=true;for(let c=0;c<3;c++)batch.geometry.attributes['instanceNormal'+c].needsUpdate=true;batch.computeBoundingBox();batch.boundingSphere=batch.boundingBox.getBoundingSphere(new THREE.Sphere());});
 }
+
+// The prepared static subtree has immutable world transforms. Visibility and geometry
+// indices may still change; animated openings and navigation live in separate roots.
+export function freezeStaticTransforms(root){root.updateMatrixWorld(true);root.traverse(object=>{object.matrixAutoUpdate=false;object.matrixWorldAutoUpdate=false;});}

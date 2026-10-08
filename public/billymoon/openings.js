@@ -19,6 +19,8 @@ export function createOpenings({sourceScene,openingMap,collisionBuilder,onStatus
   // Group matrix carries only the rigid world-space animation. Child matrices retain full source affine transforms.
   group.matrixAutoUpdate=false;group.matrix.identity();items.push(item);
  }
+ // This temporary lookup must not pin the entire 70k-node imported scene through closures.
+ lookup.clear();
  root.updateMatrixWorld(true);
  function enableCollision(builder){for(const item of items)if(!item.collider)item.collider=builder(item.sourceSnapshots);}
  if(collisionBuilder)enableCollision(collisionBuilder);

@@ -274,3 +274,15 @@ body.dusk {
 @media(max-width:760px){#render-reference{padding:16px;}.reference-footer{display:block;}.reference-footer button{width:100%;margin-top:10px;}.reference-heading h2{font-size:23px;}}
 
 .bake-choice{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.5;margin-top:13px;}.bake-choice input{width:18px;height:18px;accent-color:var(--accent);flex:0 0 18px;}
+
+/* Small, real render gallery; no carousel library or continuous CSS animation. */
+#loading .load-card,#error .load-card{width:min(620px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto}
+#loading-gallery{margin:0 0 20px;text-align:left}
+#gallery-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#e3dfd9;border-radius:14px}
+#gallery-caption{font-size:11px;line-height:1.4;color:var(--muted);margin-top:9px}
+.gallery-controls{display:flex;align-items:center;gap:8px;margin-top:8px}
+.gallery-controls button{min-width:44px;min-height:44px;padding:8px 12px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-size:12px}
+#gallery-toggle{margin-left:auto}#gallery-count{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-height:600px){#loading .load-card,#error .load-card{width:min(740px,calc(100vw - 24px));padding:20px}#loading-gallery{float:left;width:44%;margin:0 22px 8px 0}#loading-gallery img{border-radius:10px}.gallery-controls{gap:4px}.gallery-controls button{padding:6px 9px}#loading .loading-brand{display:none}}
+@media(max-width:480px){#loading .load-card,#error .load-card{padding:18px}#loading-gallery{margin-bottom:16px}#loading .loading-brand{display:none}}
+@media(forced-colors:active){.gallery-controls button{border:1px solid ButtonText}#gallery-image{border:1px solid CanvasText}}

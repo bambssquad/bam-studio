@@ -1,0 +1,10 @@
+export function loadGalleryImage(src,timeoutMs=8000){return new Promise((resolve,reject)=>{const image=new Image();image.decoding='async';image.fetchPriority='low';const timer=setTimeout(()=>finish(new Error('timeout')),timeoutMs);let settled=false;function finish(error){if(settled)return;settled=true;clearTimeout(timer);image.onload=image.onerror=null;error?reject(error):resolve();}image.onload=()=>finish();image.onerror=()=>finish(new Error('image unavailable'));image.src=src;});}
+export function createLoadingGallery({image,caption,counter,previous,next,toggle,items,load=loadGalleryImage,reducedMotion=false,schedule=setTimeout,cancel=clearTimeout}){
+ let index=0,active=true,busy=false,paused=reducedMotion,timer=null,generation=0;
+ function clear(){if(timer!==null)cancel(timer);timer=null;}
+ function labels(){toggle.textContent=paused?'Putar gambar':'Jeda gambar';toggle.setAttribute('aria-pressed',String(paused));previous.disabled=next.disabled=busy||items.length<2;}
+ function arm(){clear();if(active&&!paused&&items.length>1)timer=schedule(()=>show((index+1)%items.length),8000);}
+ async function show(wanted){if(!active||busy||!items.length)return;clear();busy=true;labels();const current=++generation,entry=items[(wanted+items.length)%items.length];try{await load(entry.src);if(!active||current!==generation)return;index=(wanted+items.length)%items.length;image.src=entry.src;image.alt=entry.alt;caption.textContent=entry.caption+' · Render offline';counter.textContent=`${index+1} / ${items.length}`;}catch{if(active&&current===generation)caption.textContent='Gambar belum tersedia. Coba sudut lain; pemuatan model tetap berjalan.';}finally{if(current===generation){busy=false;labels();arm();}}}
+ previous.addEventListener('click',()=>show(index-1));next.addEventListener('click',()=>show(index+1));toggle.addEventListener('click',()=>{paused=!paused;labels();arm();});labels();
+ return {show,stop(){active=false;generation++;busy=false;clear();labels();},resume(){if(active)return;active=true;if(!image.src)show(index);else arm();},setReducedMotion(value){if(value){paused=true;labels();clear();}},inspect:()=>({index,active,busy,paused})};
+}
