@@ -1,0 +1,58 @@
+import * as T from './vendor/three.module.js';
+import {createNavigation,buildTriangleOctree} from './navigation.js';
+export function acceptsMovementKeys(target){return !target?.closest?.('select,input,textarea,dialog,button,a,summary,[contenteditable]');}
+export function combineColliders(colliders){
+ const active=colliders.filter(Boolean);
+ return {enableCollision(builder){for(const collider of active)collider.enableCollision(builder);},collideCapsule(capsule){let best=false;for(const collider of active){const hit=collider.collideCapsule(capsule);if(hit&&(!best||hit.depth>best.depth))best=hit;}return best;},rayIntersect(ray){let best=false;for(const collider of active){const hit=collider.rayIntersect(ray);if(hit&&(!best||hit.distance<best.distance))best=hit;}return best;}};
+}
+export function restoreNavigationLayers(prepared,openings,animated,checkboxes=[]) {
+ for(const [name,layer] of prepared.layers){layer.group.visible=true;openings?.setLayerVisible(name,true);if(animated?.layers.has(name))animated.layers.get(name).group.visible=true;}
+ for(const checkbox of checkboxes)checkbox.checked=true;
+}
+export function snapshotNavigationSource(sourceScene,map) {
+ const names=new Set([...(map.architecturalCollisionCandidates?.meshNodeNames||[]),...(map.floorCandidateMeshNames||[]),...(map.stairs||[]).flatMap(x=>x.meshNodeNames||[])]),root=new T.Group();
+ sourceScene.updateMatrixWorld(true);sourceScene.traverse(mesh=>{if(!mesh.isMesh||!names.has(mesh.name))return;const proxy=new T.Mesh(mesh.geometry,mesh.material);proxy.name=mesh.name;proxy.userData={...mesh.userData};proxy.matrixAutoUpdate=false;proxy.matrix.copy(mesh.matrixWorld);root.add(proxy);});root.updateMatrixWorld(true);return root;
+}
+export function createExploration({scene,camera,controls,canvas,sourceScene,navigationMap,openings,decor,wake,beforeEnter=()=>{},onModeChange=()=>{}}) {
+ const colliders=combineColliders([openings,decor]);const $=id=>document.getElementById(id);let nav=null,building=false,look=null,padId=null,mode='orbit',requestedMode='orbit',motionSignature='';
+ const status=text=>{$('walk-status').textContent=/partial/.test(text)?'Tabrakan memakai bagian model terverifikasi. Gunakan Reset jika tersangkut.':/Returned/.test(text)?'Kembali ke titik masuk.':text;};
+ const doorSelect=$('door-select');
+ for(const item of openings.items){const option=document.createElement('option');option.value=item.id;option.textContent=item.label;doorSelect.append(option);}
+ function syncDoors(){const item=openings.items.find(x=>x.id===doorSelect.value);if(item){$('door-toggle').textContent=item.target?(item.sourcePosePartial?'Posisi sumber':'Tutup'):(item.sourcePosePartial?'Geser':'Buka');$('door-toggle').setAttribute('aria-pressed',String(item.target===1));}$('opening-count').textContent=`${openings.items.length} daun / panel teridentifikasi`;}
+ doorSelect.addEventListener('change',syncDoors);$('door-toggle').addEventListener('click',()=>{openings.toggle(doorSelect.value);syncDoors();wake();});
+ $('doors-open').addEventListener('click',()=>{openings.setAll(true);syncDoors();wake();});$('doors-reset').addEventListener('click',()=>{openings.setAll(false);syncDoors();wake();});syncDoors();
+ async function setMode(next){
+  clear();requestedMode=next;if(building)return;
+  if(next!=='orbit'&&!nav){building=true;$('walk-mode').disabled=true;$('explore-note').textContent='Menyiapkan jalur jelajah…';
+   try{await new Promise(resolve=>setTimeout(resolve,30));if(requestedMode!=='orbit'){colliders.enableCollision(buildTriangleOctree);nav=createNavigation({scene,camera,controls,sourceScene,navigationMap,dynamicNames:openings.dynamicNames,dynamicCollision:colliders.collideCapsule,dynamicRay:colliders.rayIntersect,onStatus:status});sourceScene=null;}}
+   catch(error){$('walk-mode').value='orbit';$('explore-note').textContent='Jelajah belum dapat dibuka: '+error.message;building=false;$('walk-mode').disabled=false;return;}
+   building=false;$('walk-mode').disabled=false;next=requestedMode;
+  }
+  if(next!=='orbit')beforeEnter();
+  nav?.setMode(next);mode=next;if(next!=='orbit'){camera.fov=60;camera.updateProjectionMatrix();canvas.focus();}
+  $('walk-mode').value=next;document.body.classList.toggle('walking',next!=='orbit');document.body.classList.toggle('third-person',next==='third');syncMotion();$('explore-note').textContent=next==='orbit'?'Pilih First / Third untuk masuk ke model.':'Semua layer ditampilkan saat jelajah · WASD / joystick';status('WASD · Space lompat · Shift sprint · F terbang');onModeChange(next);wake();
+ }
+ $('walk-mode').addEventListener('change',event=>setMode(event.target.value));$('exit-walk').addEventListener('click',()=>setMode('orbit'));$('walk-reset').addEventListener('click',()=>{clear();nav?.reset();wake();});
+ function interact(){if(!nav||mode==='orbit')return;const item=openings.nearest(nav.getEyePosition(),3);if(item){openings.toggle(item.id);doorSelect.value=item.id;syncDoors();wake();}}
+ $('interact').addEventListener('click',interact);
+ function syncMotion(){const state=nav?.getMotionState()||{flying:false,sprinting:false,grounded:false};const signature=[mode,state.flying,state.sprinting,state.grounded].join(':');if(signature===motionSignature)return;motionSignature=signature;$('sprint').setAttribute('aria-pressed',String(state.sprinting));$('fly').setAttribute('aria-pressed',String(state.flying));$('fly-controls').hidden=!state.flying;$('jump').disabled=state.flying||!state.grounded;$('emote-actions').hidden=mode!=='third';$('emote-play').disabled=state.flying||!state.grounded;}
+ $('jump').addEventListener('click',()=>{nav?.jump();canvas.focus();wake();});$('sprint').addEventListener('click',()=>{if(nav){nav.setSprinting(!nav.getMotionState().sprinting);canvas.focus();syncMotion();wake();}});
+ function toggleFly(){if(!nav||mode==='orbit')return;verticalPointers.clear();nav.setFlying(!nav.getMotionState().flying);canvas.focus();syncMotion();wake();}
+ function playEmote(){if(!nav?.playEmote($('emote-select').value))status('Emote tersedia saat orang ketiga berdiri di lantai.');canvas.focus();wake();}
+ $('fly').addEventListener('click',toggleFly);$('emote-play').addEventListener('click',playEmote);
+ const verticalPointers=new Map();function syncVertical(){nav?.setVertical(Math.max(-1,Math.min(1,[...verticalPointers.values()].reduce((a,b)=>a+b,0))));wake();}
+ for(const [id,direction]of [['fly-up',1],['fly-down',-1]]){const button=$(id);button.addEventListener('pointerdown',event=>{if(!nav?.getMotionState().flying)return;event.preventDefault();button.setPointerCapture(event.pointerId);verticalPointers.set(event.pointerId,direction);syncVertical();});for(const name of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(name,event=>{verticalPointers.delete(event.pointerId);syncVertical();});button.addEventListener('keydown',event=>{if(!['Space','Enter'].includes(event.code)||!nav?.getMotionState().flying)return;event.preventDefault();verticalPointers.set(id+'-key',direction);syncVertical();});button.addEventListener('keyup',event=>{if(!['Space','Enter'].includes(event.code))return;event.preventDefault();verticalPointers.delete(id+'-key');syncVertical();});button.addEventListener('blur',()=>{verticalPointers.delete(id+'-key');syncVertical();});}
+ window.addEventListener('keydown',event=>{if(mode==='orbit'||!acceptsMovementKeys(event.target))return;if(event.code==='Escape'){event.preventDefault();setMode('orbit');return;}if(event.code==='KeyF'){event.preventDefault();if(!event.repeat)toggleFly();return;}if(event.code==='KeyG'){event.preventDefault();if(!event.repeat)playEmote();return;}if(event.code==='KeyE'){event.preventDefault();if(!event.repeat)interact();return;}if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight','Space','KeyC'].includes(event.code)){event.preventDefault();nav.setKey(event.code,true);wake();}});
+ window.addEventListener('keyup',event=>{nav?.setKey(event.code,false);wake();});
+ canvas.addEventListener('pointerdown',event=>{if(mode==='orbit'||event.button!==0)return;look={id:event.pointerId,x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId);canvas.focus();});
+ canvas.addEventListener('pointermove',event=>{if(!look||event.pointerId!==look.id||!nav)return;nav.setLook((event.clientX-look.x)*.0035,(event.clientY-look.y)*.0035);look.x=event.clientX;look.y=event.clientY;wake();});
+ const endLook=event=>{if(look?.id===event.pointerId)look=null;};canvas.addEventListener('pointerup',endLook);canvas.addEventListener('pointercancel',endLook);
+ const pad=$('joystick'),knob=$('joystick-knob');
+ function movePad(event){const r=pad.getBoundingClientRect(),limit=r.width*.32;const dx=event.clientX-r.left-r.width/2,dy=event.clientY-r.top-r.height/2;const divisor=Math.max(1,Math.hypot(dx,dy)/limit);nav?.setMove(dx/divisor/limit,-dy/divisor/limit);knob.style.transform=`translate(${dx/divisor}px,${dy/divisor}px)`;wake();}
+ pad.addEventListener('pointerdown',event=>{if(mode==='orbit')return;event.preventDefault();padId=event.pointerId;pad.setPointerCapture(padId);movePad(event);});pad.addEventListener('pointermove',event=>{if(event.pointerId===padId)movePad(event);});
+ const releasePad=event=>{if(event.pointerId===padId){padId=null;nav?.setMove(0,0);knob.style.transform='';wake();}};pad.addEventListener('pointerup',releasePad);pad.addEventListener('pointercancel',releasePad);
+ function clear(){look=null;padId=null;verticalPointers.clear();knob.style.transform='';nav?.clearInputs();syncMotion();wake();}
+ document.addEventListener('focusin',event=>{if(event.target.closest('#settings select, #details'))clear();});
+ window.addEventListener('blur',clear);document.addEventListener('visibilitychange',()=>{if(document.hidden)clear();});
+ return {setMode,getMode:()=>building?requestedMode:mode,clear,resetEntry(){clear();nav?.reset();},exit(){return setMode('orbit');},tick(dt){const motion=openings.update(dt,mode==='orbit'?null:nav?.getPlayerBounds());if(motion.changed){nav?.refreshCamera();if(mode!=='orbit')nav?.setDynamicCollision(colliders.collideCapsule);syncDoors();}const movement=nav?.update(dt)||{changed:false,active:false};syncMotion();if(nav&&mode!=='orbit'){const near=openings.nearest(nav.getEyePosition(),3);$('interact').disabled=!near;$('interact').textContent=near?`${near.target?(near.sourcePosePartial?'Reset':'Tutup'):(near.sourcePosePartial?'Geser':'Buka')} ${near.label}`:'Dekati pintu · E';}return {changed:motion.changed||movement.changed,active:motion.moving||movement.active,shadowDirty:motion.finished&&!motion.moving,motionChanged:motion.changed};},inspect(){return {mode,eye:nav?.getEyePosition().toArray(),motion:nav?.getMotionState(),openings:openings.inspect()};}};
+}

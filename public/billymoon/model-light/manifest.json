@@ -1,0 +1,134 @@
+{
+  "name": "BILLYMOON",
+  "variant": "Light",
+  "quality": "light",
+  "entry": "model.gltf",
+  "bytes": 29410612,
+  "rawPackageBytes": 58825894,
+  "compression": "gzip + EXT_meshopt_compression",
+  "quantization": true,
+  "decimation": true,
+  "units": "metres",
+  "upAxis": "Y",
+  "files": [
+    {
+      "name": "model.gltf.gz",
+      "logicalName": "model.gltf",
+      "bytes": 1992878,
+      "decodedBytes": 19110723,
+      "compression": "gzip",
+      "sha256": "33942c5255b3239163c9d74388acbda47019194f10f46ee6e79cad2274d06be1",
+      "decodedSha256": "12c3dda561ee3c1939e3bc35e08585c1df07cfb2a554bf64c1becd9225bddd03"
+    },
+    {
+      "name": "model-00.bin.gz",
+      "logicalName": "model-00.bin",
+      "bytes": 13398594,
+      "decodedBytes": 19922161,
+      "compression": "gzip",
+      "sha256": "2d0fb237ede62108aaa17d41d7253e8ce25c2d243f9ce3b9789c311a464c9c10",
+      "decodedSha256": "4af9e0839951854ecdde98eccdbc1be51740537007c7eb6d8a441cbe3a14b74f",
+      "parts": [
+        {
+          "name": "model-00.bin.gz.part-000",
+          "bytes": 2000000,
+          "sha256": "8540eab9230ebd3da05bfdf2ff666add16296fa59a3d638e491bba7605ce1189"
+        },
+        {
+          "name": "model-00.bin.gz.part-001",
+          "bytes": 2000000,
+          "sha256": "e31ae6273d49cf48af3d778d663b5f866dd984827804ae83bfb3605cd9ed6acf"
+        },
+        {
+          "name": "model-00.bin.gz.part-002",
+          "bytes": 2000000,
+          "sha256": "b8d78ffe6b676b31e15b07656ef57e3ad5c5c4e0083c37844fb7c18134389b91"
+        },
+        {
+          "name": "model-00.bin.gz.part-003",
+          "bytes": 2000000,
+          "sha256": "5cb8d8b87fb046003a59cc7053cad961c649aa6d901f34529f765ec8c776d457"
+        },
+        {
+          "name": "model-00.bin.gz.part-004",
+          "bytes": 2000000,
+          "sha256": "31dd77fc7abc06457116fbfe0d04a56f2b1ad80f50f27e34e65cfbccd1c6899b"
+        },
+        {
+          "name": "model-00.bin.gz.part-005",
+          "bytes": 2000000,
+          "sha256": "6d58e1bbb69762b28788145610c2adcec514d410ed528ab93c6ccac8a29be538"
+        },
+        {
+          "name": "model-00.bin.gz.part-006",
+          "bytes": 1398594,
+          "sha256": "4d9c143459e5d5416cb94b64d7d472b348e55fca62b55c209ecb0d78fb50b62b"
+        }
+      ]
+    },
+    {
+      "name": "model-01.bin.gz",
+      "logicalName": "model-01.bin",
+      "bytes": 14019140,
+      "decodedBytes": 19793010,
+      "compression": "gzip",
+      "sha256": "84e9ce5e2d5c3c8de9f728bb5ed925cdf96e6a3e47f867497584937496833cbf",
+      "decodedSha256": "70f357b05cc0069b53448e89c12831cff38e174bcc30ad3774e875e0638ee929",
+      "parts": [
+        {
+          "name": "model-01.bin.gz.part-000",
+          "bytes": 2000000,
+          "sha256": "78ea3405b39fc367e99cf3fd0aa87294a55ac3f4090e585b0d056f0fab7a14d0"
+        },
+        {
+          "name": "model-01.bin.gz.part-001",
+          "bytes": 2000000,
+          "sha256": "250dad6f18cecd4d9394734a956c43fb138942104b905ef30aaf8a83b861ebfc"
+        },
+        {
+          "name": "model-01.bin.gz.part-002",
+          "bytes": 2000000,
+          "sha256": "6ab72bed1d711f79b9e651d9fa8b4c1eb8c41262c82aba1a641e4ee7ddfa84c0"
+        },
+        {
+          "name": "model-01.bin.gz.part-003",
+          "bytes": 2000000,
+          "sha256": "e155322155de2eee635b7d6c4bf1b272927454ed50f9f56bcee8ae49db849afe"
+        },
+        {
+          "name": "model-01.bin.gz.part-004",
+          "bytes": 2000000,
+          "sha256": "2b8c8d7a984f205f4a2b23a43860173a0dfeb0a53a471ee56f9e67db659e3284"
+        },
+        {
+          "name": "model-01.bin.gz.part-005",
+          "bytes": 2000000,
+          "sha256": "d92f7e594f349af1ef65fddff5ba1ef2f569943ff69e0a2648b1ae5c8b9afec9"
+        },
+        {
+          "name": "model-01.bin.gz.part-006",
+          "bytes": 2000000,
+          "sha256": "af107445de20ce81cfa45c6c61482b8494c5228f7b5f6e76defc931224c139f1"
+        },
+        {
+          "name": "model-01.bin.gz.part-007",
+          "bytes": 19140,
+          "sha256": "e74e0dce6aeb5c98b518d39a42065ac239e65d0d89fdb135a7a90e130bae0d23"
+        }
+      ]
+    }
+  ],
+  "triangles": 12216723,
+  "originalTriangles": 13454935,
+  "triangleReduction": 1238212,
+  "placedMeshes": 35358,
+  "nodes": 70571,
+  "meshes": 2204,
+  "materials": 383,
+  "source": "BILLYMOON (1).skp",
+  "fidelity": {
+    "maximumPositionErrorMetres": 0.00024928414335513864,
+    "vegetationSimplificationMetricMetres": 0.003,
+    "textureMemoryEstimateMiB": 124.36
+  }
+}

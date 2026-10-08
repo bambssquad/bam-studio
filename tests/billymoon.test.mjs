@@ -9,7 +9,7 @@ test('BILLYMOON is a project with an owned interior visualization',()=>{
 })
 test('Dedicated BILLYMOON section is accessible from Lookbook navigation',()=>{
  assert.match(look, /id="billymoon"/)
- assert.match(look, /Explore BILLYMOON/)
+ assert.match(look, /Project details/)
 })
 test('Gallery and lookbook totals scale with the project collection',()=>{
  assert.doesNotMatch(app, /wrap\(index - Math.round\(target\) \+ 1, 3\)/)

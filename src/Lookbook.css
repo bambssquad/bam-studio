@@ -13,3 +13,5 @@
 @media(max-width:700px){.look-nav{gap:5px;font-size:10px}.look-nav button:first-child{margin-right:0}.billymoon-feature{inset:122px 15px 18px}.billymoon-heading{margin-bottom:22px}.billymoon-feature figure img{border-radius:14px}.billymoon-summary{align-items:flex-start;flex-direction:column;gap:18px}.billymoon-summary p{font-size:13px}.billymoon-feature figcaption{font-size:9px}}
 @media(max-width:700px){.look-nav{max-width:calc(100% - 30px);overflow-x:auto;white-space:nowrap;scrollbar-width:thin}.look-nav button,.look-nav>span{flex-shrink:0}}
 @media(max-width:700px){.lookbook .look-nav{justify-content:flex-start}}
+
+.billymoon-actions{display:flex;flex-wrap:wrap;gap:10px;flex-shrink:0}.public-viewer-link{display:inline-flex;align-items:center;gap:16px;border:1px solid #222;border-radius:24px;padding:14px 20px;min-height:44px;font-size:12px;background:#151515;color:white}.public-viewer-link:hover{background:#333}.panel>.public-viewer-link{margin-top:24px}@media(max-width:700px){.billymoon-actions{width:100%}}
