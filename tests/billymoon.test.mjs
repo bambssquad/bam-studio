@@ -29,3 +29,6 @@ test('dedicated view skips hidden gallery layout work',()=>{
 test('mobile nav starts at a reachable scroll origin despite the glass layer',()=>{
  assert.match(readFileSync('src/Lookbook.css','utf8'), /\.lookbook \.look-nav\{justify-content:flex-start\}/)
 })
+test('feature render keeps its full-width aspect ratio without side letterboxing',()=>{
+ assert.match(readFileSync('src/Lookbook.css','utf8'), /figure img\{display:block;width:100%;height:auto;max-height:none/)
+})
