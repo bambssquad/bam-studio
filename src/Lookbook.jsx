@@ -6,6 +6,8 @@ import { advanceSpring, spring, clamp } from './motion'
 export default function Lookbook({ projects, photo, onOpen, onFeatured, onAbout }) {
   const [mode, setMode] = useState('timeline')
   const [active, setActive] = useState(0)
+  const billymoonIndex = projects.findIndex(project => project.name === 'BILLYMOON')
+  const billymoon = projects[billymoonIndex]
   const stage = useRef(null)
   const actions = useRef(null)
   const modeRef = useRef(mode)
@@ -36,6 +38,7 @@ export default function Lookbook({ projects, photo, onOpen, onFeatured, onAbout 
     element.addEventListener('pointerleave', leave); element.addEventListener('click', click, true)
     const tick = (time = performance.now()) => {
       if (disposed) return
+      if (modeRef.current === 'billymoon') { lastTime = time; raf = requestAnimationFrame(tick); return }
       const dt = Math.min(Math.max((time - lastTime) / 1000, .001), .032); lastTime = time
       if (media.matches) { scrollSpring.value = target; scrollSpring.velocity = 0 }
       current = media.matches ? target : advanceSpring(scrollSpring, target, dt, 160, 22)
@@ -70,11 +73,12 @@ export default function Lookbook({ projects, photo, onOpen, onFeatured, onAbout 
     return () => { disposed = true; cancelAnimationFrame(raf); element.removeEventListener('wheel', wheel); element.removeEventListener('pointerdown', down); element.removeEventListener('pointermove', move); element.removeEventListener('pointerup', up); element.removeEventListener('pointercancel', up); element.removeEventListener('keydown', key); element.removeEventListener('pointerleave', leave); element.removeEventListener('click', click, true) }
   }, [onOpen])
   return <section className={`lookbook look-${mode}`} aria-label="Bambe Studio Lookbook">
-    <nav className="look-nav" aria-label="Lookbook views"><button onClick={onFeatured}>Featured ↗</button><span>/</span>{['timeline', 'surf', 'index'].map(item => <button key={item} aria-pressed={mode === item} onClick={() => setMode(item)}>{item}</button>)}<button onClick={onAbout}>About</button></nav>
-    <JellyTitle/>
-    <div className="look-stage" ref={stage} tabIndex={0} role="region" aria-label="Project photographs. Drag, scroll, or use arrow keys.">
-      {frames.map((p, i) => <button data-project={p.project} className="look-card" key={`${p.name}-${p.view}`} aria-label={`Open ${p.name}, ${p.view}`} onClick={e => { if (e.detail === 0) onOpen(p.project) }}><div className="look-photo" style={{ aspectRatio: [ .8, .72, 1.15 ][i % 3] }}><img src={photo(p.image)} alt={`${p.name} — ${p.view.toLowerCase()}`} style={{ objectPosition: `${p.crop * 50}% center`, transform: `scale(${1 + p.crop * .18})` }} draggable="false" /></div><span className="look-meta"><span>{String(i + 1).padStart(2, '0')} / {p.view}</span><span>{p.year}</span></span><span className="look-name">{p.name}</span></button>)}
+    <nav className="look-nav" aria-label="Lookbook views"><button onClick={onFeatured}>Featured ↗</button><span>/</span>{['timeline', 'surf', 'index'].map(item => <button key={item} aria-pressed={mode === item} onClick={() => setMode(item)}>{item}</button>)}<button aria-pressed={mode === 'billymoon'} onClick={() => setMode('billymoon')}>BILLYMOON</button><button onClick={onAbout}>About</button></nav>
+    <div className="look-title-wrap" hidden={mode === 'billymoon'}><JellyTitle/></div>
+    {mode === 'billymoon' && <section id="billymoon" className="billymoon-feature" aria-labelledby="billymoon-title"><div className="billymoon-heading"><p className="eyebrow">Project / Interior visualization</p><h2 id="billymoon-title">BILLYMOON</h2><p>A closer look at the café seating area.</p></div><figure><img src={photo(billymoon.image)} alt={billymoon.alt} width="1280" height="720" loading="lazy" decoding="async"/><figcaption>Warm timber. Patterned upholstery. Natural light.</figcaption></figure><div className="billymoon-summary"><p>{billymoon.description}</p><button onClick={() => onOpen(billymoonIndex)}>Explore BILLYMOON <span aria-hidden="true">↗</span></button></div></section>}
+    <div className="look-stage" hidden={mode === 'billymoon'} ref={stage} tabIndex={0} role="region" aria-label="Project photographs. Drag, scroll, or use arrow keys.">
+      {frames.map((p, i) => <button data-project={p.project} className="look-card" key={`${p.name}-${p.view}`} aria-label={`Open ${p.name}, ${p.view}`} onClick={e => { if (e.detail === 0) onOpen(p.project) }}><div className="look-photo" style={{ aspectRatio: [ .8, .72, 1.15 ][i % 3] }}><img loading="lazy" decoding="async" src={photo(p.image)} alt={`${p.name} — ${p.view.toLowerCase()}`} style={{ objectPosition: `${p.crop * 50}% center`, transform: `scale(${1 + p.crop * .18})` }} draggable="false" /></div><span className="look-meta"><span>{String(i + 1).padStart(2, '0')} / {p.view}</span><span>{p.year}</span></span><span className="look-name">{p.name}</span></button>)}
     </div>
-    <footer className="look-footer"><div className="look-status"><span>ARCHITECTURE / INTERIORS</span><span>SCROLL OR DRAG TO EXPLORE</span><span>0{active + 1} — 09</span></div><div className="look-ruler" aria-label="Choose photograph">{frames.map((p, i) => <button key={i} aria-label={`Show ${p.name} ${p.view}`} aria-pressed={active === i} onClick={() => actions.current?.select(i)}><span>{i % 3 === 0 ? p.year : ''}</span></button>)}</div><div className="look-bottom"><button onClick={() => actions.current?.move(-1)} aria-label="Previous photograph">←</button><span>Spaces for life. A collection by Bambe Studio.</span><button onClick={() => actions.current?.move(1)} aria-label="Next photograph">→</button></div></footer>
+    <footer className="look-footer" hidden={mode === 'billymoon'}><div className="look-status"><span>ARCHITECTURE / INTERIORS</span><span>SCROLL OR DRAG TO EXPLORE</span><span>{String(active + 1).padStart(2, '0')} — {String(frames.length).padStart(2, '0')}</span></div><div className="look-ruler" aria-label="Choose photograph">{frames.map((p, i) => <button key={i} aria-label={`Show ${p.name} ${p.view}`} aria-pressed={active === i} onClick={() => actions.current?.select(i)}><span>{i % 3 === 0 ? p.year : ''}</span></button>)}</div><div className="look-bottom"><button onClick={() => actions.current?.move(-1)} aria-label="Previous photograph">←</button><span>Spaces for life. A collection by Bambe Studio.</span><button onClick={() => actions.current?.move(1)} aria-label="Next photograph">→</button></div></footer>
   </section>
 }

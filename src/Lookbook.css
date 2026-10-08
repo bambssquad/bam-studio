@@ -3,3 +3,13 @@
 @media(min-width:701px) and (min-height:651px){.look-title{top:64px;font-size:7vw}.look-photo{max-height:29svh}}
 
 .sound-help{font-size:10px;color:#777;line-height:1.5;margin-top:10px}
+
+/* Dedicated project view, retaining the Lookbook's monochrome type and glass navigation. */
+.look-stage[hidden],.look-footer[hidden]{display:none}
+.billymoon-feature{position:absolute;inset:86px 5% 24px;overflow:auto;padding:0 0 24px;scrollbar-width:thin}
+.billymoon-heading{margin-bottom:24px}.billymoon-heading .eyebrow{margin:0 0 12px}.billymoon-heading h2{font-family:Arial,Helvetica,sans-serif;font-size:clamp(48px,7vw,96px);font-weight:900;letter-spacing:-.07em;margin:0 0 12px}.billymoon-heading>p:last-child{font-size:13px;color:#777}
+.billymoon-feature figure{margin:0}.billymoon-feature figure img{display:block;width:100%;height:auto;max-height:53svh;object-fit:contain;object-position:left;border-radius:18px;background:#eeede9}.billymoon-feature figcaption{font:10px/1.5 monospace;color:#777;margin-top:10px}
+.billymoon-summary{display:flex;align-items:center;justify-content:space-between;gap:32px;margin-top:20px}.billymoon-summary p{max-width:580px;font-size:14px;line-height:1.65}.billymoon-summary button{flex-shrink:0;font-size:12px;border:1px solid #ddd;border-radius:24px;padding:14px 20px;min-height:44px}.billymoon-summary button:hover{background:#f3f3f0}.billymoon-summary button span{margin-left:16px}
+@media(max-width:700px){.look-nav{gap:5px;font-size:10px}.look-nav button:first-child{margin-right:0}.billymoon-feature{inset:122px 15px 18px}.billymoon-heading{margin-bottom:22px}.billymoon-feature figure img{border-radius:14px}.billymoon-summary{align-items:flex-start;flex-direction:column;gap:18px}.billymoon-summary p{font-size:13px}.billymoon-feature figcaption{font-size:9px}}
+@media(max-width:700px){.look-nav{max-width:calc(100% - 30px);overflow-x:auto;white-space:nowrap;scrollbar-width:thin}.look-nav button,.look-nav>span{flex-shrink:0}}
+@media(max-width:700px){.lookbook .look-nav{justify-content:flex-start}}

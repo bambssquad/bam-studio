@@ -24,6 +24,7 @@ npm run dev
 ## Checks and production
 
 ```sh
+npm test
 npm run lint
 npm run build
 npm run preview
@@ -44,3 +45,7 @@ Open All projects for the filterable index. Project details, studio information,
 Music begins after Play. Playback and continued playback with the menu closed were verified in Chrome. Some embedded browsers block YouTube; the player reports the error and provides a direct link.
 
 `npm run build` generates `dist/` with the `/bam-studio/` asset base. GitHub Actions builds and deploys `main` automatically to GitHub Pages. The legacy `.openai/hosting.json` belongs to the previous ChatGPT Site and is not used for GitHub Pages.
+
+## BILLYMOON
+
+BILLYMOON has a dedicated Lookbook section and appears in the project collection. Its locally served, optimized image is an interior visualization of the café seating area from the supplied architectural model. No location, client, or project date is asserted. The original three demonstration projects are unchanged. The private interactive viewer and original model are not included in this public portfolio.
