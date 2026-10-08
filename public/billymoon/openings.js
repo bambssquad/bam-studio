@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=phone-20261008-01760e18';
+import * as T from './vendor/three.module.js?v=bake-20261008-v9';
 const boxFrom=values=>new T.Box3(new T.Vector3(...values[0]),new T.Vector3(...values[1]));
 function motionMatrix(item,progress) {
  const t=progress*progress*(3-2*progress);

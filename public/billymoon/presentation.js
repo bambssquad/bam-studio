@@ -1,6 +1,6 @@
-import * as THREE from './vendor/three.module.js?v=phone-20261008-01760e18';
-import { RoomEnvironment } from './vendor/RoomEnvironment.js?v=phone-20261008-01760e18';
-import {INTERIOR_BOUNDS} from './interior-view.js?v=phone-20261008-01760e18';
+import * as THREE from './vendor/three.module.js?v=bake-20261008-v9';
+import { RoomEnvironment } from './vendor/RoomEnvironment.js?v=bake-20261008-v9';
+import {INTERIOR_BOUNDS} from './interior-view.js?v=bake-20261008-v9';
 export function shadowCameraBounds(bounds,position,target) {
  const camera=new THREE.PerspectiveCamera();camera.position.copy(position);camera.lookAt(target);camera.updateMatrixWorld();
  const box=new THREE.Box3();for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z])box.expandByPoint(new THREE.Vector3(x,y,z).applyMatrix4(camera.matrixWorldInverse));

@@ -1,6 +1,6 @@
-import * as T from './vendor/three.module.js?v=phone-20261008-01760e18';
-import {mergeGeometries} from './vendor/BufferGeometryUtils.js?v=phone-20261008-01760e18';
-import {makeHeightTexture} from './surface-details.js?v=phone-20261008-01760e18';
+import * as T from './vendor/three.module.js?v=bake-20261008-v9';
+import {mergeGeometries} from './vendor/BufferGeometryUtils.js?v=bake-20261008-v9';
+import {makeHeightTexture} from './surface-details.js?v=bake-20261008-v9';
 // Original optional furnishings. Only supplied geometry-audited placement records are accepted.
 export function createDecor(placements){
  const root=new T.Group();root.name='Furnitur tambahan · konsep';const textures=['wood','weave','stone'].map(makeHeightTexture);textures[0].repeat.set(3,2);textures[1].repeat.set(3,3);

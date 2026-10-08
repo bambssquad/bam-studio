@@ -1,25 +1,26 @@
-import {fetchModelPayload} from './model-transfer.js?v=phone-20261008-01760e18';
-import * as THREE from './vendor/three.module.js?v=phone-20261008-01760e18';
-import { OrbitControls } from './vendor/OrbitControls.js?v=phone-20261008-01760e18';
-import { GLTFLoader } from './vendor/GLTFLoader.js?v=phone-20261008-01760e18';
-import { MeshoptDecoder } from './vendor/meshopt_decoder.module.js?v=phone-20261008-01760e18';
-import { buildBatches, restoreSourceMatrices, syncBatches } from './model.js?v=phone-20261008-01760e18';
-import { cameraPose, updateDepthRange } from './camera.js?v=phone-20261008-01760e18';
-import { fetchManifest, fetchOptionalManifest, shaderHealth, decodePayload, setPresentationControlsBusy } from './runtime.js?v=phone-20261008-01760e18';
-import { createPresentation } from './presentation.js?v=phone-20261008-01760e18';
-import { restoreSourceCutouts } from './source-materials.js?v=phone-20261008-01760e18';
-import {createOpenings} from './openings.js?v=phone-20261008-01760e18';
-import {createExploration,snapshotNavigationSource,restoreNavigationLayers} from './exploration.js?v=phone-20261008-01760e18';
-import {prepareMaterials,createFixtureLights} from './materials.js?v=phone-20261008-01760e18';
-import {renderSize,rendererEdgeLimit,applyBufferSize} from './resolution.js?v=phone-20261008-01760e18';
-import {prepareSurfaceDetails} from './surface-details.js?v=phone-20261008-01760e18';
-import {createDecor} from './decor.js?v=phone-20261008-01760e18';
-import {interiorCameraPose,createInteriorFill} from './interior-view.js?v=phone-20261008-01760e18';
-import {prepareFloorRepair} from './floor-repair.js?v=phone-20261008-01760e18';
-import {prepareFloorLightmap} from './floor-lightmap.js?v=phone-20261008-01760e18';
-import {createRenderReference} from './render-reference.js?v=phone-20261008-01760e18';
-import {deviceBudget,createFrameBudget} from './performance-budget.js?v=phone-20261008-01760e18';
-import {freezeStaticTransforms} from './model.js?v=phone-20261008-01760e18';
+import {fetchModelPayload} from './model-transfer.js?v=bake-20261008-v9';
+import * as THREE from './vendor/three.module.js?v=bake-20261008-v9';
+import { OrbitControls } from './vendor/OrbitControls.js?v=bake-20261008-v9';
+import { GLTFLoader } from './vendor/GLTFLoader.js?v=bake-20261008-v9';
+import { MeshoptDecoder } from './vendor/meshopt_decoder.module.js?v=bake-20261008-v9';
+import { buildBatches, restoreSourceMatrices, syncBatches } from './model.js?v=bake-20261008-v9';
+import { cameraPose, updateDepthRange } from './camera.js?v=bake-20261008-v9';
+import { fetchManifest, fetchOptionalManifest, shaderHealth, decodePayload, setPresentationControlsBusy } from './runtime.js?v=bake-20261008-v9';
+import { createPresentation } from './presentation.js?v=bake-20261008-v9';
+import { restoreSourceCutouts } from './source-materials.js?v=bake-20261008-v9';
+import {createOpenings} from './openings.js?v=bake-20261008-v9';
+import {createExploration,snapshotNavigationSource,restoreNavigationLayers} from './exploration.js?v=bake-20261008-v9';
+import {prepareMaterials,createFixtureLights} from './materials.js?v=bake-20261008-v9';
+import {renderSize,rendererEdgeLimit,applyBufferSize} from './resolution.js?v=bake-20261008-v9';
+import {prepareSurfaceDetails} from './surface-details.js?v=bake-20261008-v9';
+import {createDecor} from './decor.js?v=bake-20261008-v9';
+import {interiorCameraPose,createInteriorFill} from './interior-view.js?v=bake-20261008-v9';
+import {prepareFloorRepair} from './floor-repair.js?v=bake-20261008-v9';
+import {prepareFloorLightmap} from './floor-lightmap.js?v=bake-20261008-v9';
+import {createRenderReference} from './render-reference.js?v=bake-20261008-v9';
+import {deviceBudget,createFrameBudget} from './performance-budget.js?v=bake-20261008-v9';
+import {freezeStaticTransforms} from './model.js?v=bake-20261008-v9';
+import {prepareWallLightmaps} from './wall-lightmaps.js?v=bake-20261008-v9';
 
 const $=id=>document.getElementById(id);
 const mobile=()=>matchMedia('(max-width:760px)').matches;
@@ -27,7 +28,7 @@ const budget=deviceBudget({width:innerWidth,height:innerHeight,coarsePointer:mat
 const surfaceEnabled=()=>detailMode==='on'&&materialsMode==='pbr'&&(!budget.phone||graphicsMode==='cinematic');
 let renderer,camera,controls,scene,prepared,currentView='iso',framePending=false,ready=false,lightMode='day';
 let presentation,graphicsMode='light',assertShaderHealthy=()=>{};
-let surfaceDetails,decor,decorData,detailMode='on',detailIndex=0,floorRepair,interiorFill,floorBake,bakeRequested=false,referenceOpen=false;
+let surfaceDetails,decor,decorData,detailMode='on',detailIndex=0,floorRepair,interiorFill,floorBake,wallBakes,bakeRequested=false,referenceOpen=false;
 let animatedBatches,exploration,openings,materialController,fixtureRig,materialsMode='pbr',resolutionMode='auto',lastFrame=0,dirty=true;
 const loadState={phase:'loading',loaded:0,total:0};
 const pendingTransfers=new Set();let loadingCancelled=false;
@@ -87,7 +88,7 @@ function applyView(view,interiorLighting=true){if(!prepared)return;if(exploratio
  else{camera.fov=40;const p=cameraPose(prepared.bounds,camera.aspect,view);camera.position.copy(p.position);camera.up.copy(p.up);camera.near=p.near;camera.far=p.far;controls.target.copy(p.target);}
  camera.updateProjectionMatrix();controls.update();$('view').value=view;
  const labels={iso:['01','Keseluruhan tapak','Isometrik'],front:['02','Tampak depan','Arah fasad model sumber'],top:['03','Tampak atas','Keseluruhan tapak'],interior:['04','Interior kafe','Sudut opsi 2 · tampilan real-time']};const values=labels[view];$('view-number').textContent=values[0];$('view-title').textContent=values[1];$('view-note').textContent=values[2];if(view==='interior'&&mobile())setPanel(false);requestRender();}
-function applyFloorPresentation(){const active=lightMode==='interior'&&materialsMode==='pbr';floorRepair?.setEnabled(active);floorBake?.setPresentation(bakeRequested,lightMode,materialsMode);$('floor-bake').disabled=!ready||!active||!floorBake?.available;window.__billymoon.floorBake={available:!!floorBake?.available,enabled:!!floorBake?.isEnabled()};if(prepared)window.__billymoon.floorRepair={available:!!floorRepair?.available,enabled:!!floorRepair?.isEnabled(),removedTriangles:floorRepair?.isEnabled()?floorRepair.removedTriangles:0};}
+function applyFloorPresentation(){const active=lightMode==='interior'&&materialsMode==='pbr';floorRepair?.setEnabled(active);floorBake?.setPresentation(bakeRequested,lightMode,materialsMode);wallBakes?.setPresentation(bakeRequested,lightMode,materialsMode);window.__billymoon.wallBake={...wallBakes?.stats,enabled:!!wallBakes?.isEnabled()};$('floor-bake').disabled=!ready||!active||!floorBake?.available;window.__billymoon.floorBake={available:!!floorBake?.available,enabled:!!floorBake?.isEnabled()};if(prepared)window.__billymoon.floorRepair={available:!!floorRepair?.available,enabled:!!floorRepair?.isEnabled(),removedTriangles:floorRepair?.isEnabled()?floorRepair.removedTriangles:0};}
 
 let ambient,key,fill;
 function setLight(mode){lightMode=mode;const night=mode==='night',dusk=mode==='dusk',interior=mode==='interior';document.body.classList.toggle('dusk',night||dusk);for(const id of ['day','dusk','night','interior'])$(id).setAttribute('aria-pressed',String(mode===id));
@@ -119,9 +120,10 @@ async function init(){
  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.02,3000);controls=new OrbitControls(camera,$('scene'));controls.enableDamping=false;controls.minDistance=.5;controls.maxDistance=2000;controls.maxPolarAngle=Math.PI*.98;controls.addEventListener('change',requestRender);
  ambient=new THREE.HemisphereLight();key=new THREE.DirectionalLight();key.position.set(100,130,80);fill=new THREE.DirectionalLight(0xc1daf2);fill.position.set(-100,70,-90);scene.add(ambient,key,fill);setLight(lightMode);if(resize()===false)return;
  let {gltf,manifest}=await loadModel();if(loadingCancelled)return;$('info-geometry').textContent=`${(manifest.triangles/1e6).toFixed(2)} juta segitiga · ${manifest.quality==='light'?'model ringan':'detail asli'}`;
- const [openingMap,navigationMap,pbrData,detailData,floorData,bakeData]=await Promise.all([fetchManifest('./openings-data.json'),fetchManifest('./navigation-data.json'),fetchManifest('./pbr-data.json'),fetchManifest('./decor-data.json'),fetchOptionalManifest('./floor-repair-data.json'),fetchOptionalManifest('./floor-lightmap-data.json')]);
+ const [openingMap,navigationMap,pbrData,detailData,floorData,bakeData,wallData]=await Promise.all([fetchManifest('./openings-data.json'),fetchManifest('./navigation-data.json'),fetchManifest('./pbr-data.json'),fetchManifest('./decor-data.json'),fetchOptionalManifest('./floor-repair-data.json'),fetchOptionalManifest('./floor-lightmap-data.json'),fetchOptionalManifest('./wall-lightmaps-data.json')]);
  floorRepair=await prepareFloorRepair(gltf.scene,floorData?.variants?.[manifest.quality==='light'?'model-light':'model']);
  floorBake=await prepareFloorLightmap(gltf.scene,floorData?.variants?.[manifest.quality==='light'?'model-light':'model'],{...(bakeData||{}),verified:!!bakeData?.verified&&floorRepair.available});
+ wallBakes=await prepareWallLightmaps(gltf.scene,wallData,manifest.quality==='light'?'model-light':'model');
  decorData=detailData;decor=createDecor(decorData.placements);
  materialController=prepareMaterials(gltf.scene,pbrData);materialController.apply(true);surfaceDetails=prepareSurfaceDetails(gltf.scene);surfaceDetails.setEnabled(surfaceEnabled());
  openings=createOpenings({sourceScene:gltf.scene,openingMap,onStatus:message=>$('walk-status').textContent=message});
@@ -155,13 +157,13 @@ $('detail-additions').addEventListener('change',async event=>{if(!ready){event.t
 $('detail-focus').addEventListener('click',()=>{if(!ready||detailMode==='off')return;exploration?.exit();const p=decorData.placements[detailIndex++%decorData.placements.length];camera.position.fromArray(p.inspectionCamera);camera.up.set(0,1,0);camera.fov=55;camera.updateProjectionMatrix();controls.target.fromArray(p.inspectionTarget);controls.update();$('view').value='detail';$('view-number').textContent='DETAIL';$('view-title').textContent=p.label;$('view-note').textContent='Furnitur tambahan · klik lagi untuk area berikutnya';if(mobile())setPanel(false);requestRender();});
 $('floor-bake').addEventListener('change',async event=>{
  if(!ready||!floorBake?.available){event.target.checked=bakeRequested;return;}
- bakeRequested=event.target.checked;ready=false;loadState.phase='updating';presentationBusy(true);$('floor-bake-note').textContent='Menyiapkan pantulan lantai…';
+ bakeRequested=event.target.checked;ready=false;loadState.phase='updating';presentationBusy(true);$('floor-bake-note').textContent='Menyiapkan cahaya bake kafe…';
  try{
-  if(bakeRequested)await floorBake.ensureTexture();
+  if(bakeRequested){await floorBake.ensureTexture();if(loadState.phase!=='error')await wallBakes?.ensureTextures();}
   if(loadState.phase==='error')return;applyFloorPresentation();await renderer.compileAsync(scene,camera);if(loadState.phase==='error')return;assertShaderHealthy();renderer.render(scene,camera);assertShaderHealthy();
-  $('floor-bake-note').textContent='Pencahayaan statis · aktif hanya pada Interior + PBR.';
+  $('floor-bake-note').textContent=`Lantai + ${wallBakes?.stats.surfaces||0} permukaan dinding · statis, Interior + PBR.`;
  }catch(error){
-  bakeRequested=false;$('floor-bake').checked=false;floorBake.setPresentation(false,lightMode,materialsMode);
+  bakeRequested=false;$('floor-bake').checked=false;floorBake.setPresentation(false,lightMode,materialsMode);wallBakes?.setPresentation(false,lightMode,materialsMode);
   assertShaderHealthy=shaderHealth(renderer,error=>{if(ready)fail(error);});
   try{await renderer.compileAsync(scene,camera);if(loadState.phase==='error')return;assertShaderHealthy();$('floor-bake-note').textContent='Cahaya tambahan belum tersedia; tampilan standar dipakai.';}
   catch(fallbackError){fail(fallbackError);}

@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=phone-20261008-01760e18';
+import * as T from './vendor/three.module.js?v=bake-20261008-v9';
 const KEYS=['roughness','metalness','opacity','transparent','depthWrite'];
 export function prepareMaterials(sourceScene,config) {
  const profiles=new Map((config.profiles||[]).map(p=>[p.materialIndex,p.settings]));const records=new Map(),variants=new Map();
