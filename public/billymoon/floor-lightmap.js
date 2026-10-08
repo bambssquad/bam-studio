@@ -1,5 +1,5 @@
-import * as T from './vendor/three.module.js';
-import {geometryDigest} from './floor-repair.js';
+import * as T from './vendor/three.module.js?v=phone-20261008-01760e18';
+import {geometryDigest} from './floor-repair.js?v=phone-20261008-01760e18';
 export function loadBoundedTexture(loader,url,timeoutMs=10000){return new Promise((resolve,reject)=>{let settled=false;const timer=setTimeout(()=>{settled=true;reject(new Error('Cahaya lantai terlalu lama dimuat.'));},timeoutMs);Promise.resolve().then(()=>loader.loadAsync(url)).then(texture=>{if(settled){texture.dispose();return;}settled=true;clearTimeout(timer);resolve(texture);},error=>{if(settled)return;settled=true;clearTimeout(timer);reject(error);});});}
 export function planarLightmapUvs(geometry,matrix,config){const p=geometry.attributes.position,out=new Float32Array(p.count*2),b=config.boundsGltfXZ,[w,h]=config.resolution,pad=config.paddingTexels,span=config.innerSpanTexels,v=new T.Vector3();for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(matrix);out[i*2]=(pad+(v.x-b.xmin)/(b.xmax-b.xmin)*span)/w;out[i*2+1]=(pad+(v.z-b.zmin)/(b.zmax-b.zmin)*span)/h;}return new T.BufferAttribute(out,2);}
 export function installBakedDiffuse(material){

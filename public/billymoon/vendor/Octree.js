@@ -7,7 +7,7 @@ import {
 	Vector3,
 	Layers
 } from 'three';
-import { Capsule } from './Capsule.js';
+import { Capsule } from './Capsule.js?v=phone-20261008-01760e18';
 
 
 const _v1 = new Vector3();

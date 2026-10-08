@@ -1,5 +1,5 @@
-import * as T from './vendor/three.module.js';
-import {createNavigation,buildTriangleOctree} from './navigation.js';
+import * as T from './vendor/three.module.js?v=phone-20261008-01760e18';
+import {createNavigation,buildTriangleOctree} from './navigation.js?v=phone-20261008-01760e18';
 export function acceptsMovementKeys(target){return !target?.closest?.('select,input,textarea,dialog,button,a,summary,[contenteditable]');}
 export function combineColliders(colliders){
  const active=colliders.filter(Boolean);
