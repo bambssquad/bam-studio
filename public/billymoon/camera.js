@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three.module.js?v=bake-20261008-v9';
+import * as THREE from './vendor/three.module.js?v=whole-20261008-v10';
 const FOV=40;
 export function cameraPose(bounds,aspect,view='iso') {
  const center=bounds.getCenter(new THREE.Vector3());

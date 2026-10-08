@@ -7,7 +7,7 @@ import {
 	Vector3,
 	Layers
 } from 'three';
-import { Capsule } from './Capsule.js?v=bake-20261008-v9';
+import { Capsule } from './Capsule.js?v=whole-20261008-v10';
 
 
 const _v1 = new Vector3();

@@ -1,0 +1,22 @@
+import * as T from './vendor/three.module.js?v=whole-20261008-v10';
+export async function sha256(bytes){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(v=>v.toString(16).padStart(2,'0')).join('');}
+export async function fetchVerifiedBinary(asset,fetcher=fetch){
+ if(!Number.isInteger(asset?.bytes)||asset.bytes<1||asset.bytes>8388608)throw new Error('Bake payload budget mismatch');
+ const parts=asset.parts||[{url:asset.url,bytes:asset.bytes,sha256:asset.sha256}],out=new Uint8Array(asset.bytes);let offset=0;
+ for(const part of parts){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetcher(part.url,{signal:controller.signal});if(!response.ok)throw new Error('Berkas bake belum tersedia.');const bytes=await response.arrayBuffer();if(bytes.byteLength!==part.bytes||await sha256(bytes)!==part.sha256||offset+bytes.byteLength>out.length)throw new Error('Bake payload hash/size mismatch');out.set(new Uint8Array(bytes),offset);offset+=bytes.byteLength;}finally{clearTimeout(timer);}}
+ if(offset!==out.length||await sha256(out)!==asset.sha256)throw new Error('Bake reconstruction hash mismatch');return out.buffer;
+}
+function array(buffer,descriptor){const Type={'<u4':Uint32Array,'<i4':Int32Array,'<f4':Float32Array}[descriptor.dtype];if(!Type||descriptor.byteOffset%4||descriptor.byteLength!==descriptor.count*descriptor.itemSize*4||descriptor.byteOffset+descriptor.byteLength>buffer.byteLength)throw new Error('Bake array bounds mismatch');return new Type(buffer,descriptor.byteOffset,descriptor.count*descriptor.itemSize);}
+export function remapAttribute(source,remap){
+ const raw=source.isInterleavedBufferAttribute?source.data.array:source.array,stride=source.isInterleavedBufferAttribute?source.data.stride:source.itemSize,offset=source.isInterleavedBufferAttribute?source.offset:0,out=new raw.constructor(remap.length*source.itemSize);
+ for(let i=0;i<remap.length;i++){if(remap[i]>=source.count)throw new Error('Bake vertex remap out of range');for(let c=0;c<source.itemSize;c++)out[i*source.itemSize+c]=raw[remap[i]*stride+offset+c];}
+ const attribute=source.isFloat16BufferAttribute?new T.Float16BufferAttribute(out,source.itemSize,source.normalized):new T.BufferAttribute(out,source.itemSize,source.normalized);attribute.gpuType=source.gpuType;return attribute;
+}
+export function buildBakeGeometry(source,spec,buffer){
+ const remap=array(buffer,spec.sourceVertexRemap),indices=array(buffer,spec.indices),order=array(buffer,spec.sourceTriangleOrder),front=array(buffer,spec.uvFront),back=array(buffer,spec.uvBack),count=source.index?.count;
+ if(source.attributes.position.count!==spec.sourceVertexCount||!count||(spec.sourceTriangleCount!==undefined&&count!==spec.sourceTriangleCount*3)||indices.length!==count||order.length*3!==count||front.length!==remap.length*2||back.length!==front.length||remap.length!==spec.derivedVertexCount)throw new Error('Bake topology shape mismatch');
+ const seen=new Uint8Array(order.length);for(let i=0;i<order.length;i++){const triangle=order[i];if(triangle>=order.length||seen[triangle])throw new Error('Bake triangle duplication or omission');seen[triangle]=1;for(let c=0;c<3;c++)if(indices[i*3+c]>=remap.length||remap[indices[i*3+c]]!==source.index.getX(triangle*3+c))throw new Error('Bake source triangle winding mismatch');}
+ const charts=array(buffer,spec.sourceTriangleChart);if(charts.length!==order.length)throw new Error('Bake chart shape mismatch');
+ for(let t=0;t<order.length;t++)for(let c=0;c<3;c++){const j=indices[t*3+c]*2,empty=charts[t]<0;for(const values of [front,back]){if(empty){if(values[j]!==-1||values[j+1]!==-1)throw new Error('Bake sentinel contract mismatch');}else if(!Number.isFinite(values[j])||!Number.isFinite(values[j+1])||values[j]<0||values[j]>1.00001||values[j+1]<0||values[j+1]>1.00001)throw new Error('Bake UV out of bounds');}}
+ const geometry=new T.BufferGeometry();for(const [name,attribute]of Object.entries(source.attributes))if(!attribute.isInstancedBufferAttribute)geometry.setAttribute(name,remapAttribute(attribute,remap));geometry.setIndex(new T.BufferAttribute(indices,1));geometry.setAttribute('bakeUvFront',new T.BufferAttribute(front,2));geometry.setAttribute('bakeUvBack',new T.BufferAttribute(back,2));geometry.computeBoundingBox();geometry.computeBoundingSphere();geometry.userData.sourceTriangleOrder=order;return geometry;
+}

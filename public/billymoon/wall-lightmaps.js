@@ -1,6 +1,6 @@
-import * as T from './vendor/three.module.js?v=bake-20261008-v9';
-import {geometryDigest} from './floor-repair.js?v=bake-20261008-v9';
-import {installBakedDiffuse,loadBoundedTexture} from './floor-lightmap.js?v=bake-20261008-v9';
+import * as T from './vendor/three.module.js?v=whole-20261008-v10';
+import {geometryDigest} from './floor-repair.js?v=whole-20261008-v10';
+import {installBakedDiffuse,loadBoundedTexture} from './floor-lightmap.js?v=whole-20261008-v10';
 
 async function prepareSurface(scene,surface,tier){
  const expected=surface.variants?.[tier],encoding=surface.encoding;if(!expected)throw new Error('Missing wall geometry guards');
@@ -16,10 +16,10 @@ async function prepareSurface(scene,surface,tier){
  const geometry=source.clone(),originalMaterial=mesh.material,material=originalMaterial.clone();material.userData={...originalMaterial.userData,interiorWallBake:surface.id};installBakedDiffuse(material);geometry.setAttribute('uv1',new T.BufferAttribute(new Float32Array(uv),2));geometry.clearGroups();
  let start=0,last=selected.has(0)?0:1;for(let triangle=1;triangle<=source.index.count/3;triangle++){const next=selected.has(triangle)?0:1;if(triangle===source.index.count/3||next!==last){geometry.addGroup(start*3,(triangle-start)*3,last);start=triangle;last=next;}}
  mesh.geometry=geometry;mesh.material=[material,originalMaterial];matches.length=0;mesh=null;scene=null;
- let texture=null,pending=null,enabled=false,disposed=false;
+ let texture=null,pending=null,enabled=false,disposed=false,generation=0;
  function setEnabled(value){enabled=!!value&&!!texture&&!disposed;const map=enabled?texture:null;if(material.lightMap!==map){material.lightMap=map;material.lightMapIntensity=encoding.threeLightMapIntensity;material.needsUpdate=true;}}
- async function ensureTexture(loader){if(disposed)return false;if(texture)return true;if(!pending)pending=loadBoundedTexture(loader,surface.url).then(map=>{if(disposed){map.dispose();return false;}map.colorSpace=T.SRGBColorSpace;map.flipY=true;map.channel=1;map.wrapS=map.wrapT=T.ClampToEdgeWrapping;map.minFilter=T.LinearMipmapLinearFilter;map.magFilter=T.LinearFilter;map.generateMipmaps=true;map.needsUpdate=true;texture=map;return true;}).catch(error=>{pending=null;throw error;});return pending;}
- return {material,triangles:selected.size,textureBytes:encoding.pngBytes,setEnabled,ensureTexture,isEnabled:()=>enabled,dispose(){if(disposed)return;setEnabled(false);disposed=true;texture?.dispose();material.dispose();geometry.dispose();}};
+ async function ensureTexture(loader){if(disposed)return false;if(texture)return true;if(!pending){const token=generation;pending=loadBoundedTexture(loader,surface.url).then(map=>{if(disposed||token!==generation){map.dispose();return false;}map.colorSpace=T.SRGBColorSpace;map.flipY=true;map.channel=1;map.wrapS=map.wrapT=T.ClampToEdgeWrapping;map.minFilter=T.LinearMipmapLinearFilter;map.magFilter=T.LinearFilter;map.generateMipmaps=true;map.needsUpdate=true;texture=map;return true;}).catch(error=>{if(token===generation)pending=null;throw error;});}return pending;}
+ return {material,triangles:selected.size,textureBytes:encoding.pngBytes,setEnabled,ensureTexture,isEnabled:()=>enabled,releaseTexture(){setEnabled(false);generation++;texture?.dispose();texture=null;pending=null;},dispose(){if(disposed)return;setEnabled(false);disposed=true;texture?.dispose();material.dispose();geometry.dispose();}};
 }
 export async function prepareWallLightmaps(sourceScene,config,tier){
  const surfaces=[],reasons=[];sourceScene.updateMatrixWorld(true);
@@ -28,6 +28,6 @@ export async function prepareWallLightmaps(sourceScene,config,tier){
  return {available:surfaces.length>0,reasons,materials:surfaces.map(s=>s.material),stats:{surfaces:surfaces.length,triangles:surfaces.reduce((n,s)=>n+s.triangles,0),textureBytes:surfaces.reduce((n,s)=>n+s.textureBytes,0),estimatedGpuMiB:surfaces.length*1024*1024*4*4/3/1048576},
   async ensureTextures(loader=new T.TextureLoader()){for(const surface of surfaces){if(disposed)return false;await surface.ensureTexture(loader);}return !disposed;},
   setPresentation(requested,time,materials){for(const surface of surfaces)surface.setEnabled(!disposed&&requested&&time==='interior'&&materials==='pbr');},
-  isEnabled:()=>surfaces.some(s=>s.isEnabled()),dispose(){if(disposed)return;disposed=true;for(const surface of surfaces)surface.dispose();},
+  isEnabled:()=>surfaces.some(s=>s.isEnabled()),releaseTextures(){for(const surface of surfaces)surface.releaseTexture();},dispose(){if(disposed)return;disposed=true;for(const surface of surfaces)surface.dispose();},
  };
 }

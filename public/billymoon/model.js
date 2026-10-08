@@ -1,9 +1,11 @@
-import * as THREE from './vendor/three.module.js?v=bake-20261008-v9';
+import * as THREE from './vendor/three.module.js?v=whole-20261008-v10';
 const reflection = new THREE.Matrix4().makeScale(-1, 1, 1);
 
 
 const patchedMaterials=new WeakSet();
-function exactInstanceNormals(material) {
+const retainedSourceGeometry=new WeakMap();
+export const sourceGeometryForBatch=mesh=>retainedSourceGeometry.get(mesh);
+export function exactInstanceNormals(material) {
   if(patchedMaterials.has(material))return;
   const original=THREE.ShaderChunk.defaultnormal_vertex;
   const start=original.indexOf('\ttransformedNormal /= vec3( dot( im[');
@@ -59,9 +61,11 @@ export async function buildBatches(scene, onProgress=()=>{}, options={}) {
     const mirrored=mesh.matrixWorld.determinant()<0;
     const materialKey=(Array.isArray(mesh.material)?mesh.material:[mesh.material]).map(m=>m.uuid).join(',');
     const transparent=(Array.isArray(mesh.material)?mesh.material:[mesh.material]).some(m=>m.transparent);
-    const key=JSON.stringify([mesh.geometry.uuid,materialKey,layer,mirrored,transparent?mesh.uuid:null]);
-    if(!groups.has(key)) groups.set(key,{geometry:mesh.geometry,material:mesh.material,layer,mirrored,transparent,items:[]});
-    groups.get(key).items.push({matrix:mesh.matrixWorld.clone(),sourceIndex});
+    const sourceMeshIndex=mesh.userData.sourceMeshIndex;
+    const bindingIdentity=options.retainGeometryFor?.has(sourceMeshIndex)?sourceMeshIndex:null;
+    const key=JSON.stringify([mesh.geometry.uuid,bindingIdentity,materialKey,layer,mirrored,transparent?mesh.uuid:null]);
+    if(!groups.has(key)) groups.set(key,{geometry:mesh.geometry,material:mesh.material,sourceMeshIndex,layer,mirrored,transparent,items:[]});
+    groups.get(key).items.push({matrix:mesh.matrixWorld.clone(),sourceIndex,sourceNodeIndex:mesh.userData.sourceNodeIndex,sourceName:mesh.name,sourceInstance:mesh.userData.sourceInstance});
     const n=(mesh.geometry.index?.count || mesh.geometry.attributes.position.count)/3;
     triangles+=n;sourceMeshes++;
     if(!mesh.geometry.boundingBox)mesh.geometry.computeBoundingBox();
@@ -93,7 +97,8 @@ export async function buildBatches(scene, onProgress=()=>{}, options={}) {
     (Array.isArray(batch.material)?batch.material:[batch.material]).forEach(exactInstanceNormals);
     const out=new THREE.InstancedMesh(geometry,batch.material,batch.items.length);
     out.name=batch.layer;
-    out.userData.sourceIndices=batch.items.map(x=>x.sourceIndex);out.userData.reflected=batch.mirrored;
+    out.userData.sourceIndices=batch.items.map(x=>x.sourceIndex);out.userData.sourceNodeIndices=batch.items.map(x=>x.sourceNodeIndex);out.userData.sourceMeshIndex=batch.sourceMeshIndex;out.userData.reflected=batch.mirrored;
+    if(options.retainGeometryFor?.has(batch.sourceMeshIndex)){out.userData.sourceNames=batch.items.map(x=>x.sourceName);out.userData.sourceInstances=batch.items.map(x=>x.sourceInstance);const original=new THREE.BufferGeometry();for(const [name,attribute]of Object.entries(batch.geometry.attributes))original.setAttribute(name,attribute);original.setIndex(batch.geometry.index);original.groups=batch.geometry.groups.map(g=>({...g}));original.boundingBox=batch.geometry.boundingBox?.clone();original.boundingSphere=batch.geometry.boundingSphere?.clone();retainedSourceGeometry.set(out,original);}
     batch.items.forEach(({matrix},i)=>out.setMatrixAt(i,matrix));
     out.instanceMatrix.needsUpdate=true;out.computeBoundingBox();out.boundingSphere=out.boundingBox.getBoundingSphere(new THREE.Sphere());
     layer.group.add(out);
@@ -107,6 +112,8 @@ export async function buildBatches(scene, onProgress=()=>{}, options={}) {
 export function restoreSourceMatrices(gltf,json) {
  for(const [object,association] of gltf.parser.associations) {
   const source=json.nodes?.[association.nodes];
+  if(object.isObject3D&&Number.isInteger(association.meshes))object.userData.sourceMeshIndex=association.meshes;
+  if(object.isObject3D&&Number.isInteger(source?.mesh))object.userData.sourceMeshIndex=source.mesh;
   if(object.isObject3D&&Number.isInteger(association.nodes))object.userData.sourceNodeIndex=association.nodes;
   if(source?.matrix&&object.isObject3D) {object.matrix.fromArray(source.matrix);object.matrixAutoUpdate=false;object.matrixWorldNeedsUpdate=true;}
  }

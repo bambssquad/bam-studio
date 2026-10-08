@@ -1,6 +1,6 @@
-import {safeViewerUrl} from './resolution.js?v=bake-20261008-v9';
+import {safeViewerUrl} from './resolution.js?v=whole-20261008-v10';
 // Independent of WebGL, Three.js and the model loader: this remains usable on unsupported GPUs.
-import {createLoadingGallery} from './loading-gallery.js?v=bake-20261008-v9';
+import {createLoadingGallery} from './loading-gallery.js?v=whole-20261008-v10';
 const $=id=>document.getElementById(id),root=$('loading-gallery'),motion=matchMedia('(prefers-reduced-motion: reduce)');
 const items=[
  {
