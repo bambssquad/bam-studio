@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=map-20261009-v11';
+import * as T from './vendor/three.module.js?v=mono-20261009-v12';
 const KEYS=['roughness','metalness','opacity','transparent','depthWrite'];
 export function prepareMaterials(sourceScene,config) {
  const profiles=new Map((config.profiles||[]).map(p=>[p.materialIndex,p.settings]));const records=new Map(),variants=new Map();

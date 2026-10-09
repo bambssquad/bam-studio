@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=map-20261009-v11';
+import * as T from './vendor/three.module.js?v=mono-20261009-v12';
 // Art-directed micro-height only. Existing source colors, albedo and UV geometry stay authoritative.
 const profiles=new Map([[114,'stone'],[117,'stone'],[144,'wood'],[147,'wood'],[93,'wood'],[102,'wood'],[228,'wood'],[229,'wood'],[235,'wood'],[240,'wood'],[336,'wood'],[338,'wood']]);
 export function makeHeightTexture(kind){

@@ -1,10 +1,10 @@
 import {
   Box3, Group, Mesh, Ray, Triangle, Vector3,
 } from 'three';
-import { Octree } from './vendor/Octree.js?v=map-20261009-v11';
-import { Capsule } from './vendor/Capsule.js?v=map-20261009-v11';
-import { createAvatar } from './avatar.js?v=map-20261009-v11';
-import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=map-20261009-v11';
+import { Octree } from './vendor/Octree.js?v=mono-20261009-v12';
+import { Capsule } from './vendor/Capsule.js?v=mono-20261009-v12';
+import { createAvatar } from './avatar.js?v=mono-20261009-v12';
+import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=mono-20261009-v12';
 
 const RADIUS = .25, BODY_HEIGHT = 1.7, STEP = .22, SKIN = .0001;
 const SPEED = 2.4, RUN_SPEED = 4.8, GRAVITY = 18, MAX_DT = 1 / 15;

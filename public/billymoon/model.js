@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three.module.js?v=map-20261009-v11';
+import * as THREE from './vendor/three.module.js?v=mono-20261009-v12';
 const reflection = new THREE.Matrix4().makeScale(-1, 1, 1);
 
 

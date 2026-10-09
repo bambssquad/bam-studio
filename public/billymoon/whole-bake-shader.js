@@ -1,5 +1,5 @@
-import * as T from './vendor/three.module.js?v=map-20261009-v11';
-import {exactInstanceNormals} from './model.js?v=map-20261009-v11';
+import * as T from './vendor/three.module.js?v=mono-20261009-v12';
+import {exactInstanceNormals} from './model.js?v=mono-20261009-v12';
 export function installWholeBakeShader(material,uniforms){
  const end=T.ShaderChunk.lights_fragment_end,specularCall='RE_IndirectSpecular( radiance, iblIrradiance, clearcoatRadiance, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );';
  if(!end.includes(specularCall))throw new Error('Whole bake specular shader incompatible');
