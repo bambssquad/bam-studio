@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=whole-20261008-v10';
+import * as T from './vendor/three.module.js?v=map-20261009-v11';
 export const INTERIOR_BOUNDS=new T.Box3(new T.Vector3(58,1.7,-20),new T.Vector3(72,10.1,1));
 export function interiorCameraPose(){return {position:new T.Vector3(61.25,3.65,-14.65),target:new T.Vector3(65,3.1,-10.4),fov:T.MathUtils.radToDeg(2*Math.atan(Math.tan(T.MathUtils.degToRad(68)/2)/(16/9)))};}
 // Art-directed realtime fills at the offline setup positions. Intensities are

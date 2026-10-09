@@ -1,6 +1,6 @@
-import * as T from './vendor/three.module.js?v=whole-20261008-v10';
-import {geometryDigest} from './floor-repair.js?v=whole-20261008-v10';
-import {installBakedDiffuse,loadBoundedTexture} from './floor-lightmap.js?v=whole-20261008-v10';
+import * as T from './vendor/three.module.js?v=map-20261009-v11';
+import {geometryDigest} from './floor-repair.js?v=map-20261009-v11';
+import {installBakedDiffuse,loadBoundedTexture} from './floor-lightmap.js?v=map-20261009-v11';
 
 async function prepareSurface(scene,surface,tier){
  const expected=surface.variants?.[tier],encoding=surface.encoding;if(!expected)throw new Error('Missing wall geometry guards');

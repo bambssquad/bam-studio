@@ -1,28 +1,29 @@
-import {fetchModelPayload} from './model-transfer.js?v=whole-20261008-v10';
-import {createWholeBuildingBake} from './whole-building-bake.js?v=whole-20261008-v10';
-import * as THREE from './vendor/three.module.js?v=whole-20261008-v10';
-import { OrbitControls } from './vendor/OrbitControls.js?v=whole-20261008-v10';
-import { GLTFLoader } from './vendor/GLTFLoader.js?v=whole-20261008-v10';
-import { MeshoptDecoder } from './vendor/meshopt_decoder.module.js?v=whole-20261008-v10';
-import { buildBatches, restoreSourceMatrices, syncBatches } from './model.js?v=whole-20261008-v10';
-import { cameraPose, updateDepthRange } from './camera.js?v=whole-20261008-v10';
-import { fetchManifest, fetchOptionalManifest, shaderHealth, decodePayload, setPresentationControlsBusy } from './runtime.js?v=whole-20261008-v10';
-import { createPresentation } from './presentation.js?v=whole-20261008-v10';
-import { restoreSourceCutouts } from './source-materials.js?v=whole-20261008-v10';
-import {createOpenings} from './openings.js?v=whole-20261008-v10';
-import {createExploration,snapshotNavigationSource,restoreNavigationLayers} from './exploration.js?v=whole-20261008-v10';
-import {prepareMaterials,createFixtureLights} from './materials.js?v=whole-20261008-v10';
-import {renderSize,rendererEdgeLimit,applyBufferSize} from './resolution.js?v=whole-20261008-v10';
-import {prepareSurfaceDetails} from './surface-details.js?v=whole-20261008-v10';
-import {createDecor} from './decor.js?v=whole-20261008-v10';
-import {interiorCameraPose,createInteriorFill} from './interior-view.js?v=whole-20261008-v10';
-import {prepareFloorRepair} from './floor-repair.js?v=whole-20261008-v10';
-import {prepareFloorLightmap} from './floor-lightmap.js?v=whole-20261008-v10';
-import {createRenderReference} from './render-reference.js?v=whole-20261008-v10';
-import {deviceBudget,createFrameBudget} from './performance-budget.js?v=whole-20261008-v10';
-import {freezeStaticTransforms} from './model.js?v=whole-20261008-v10';
-import {prepareWallLightmaps} from './wall-lightmaps.js?v=whole-20261008-v10';
-import {prepareGeometryDetail} from './geometry-detail.js?v=whole-20261008-v10';
+import {fetchModelPayload} from './model-transfer.js?v=map-20261009-v11';
+import {createMapSuspension} from './map-suspension.js?v=map-20261009-v11';
+import {createWholeBuildingBake} from './whole-building-bake.js?v=map-20261009-v11';
+import * as THREE from './vendor/three.module.js?v=map-20261009-v11';
+import { OrbitControls } from './vendor/OrbitControls.js?v=map-20261009-v11';
+import { GLTFLoader } from './vendor/GLTFLoader.js?v=map-20261009-v11';
+import { MeshoptDecoder } from './vendor/meshopt_decoder.module.js?v=map-20261009-v11';
+import { buildBatches, restoreSourceMatrices, syncBatches } from './model.js?v=map-20261009-v11';
+import { cameraPose, updateDepthRange } from './camera.js?v=map-20261009-v11';
+import { fetchManifest, fetchOptionalManifest, shaderHealth, decodePayload, setPresentationControlsBusy } from './runtime.js?v=map-20261009-v11';
+import { createPresentation } from './presentation.js?v=map-20261009-v11';
+import { restoreSourceCutouts } from './source-materials.js?v=map-20261009-v11';
+import {createOpenings} from './openings.js?v=map-20261009-v11';
+import {createExploration,snapshotNavigationSource,restoreNavigationLayers} from './exploration.js?v=map-20261009-v11';
+import {prepareMaterials,createFixtureLights} from './materials.js?v=map-20261009-v11';
+import {renderSize,rendererEdgeLimit,applyBufferSize} from './resolution.js?v=map-20261009-v11';
+import {prepareSurfaceDetails} from './surface-details.js?v=map-20261009-v11';
+import {createDecor} from './decor.js?v=map-20261009-v11';
+import {interiorCameraPose,createInteriorFill} from './interior-view.js?v=map-20261009-v11';
+import {prepareFloorRepair} from './floor-repair.js?v=map-20261009-v11';
+import {prepareFloorLightmap} from './floor-lightmap.js?v=map-20261009-v11';
+import {createRenderReference} from './render-reference.js?v=map-20261009-v11';
+import {deviceBudget,createFrameBudget} from './performance-budget.js?v=map-20261009-v11';
+import {freezeStaticTransforms} from './model.js?v=map-20261009-v11';
+import {prepareWallLightmaps} from './wall-lightmaps.js?v=map-20261009-v11';
+import {prepareGeometryDetail} from './geometry-detail.js?v=map-20261009-v11';
 
 const $=id=>document.getElementById(id);
 const mobile=()=>matchMedia('(max-width:760px)').matches;
@@ -31,8 +32,11 @@ const surfaceEnabled=()=>detailMode==='on'&&materialsMode==='pbr'&&(!budget.phon
 let renderer,camera,controls,scene,prepared,currentView='iso',framePending=false,ready=false,lightMode='day';
 let presentation,graphicsMode='light',assertShaderHealthy=()=>{};
 let surfaceDetails,decor,decorData,detailMode='on',detailIndex=0,floorRepair,interiorFill,floorBake,wallBakes,bakeRequested=false,referenceOpen=false;
+let mapOpen=!!window.__billymoonMap?.inspect().opened,lastMapPoseAt=-Infinity;
 let geometryDetail,geometryConfig,geometryRequested=false,wholeBake,bakeScope='whole';
 let animatedBatches,exploration,openings,materialController,fixtureRig,materialsMode='pbr',resolutionMode='auto',lastFrame=0,dirty=true;
+const mapSuspension=createMapSuspension({initialOpen:mapOpen,getControls:()=>controls,getExploration:()=>exploration,onChange(open){mapOpen=open;lastFrame=0;frameBudget.reset();publishMapPose(true);if(!open)requestRender();}});
+window.addEventListener('billymoon:map-modal',event=>mapSuspension.setOpen(!!event.detail?.open));
 const loadState={phase:'loading',loaded:0,total:0};
 const pendingTransfers=new Set();let loadingCancelled=false;
 window.__billymoon={state:loadState};
@@ -76,16 +80,18 @@ async function loadModel(){
  for(const img of json.images||[]) if(img.uri&&!img.uri.startsWith('data:')){const bytes=data.get(img.uri);if(!bytes)throw new Error('Tekstur model tidak ditemukan.');const url=URL.createObjectURL(new Blob([bytes]));urls.push(url);data.delete(img.uri);img.uri=url;}
  try{const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);const gltf=await loader.parseAsync(JSON.stringify(json),'');restoreSourceMatrices(gltf,json);restoreSourceCutouts(gltf);return {gltf,manifest};}finally{urls.forEach(URL.revokeObjectURL);data.clear();}
 }
-function requestRender(force=true){if(!ready||document.hidden||referenceOpen)return;if(force)dirty=true;if(framePending)return;framePending=true;requestAnimationFrame(drawFrame);}
-function drawFrame(time){framePending=false;if(!ready||document.hidden||referenceOpen){lastFrame=0;frameBudget.reset();return;}if(!frameBudget.due(time)){requestRender(false);return;}const dt=lastFrame?Math.min(.1,(time-lastFrame)/1000):1/60;lastFrame=time;
+function requestRender(force=true){if(!ready||document.hidden||referenceOpen||mapOpen)return;if(force)dirty=true;if(framePending)return;framePending=true;requestAnimationFrame(drawFrame);}
+function drawFrame(time){framePending=false;if(!ready||document.hidden||referenceOpen||mapOpen){lastFrame=0;frameBudget.reset();return;}if(!frameBudget.due(time)){requestRender(false);return;}const dt=lastFrame?Math.min(.1,(time-lastFrame)/1000):1/60;lastFrame=time;
  const state=exploration?.tick(dt)||{changed:false,active:false,shadowDirty:false};if(exploration?.getMode()!=='first'&&exploration?.getMode()!=='third')controls.update();
  if(frameBudget.record(time,state.active)&&resolutionMode==='auto')resize();window.__billymoon.performance=frameBudget.inspect();
  if(geometryDetail?.update(camera.position)){dirty=true;presentation?.refreshShadows();}window.__billymoon.geometryDetail=geometryDetail?.inspect();wholeBake?.update(camera);window.__billymoon.wholeBake=wholeBake?.inspect();
  if(state.motionChanged&&animatedBatches)syncBatches(animatedBatches,openings.root);
  if(state.shadowDirty)presentation?.refreshShadows();
  if(dirty||state.changed||state.shadowDirty){updateDepthRange(camera,prepared.bounds);try{renderer.render(scene,camera);assertShaderHealthy();}catch(error){fail(error);return;}window.__billymoon.renderCalls=renderer.info.render.calls;window.__billymoon.exploration=exploration?.inspect();dirty=false;}
+ publishMapPose(false,time);
  if(state.active)requestRender(false);else lastFrame=0;
 }
+function publishMapPose(force=false,time=performance.now()){if(!ready||!camera||!controls||(!force&&time-lastMapPoseAt<100))return;lastMapPoseAt=time;const walkPose=exploration?.getMapPose(),direction=camera.getWorldDirection(new THREE.Vector3());window.dispatchEvent(new CustomEvent('billymoon:map-pose',{detail:walkPose||{mode:'orbit',position:controls.target.toArray(),heading:Math.hypot(direction.x,direction.z)<.0001?null:Math.atan2(direction.x,-direction.z),flying:false}}));}
 function resize(){if(!renderer)return;const w=innerWidth,h=innerHeight;let size;try{const max=rendererEdgeLimit(renderer);size=renderSize(w,h,devicePixelRatio||1,max,resolutionMode,budget,frameBudget.inspect().scale);try{applyBufferSize(renderer,w,h,size);}catch(error){if(resolutionMode==='auto'||renderer.getContext().isContextLost())throw error;resolutionMode='auto';$('resolution').value='auto';size=renderSize(w,h,devicePixelRatio||1,max,'auto',budget,.7);applyBufferSize(renderer,w,h,size);}}catch(error){fail(error);return false;}camera.aspect=w/h;camera.updateProjectionMatrix();$('resolution-note').textContent=`${size.width} × ${size.height} px · ${budget.phone?'dibatasi aman untuk HP · ':''}tekstur mengikuti model`;requestRender();return true;}
 function applyView(view,interiorLighting=true){if(!prepared)return;if(exploration?.getMode()!=='orbit')exploration?.exit();currentView=view;controls.minDistance=.5;
  if(view==='interior'){const p=interiorCameraPose();camera.position.copy(p.position);camera.up.set(0,1,0);camera.fov=p.fov;controls.target.copy(p.target);if(interiorLighting)setLight('interior');}
@@ -122,7 +128,7 @@ async function init(){
  try{renderer=new THREE.WebGLRenderer({canvas:$('scene'),antialias:budget.antialias,powerPreference:budget.powerPreference,alpha:false});}catch{throw new Error('Browser ini belum dapat membuka WebGL 2. Aktifkan akselerasi grafis atau gunakan browser lain.');}
  assertShaderHealthy=shaderHealth(renderer,error=>{if(ready)fail(error);});
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=false;
- scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.02,3000);controls=new OrbitControls(camera,$('scene'));controls.enableDamping=false;controls.minDistance=.5;controls.maxDistance=2000;controls.maxPolarAngle=Math.PI*.98;controls.addEventListener('change',requestRender);
+ scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.02,3000);controls=new OrbitControls(camera,$('scene'));controls.enableDamping=false;controls.minDistance=.5;controls.maxDistance=2000;controls.maxPolarAngle=Math.PI*.98;controls.addEventListener('change',requestRender);mapSuspension.sync();
  ambient=new THREE.HemisphereLight();key=new THREE.DirectionalLight();key.position.set(100,130,80);fill=new THREE.DirectionalLight(0xc1daf2);fill.position.set(-100,70,-90);scene.add(ambient,key,fill);setLight(lightMode);if(resize()===false)return;
  let {gltf,manifest}=await loadModel();if(loadingCancelled)return;$('info-geometry').textContent=`${(manifest.triangles/1e6).toFixed(2)} juta segitiga · ${manifest.quality==='light'?'model ringan':'detail asli'}`;
  const [openingMap,navigationMap,pbrData,detailData,floorData,bakeData,wallData,geometryData,wholeBootstrap]=await Promise.all([fetchManifest('./openings-data.json'),fetchManifest('./navigation-data.json'),fetchManifest('./pbr-data.json'),fetchManifest('./decor-data.json'),fetchOptionalManifest('./floor-repair-data.json'),fetchOptionalManifest('./floor-lightmap-data.json'),fetchOptionalManifest('./wall-lightmaps-data.json'),fetchOptionalManifest('./geometry/tray-config-608670dfeed2.json'),fetchOptionalManifest('./whole-bake/bootstrap-680bb92acaf5.json')]);
@@ -143,12 +149,12 @@ async function init(){
  animatedBatches=await buildBatches(openings.root);floorRepair.bindBatches(prepared.root);wholeBake=createWholeBuildingBake(prepared.root,wholeBootstrap,manifest.quality==='light'?'light':'detail',{wake:requestRender,onStatus:text=>$('floor-bake-note').textContent=text});
  const displayRoot=new THREE.Group();displayRoot.add(prepared.root,animatedBatches.root,decor.root);scene.add(displayRoot);scene.updateMatrixWorld(true);freezeStaticTransforms(prepared.root);gltf=null;
  presentation=createPresentation(renderer,scene,displayRoot,prepared.bounds,{ambient,key,fill},{shadowSize:budget.shadowSize});fixtureRig=createFixtureLights(scene,pbrData.night);interiorFill=createInteriorFill(scene);
- exploration=createExploration({scene,camera,controls,canvas:$('scene'),sourceScene:navigationSource,navigationMap,openings,decor,wake:requestRender,beforeEnter:restoreLayers,onModeChange:mode=>{if(mode!=='orbit')setPanel(false);requestRender();}});
- createLayers();applyView(budget.phone?'interior':'iso',false);setLight(lightMode);setProgress(99,'Menampilkan model','Menyiapkan tampilan pertama');
+ exploration=createExploration({scene,camera,controls,canvas:$('scene'),sourceScene:navigationSource,navigationMap,openings,decor,wake:requestRender,beforeEnter:restoreLayers,onModeChange:mode=>{if(mode!=='orbit')setPanel(false);publishMapPose(true);requestRender();}});
+ mapSuspension.sync();createLayers();applyView(budget.phone?'interior':'iso',false);setLight(lightMode);setProgress(99,'Menampilkan model','Menyiapkan tampilan pertama');
  // Compile once, then draw the complete model before dismissing the loader.
  await renderer.compileAsync(scene,camera);if(loadState.phase==='error')return;assertShaderHealthy();renderer.render(scene,camera);assertShaderHealthy();ready=true;
  $('loading').hidden=true;document.body.classList.add('ready');$('view').disabled=false;$('visit-render-camera').disabled=false;$('reset').disabled=false;$('show-all').disabled=false;$('graphics').disabled=false;$('model-tier').disabled=false;$('walk-mode').disabled=false;$('materials').disabled=false;$('resolution').disabled=false;$('detail-additions').disabled=false;$('detail-focus').disabled=false;$('detail-note').textContent='3 area furnitur konsep · detail permukaan pada PBR + Sinematik di HP';
- applyGeometryPresentation();applyFloorPresentation();$('model-status').textContent=`${prepared.layers.size} layer · ${prepared.stats.sourceMeshes.toLocaleString('id-ID')} objek`;loadState.phase='ready';
+ applyGeometryPresentation();applyFloorPresentation();publishMapPose(true);window.dispatchEvent(new Event('billymoon:model-ready'));$('model-status').textContent=`${prepared.layers.size} layer · ${prepared.stats.sourceMeshes.toLocaleString('id-ID')} objek`;loadState.phase='ready';
  Object.assign(window.__billymoon,{additions:{furniture:decor.stats,surface:surfaceDetails.stats},stats:prepared.stats,renderCalls:renderer.info.render.calls,bounds:{min:prepared.bounds.min.toArray(),max:prepared.bounds.max.toArray()},layerNames:[...prepared.layers.keys()]});requestRender();
 }
 function applyGeometryPresentation(){geometryDetail?.setEnabled(geometryRequested&&detailMode==='on'&&materialsMode==='pbr');$('geometry-detail').disabled=!ready||!geometryDetail?.available;$('geometry-focus').disabled=!ready||!geometryDetail?.available||detailMode!=='on'||materialsMode!=='pbr';}

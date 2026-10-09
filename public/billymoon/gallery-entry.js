@@ -1,6 +1,6 @@
-import {safeViewerUrl} from './resolution.js?v=whole-20261008-v10';
+import {safeViewerUrl} from './resolution.js?v=map-20261009-v11';
 // Independent of WebGL, Three.js and the model loader: this remains usable on unsupported GPUs.
-import {createLoadingGallery} from './loading-gallery.js?v=whole-20261008-v10';
+import {createLoadingGallery} from './loading-gallery.js?v=map-20261009-v11';
 const $=id=>document.getElementById(id),root=$('loading-gallery'),motion=matchMedia('(prefers-reduced-motion: reduce)');
 const items=[
  {

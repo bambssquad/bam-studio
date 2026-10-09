@@ -1,10 +1,10 @@
 import {
   Box3, Group, Mesh, Ray, Triangle, Vector3,
 } from 'three';
-import { Octree } from './vendor/Octree.js?v=whole-20261008-v10';
-import { Capsule } from './vendor/Capsule.js?v=whole-20261008-v10';
-import { createAvatar } from './avatar.js?v=whole-20261008-v10';
-import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=whole-20261008-v10';
+import { Octree } from './vendor/Octree.js?v=map-20261009-v11';
+import { Capsule } from './vendor/Capsule.js?v=map-20261009-v11';
+import { createAvatar } from './avatar.js?v=map-20261009-v11';
+import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=map-20261009-v11';
 
 const RADIUS = .25, BODY_HEIGHT = 1.7, STEP = .22, SKIN = .0001;
 const SPEED = 2.4, RUN_SPEED = 4.8, GRAVITY = 18, MAX_DT = 1 / 15;
@@ -372,5 +372,5 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     clearInputs();avatarModel.dispose();octree.clear();disposed=true;
   }
   reset();
-  return {setMode,setMove,setLook,setKey,jump,setSprinting,setVertical,setFlying,playEmote,getMotionState,clearInputs,setDynamicCollision,refreshCamera(){pendingLook=true;},update,reset,getMode:()=>mode,getPlayerBounds,getEyePosition:eye,dispose};
+  return {setMode,setMove,setLook,setKey,jump,setSprinting,setVertical,setFlying,playEmote,getMotionState,clearInputs,setDynamicCollision,refreshCamera(){pendingLook=true;},update,reset,getMode:()=>mode,getPlayerBounds,getEyePosition:eye,getMapPose(){const p=eye();return {mode,position:[p.x,p.y-eyeHeight,p.z],heading:yaw,flying,grounded};},dispose};
 }

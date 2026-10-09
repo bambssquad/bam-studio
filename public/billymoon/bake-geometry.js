@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=whole-20261008-v10';
+import * as T from './vendor/three.module.js?v=map-20261009-v11';
 export async function sha256(bytes){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(v=>v.toString(16).padStart(2,'0')).join('');}
 export async function fetchVerifiedBinary(asset,fetcher=fetch){
  if(!Number.isInteger(asset?.bytes)||asset.bytes<1||asset.bytes>8388608)throw new Error('Bake payload budget mismatch');

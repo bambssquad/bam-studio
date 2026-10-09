@@ -1,10 +1,10 @@
-import * as T from './vendor/three.module.js?v=whole-20261008-v10';
-import {sourceGeometryForBatch,reflectedGeometry} from './model.js?v=whole-20261008-v10';
-import {geometryDigest} from './floor-repair.js?v=whole-20261008-v10';
-import {loadBoundedTexture} from './floor-lightmap.js?v=whole-20261008-v10';
-import {buildBakeGeometry,fetchVerifiedBinary} from './bake-geometry.js?v=whole-20261008-v10';
-import {fetchManifest} from './runtime.js?v=whole-20261008-v10';
-import {installWholeBakeShader} from './whole-bake-shader.js?v=whole-20261008-v10';
+import * as T from './vendor/three.module.js?v=map-20261009-v11';
+import {sourceGeometryForBatch,reflectedGeometry} from './model.js?v=map-20261009-v11';
+import {geometryDigest} from './floor-repair.js?v=map-20261009-v11';
+import {loadBoundedTexture} from './floor-lightmap.js?v=map-20261009-v11';
+import {buildBakeGeometry,fetchVerifiedBinary} from './bake-geometry.js?v=map-20261009-v11';
+import {fetchManifest} from './runtime.js?v=map-20261009-v11';
+import {installWholeBakeShader} from './whole-bake-shader.js?v=map-20261009-v11';
 const reflection=new T.Matrix4().makeScale(-1,1,1);
 export async function loadVerifiedBakeTexture(asset,{fetcher=fetch,loader=new T.TextureLoader()}={}){
  if(asset?.width!==1024||asset?.height!==1024||!Number.isInteger(asset.bytes)||asset.bytes<1||asset.bytes>1000000)throw new Error('Bake texture budget mismatch');
