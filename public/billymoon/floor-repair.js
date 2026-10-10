@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=graphics-20261009-v13';
+import * as T from './vendor/three.module.js?v=drive-20261010-v14';
 const noop=reason=>({available:false,reason,removedTriangles:0,setEnabled(){},bindBatches(){},dispose(){},isEnabled:()=>false});
 async function hash(buffer){if(!globalThis.crypto?.subtle)throw new Error('Geometry verification unavailable');const bytes=new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256',buffer));return [...bytes].map(x=>x.toString(16).padStart(2,'0')).join('');}
 export async function geometryDigest(geometry){const p=geometry.attributes.position,index=geometry.index;if(!p||!index)throw new Error('Indexed positions required');const a=new ArrayBuffer(p.count*12),v=new DataView(a),b=new ArrayBuffer(index.count*4),iv=new DataView(b);for(let i=0;i<p.count;i++){v.setFloat32(i*12,p.getX(i),true);v.setFloat32(i*12+4,p.getY(i),true);v.setFloat32(i*12+8,p.getZ(i),true);}for(let i=0;i<index.count;i++)iv.setUint32(i*4,index.getX(i),true);return {canonicalPositionFloat32Sha256:await hash(a),canonicalIndexUint32Sha256:await hash(b)};}

@@ -1,5 +1,5 @@
-import * as T from './vendor/three.module.js?v=graphics-20261009-v13';
-import {reflectedGeometry} from './model.js?v=graphics-20261009-v13';
+import * as T from './vendor/three.module.js?v=drive-20261010-v14';
+import {reflectedGeometry} from './model.js?v=drive-20261010-v14';
 const empty=reason=>({available:false,reason,bindBatches:()=>false,ensureLoaded:async()=>false,setEnabled(){},update:()=>false,inspect:()=>({available:false,active:false,addedTriangles:0}),dispose(){}});
 async function digest(buffer){if(!globalThis.crypto?.subtle)throw new Error('Geometry hashing unavailable');return [...new Uint8Array(await crypto.subtle.digest('SHA-256',buffer))].map(v=>v.toString(16).padStart(2,'0')).join('');}
 export function canonicalGeometryBytes(geometry){const p=geometry.attributes.position,n=geometry.attributes.normal,uv=geometry.attributes.uv,index=geometry.index;if(!p||!n||!uv||!index)throw new Error('Missing source attributes');const buffer=new ArrayBuffer((p.count*3+n.count*3+uv.count*2+index.count)*4),view=new DataView(buffer);let offset=0;for(const [attribute,size,integer]of [[p,3,false],[n,3,false],[uv,2,false],[index,1,true]])for(let i=0;i<attribute.count;i++)for(let c=0;c<size;c++){const value=attribute.getComponent(i,c);integer?view.setUint32(offset,value,true):view.setFloat32(offset,value,true);offset+=4;}return buffer;}

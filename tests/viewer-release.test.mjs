@@ -2,7 +2,7 @@ import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {readdirSync,readFileSync,existsSync} from 'node:fs'
 import {join,dirname} from 'node:path'
-const root='public/billymoon', tag='v=graphics-20261009-v13'
+const root='public/billymoon', tag='v=drive-20261010-v14'
 const walk=d=>readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(join(d,e.name)):[join(d,e.name)])
 test('entire local module graph uses one release identity',()=>{
  let refs=0

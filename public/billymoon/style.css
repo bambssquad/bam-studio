@@ -304,3 +304,5 @@ body:not(.ready) #minimap{display:none}#loading-map,#error-map{max-width:280px;m
 #floorplan-dialog{background:#fff;color:#171717}.floorplan-toolbar button{background:#f7f7f7;color:#222}.floorplan-toolbar select{background:#fff;color:#222}.floorplan-footer p{color:#666}
 
 .night-settings{padding:8px 0 4px}.night-settings input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}.night-settings output{float:right;font-variant-numeric:tabular-nums}
+.vehicle-options{margin:10px 0}.vehicle-options button{min-height:44px;width:100%;margin-top:5px}#drive-actions[hidden]{display:none}#drive-speed{display:block;text-align:right;font-size:18px;font-variant-numeric:tabular-nums;padding:5px 2px}.drive-pedals{display:flex;gap:8px}.drive-pedals button{min-width:74px;min-height:66px;touch-action:none;user-select:none;-webkit-user-select:none}.driving #walk-reset{display:none}.driving #walk-status{max-width:230px}.driving #joystick{border-width:2px}
+@media(max-width:760px){.drive-pedals button{min-width:68px;min-height:60px}.driving .walk-actions{max-width:210px}}

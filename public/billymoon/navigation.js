@@ -1,10 +1,10 @@
 import {
   Box3, Group, Mesh, Ray, Triangle, Vector3,
 } from 'three';
-import { Octree } from './vendor/Octree.js?v=graphics-20261009-v13';
-import { Capsule } from './vendor/Capsule.js?v=graphics-20261009-v13';
-import { createAvatar } from './avatar.js?v=graphics-20261009-v13';
-import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=graphics-20261009-v13';
+import { Octree } from './vendor/Octree.js?v=drive-20261010-v14';
+import { Capsule } from './vendor/Capsule.js?v=drive-20261010-v14';
+import { createAvatar } from './avatar.js?v=drive-20261010-v14';
+import { AUDITED_DYNAMIC_NAMES } from './audited-dynamic-names.js?v=drive-20261010-v14';
 
 const RADIUS = .25, BODY_HEIGHT = 1.7, STEP = .22, SKIN = .0001;
 const SPEED = 2.4, RUN_SPEED = 4.8, GRAVITY = 18, MAX_DT = 1 / 15;
@@ -161,6 +161,7 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
   let savedOrbit=null, dirty=false, pendingLook=false, cameraSettling=false, flying=false, sprinting=false, verticalInput=0;
   const smoothAim=new Vector3(),desiredCamera=new Vector3();
   let dynamicCollisionHook=typeof dynamicCollision==='function'?dynamicCollision:null;
+  let supplementalCollider=null,externalControl=false;
   const move = new Vector3(), forward = new Vector3(), right = new Vector3();
   const oldEye = new Vector3(), cameraRay = new Ray(), cameraAim = new Vector3();
   const notify = message => onStatus(message);
@@ -171,7 +172,7 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
   }
   function clearInputs() {keyState.clear();stick.x=0;stick.y=0;verticalInput=0;sprinting=false;avatarModel.cancelEmote?.();}
   function reset() {
-    clearInputs();avatarModel.reset();flying=false;cameraSettling=false;
+    externalControl=false;clearInputs();avatarModel.reset();flying=false;cameraSettling=false;
     capsule.start.copy(startEye);capsule.start.y += RADIUS-eyeHeight;
     capsule.end.copy(startEye);capsule.end.y += BODY_HEIGHT-RADIUS-eyeHeight;
     velocity.set(0,0,0);yaw=initialYaw;pitch=0;grounded=false;pendingLook=false;
@@ -195,11 +196,13 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     if (disposed) return;
     if (!['orbit','first','third'].includes(next)) throw new RangeError(`Unknown navigation mode: ${next}`);
     if (next===mode) return;
+    externalControl=false;
     if (mode==='orbit' && next!=='orbit') {savedOrbit=snapshotOrbit();if(controls)controls.enabled=false;}
     if(flying)setFlying(false);clearInputs();avatarModel.reset();mode=next;avatar.visible=mode==='third';dirty=true;
     if (mode==='orbit') restoreOrbit();else syncCamera();
   }
-  function cameraHit(ray){const fixedHit=octree.rayIntersect(ray),movingHit=typeof dynamicRay==='function'?dynamicRay(ray.clone()):null;return movingHit&&Number.isFinite(movingHit.distance)&&movingHit.distance>=0&&(!fixedHit||movingHit.distance<fixedHit.distance)?movingHit:fixedHit;}
+  function groundHit(ray){const fixed=octree.rayIntersect(ray),extra=supplementalCollider?.rayIntersect(ray.clone());return extra&&Number.isFinite(extra.distance)&&extra.distance>=0&&(!fixed||extra.distance<fixed.distance)?extra:fixed;}
+  function cameraHit(ray){const fixedHit=groundHit(ray),movingHit=typeof dynamicRay==='function'?dynamicRay(ray.clone()):null;return movingHit&&Number.isFinite(movingHit.distance)&&movingHit.distance>=0&&(!fixedHit||movingHit.distance<fixedHit.distance)?movingHit:fixedHit;}
   function constrainCamera(position,origin){cameraRay.origin.copy(origin);cameraRay.direction.copy(position).sub(origin);const length=cameraRay.direction.length();if(length<1e-8)return;cameraRay.direction.divideScalar(length);const hit=cameraHit(cameraRay);if(hit&&hit.distance<length+.15)position.copy(origin).addScaledVector(cameraRay.direction,Math.max(0,hit.distance-.15));}
   function syncCamera(dt=0) {
     const beforePosition=camera.position.clone(),beforeQuaternion=camera.quaternion.clone();
@@ -222,7 +225,9 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     if(!camera.position.equals(beforePosition)||!camera.quaternion.equals(beforeQuaternion)||(avatar.visible&&(!avatar.position.equals(beforeAvatarPosition)||avatar.rotation.y!==beforeAvatarYaw)))dirty=true;
   }
   function intersect(c) {
-    const fixed=octree.capsuleIntersect(c);
+    let fixed=octree.capsuleIntersect(c);
+    const extra=supplementalCollider?.collideCapsule(c.clone());
+    if(extra&&Number.isFinite(extra.depth)&&extra.depth>0&&extra.normal?.isVector3&&extra.normal.toArray().every(Number.isFinite)&&(!fixed||extra.depth>fixed.depth))fixed=extra;
     // Protect controller state from accidental callback mutation. The hook owns
     // broad-phase culling of its moving leaves and returns world-space normals.
     const dynamic=dynamicCollisionHook?.(c.clone());
@@ -235,6 +240,13 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
   function setDynamicCollision(fn) {
     if(fn!==null && fn!==undefined && typeof fn!=='function')throw new TypeError('Dynamic collision must be a function or null');
     dynamicCollisionHook=fn || null;grounded=false;
+  }
+  function setSupplementalCollider(collider){
+    if(collider!==null&&(!collider||typeof collider.collideCapsule!=='function'||typeof collider.rayIntersect!=='function'))throw new TypeError('Invalid supplemental collider');
+    supplementalCollider=collider;grounded=grounded&&Number.isFinite(localSupport(capsule,.01,.03));
+    if(collider?.bounds?.length===4&&collider.bounds.every(Number.isFinite)){
+      worldBounds.expandByPoint(new Vector3(collider.bounds[0],worldBounds.min.y,collider.bounds[1]));worldBounds.expandByPoint(new Vector3(collider.bounds[2],worldBounds.max.y,collider.bounds[3]));
+    }
   }
   function resolve(c, horizontal=false) {
     let floor=false,blocked=false;
@@ -263,9 +275,9 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     let height=-Infinity;
     for(const offset of offsets) {
       const ray=new Ray(new Vector3(c.start.x+offset.x,feet+maxUp+SKIN,c.start.z+offset.z),DOWN);
-      const hit=octree.rayIntersect(ray);
+      const hit=groundHit(ray);
       if(!hit || hit.distance>maxUp+maxDown+2*SKIN)continue;
-      const n=hit.triangle.getNormal(new Vector3());
+      const n=hit.normal||hit.triangle.getNormal(new Vector3());
       if(Math.abs(n.y)<MIN_GROUND_NORMAL)continue;
       height=Math.max(height,hit.position.y);
     }
@@ -314,22 +326,22 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
       reset();notify('Returned to the audited entry after leaving collision bounds.');return true;
     }
   }
-  function jump(){if(disposed||mode==='orbit'||flying||!grounded)return false;avatarModel.cancelEmote?.();velocity.y=6.3;grounded=false;dirty=true;return true;}
+  function jump(){if(disposed||externalControl||mode==='orbit'||flying||!grounded)return false;avatarModel.cancelEmote?.();velocity.y=6.3;grounded=false;dirty=true;return true;}
   function setSprinting(value){sprinting=mode!=='orbit'&&!!value;}
   function setVertical(value){verticalInput=flying?clamp(value,-1,1):0;}
   function landBelow(){
-    const feet=capsule.start.y-RADIUS,ray=new Ray(new Vector3(capsule.start.x,feet+.002,capsule.start.z),DOWN),hit=octree.rayIntersect(ray);
-    if(hit&&hit.distance<60&&Math.abs(hit.triangle.getNormal(new Vector3()).y)>=MIN_GROUND_NORMAL){const candidate=capsule.clone();candidate.translate(new Vector3(0,hit.position.y+SKIN-feet,0));if(clearAt(candidate)){capsule.copy(candidate);grounded=true;velocity.y=0;return true;}}
+    const feet=capsule.start.y-RADIUS,ray=new Ray(new Vector3(capsule.start.x,feet+.002,capsule.start.z),DOWN),hit=groundHit(ray);
+    if(hit&&hit.distance<60&&Math.abs((hit.normal||hit.triangle.getNormal(new Vector3())).y)>=MIN_GROUND_NORMAL){const candidate=capsule.clone();candidate.translate(new Vector3(0,hit.position.y+SKIN-feet,0));if(clearAt(candidate)){capsule.copy(candidate);grounded=true;velocity.y=0;return true;}}
     reset();notify('Tidak ada lantai aman di bawah. Kembali ke titik masuk.');return false;
   }
-  function setFlying(value){if(disposed||mode==='orbit')return false;const next=!!value;if(next===flying)return true;avatarModel.cancelEmote?.();verticalInput=0;velocity.set(0,0,0);keyState.delete('Space');keyState.delete('KeyC');flying=next;if(next)grounded=false;else landBelow();dirty=true;pendingLook=true;return true;}
+  function setFlying(value){if(disposed||externalControl||mode==='orbit')return false;const next=!!value;if(next===flying)return true;avatarModel.cancelEmote?.();verticalInput=0;velocity.set(0,0,0);keyState.delete('Space');keyState.delete('KeyC');flying=next;if(next)grounded=false;else landBelow();dirty=true;pendingLook=true;return true;}
   function flightStep(dt,inputX,inputY,inputZ,speed){
     forward.set(Math.sin(yaw),0,-Math.cos(yaw));right.set(Math.cos(yaw),0,Math.sin(yaw));move.copy(forward).multiplyScalar(inputY).addScaledVector(right,inputX);move.y=inputZ;if(move.lengthSq()>1)move.normalize();move.multiplyScalar(speed*dt);capsule.translate(move);resolve(capsule);grounded=false;
     if(capsule.start.y>worldBounds.max.y+40){const delta=worldBounds.max.y+40-capsule.start.y;capsule.translate(new Vector3(0,delta,0));}
     if(capsule.start.y<worldBounds.min.y-3||capsule.start.x<worldBounds.min.x-15||capsule.start.x>worldBounds.max.x+15||capsule.start.z<worldBounds.min.z-15||capsule.start.z>worldBounds.max.z+15){reset();notify('Batas jelajah tercapai. Kembali ke titik masuk.');return true;}
   }
   function update(dt) {
-    if(disposed)return {changed:false,active:false};
+    if(disposed||externalControl)return {changed:false,active:false};
     if(mode==='orbit'){const changed=dirty;dirty=false;return {changed,active:false};}
     const x=stick.x+(keyState.has('KeyD')||keyState.has('ArrowRight')?1:0)-(keyState.has('KeyA')||keyState.has('ArrowLeft')?1:0);
     const y=stick.y+(keyState.has('KeyW')||keyState.has('ArrowUp')?1:0)-(keyState.has('KeyS')||keyState.has('ArrowDown')?1:0);
@@ -347,17 +359,18 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     const changed=dirty||animation.changed;dirty=false;
     return {changed,active:moving||(!grounded&&!flying)||animation.active||cameraSettling};
   }
-  function playEmote(name){if(mode!=='third'||flying||!grounded)return false;clearInputs();avatarModel.update({distance:0,dt:0,pitch,visible:true,grounded,flying:false,moving:false});return avatarModel.playEmote?.(name)||false;}
-  function getMotionState(){return {flying,sprinting:sprinting||keyState.has('ShiftLeft')||keyState.has('ShiftRight'),grounded,verticalInput,emote:avatarModel.getState?.().emote||null};}
+  function playEmote(name){if(externalControl||mode!=='third'||flying||!grounded)return false;clearInputs();avatarModel.update({distance:0,dt:0,pitch,visible:true,grounded,flying:false,moving:false});return avatarModel.playEmote?.(name)||false;}
+  function getMotionState(){return {riding:externalControl,flying,sprinting:sprinting||keyState.has('ShiftLeft')||keyState.has('ShiftRight'),grounded,verticalInput,emote:avatarModel.getState?.().emote||null};}
   function setMove(x,y) {stick.x=clamp(x,-1,1);stick.y=clamp(y,-1,1);}
   function setLook(dx,dy) {
-    if(mode==='orbit'||disposed)return;
+    if(mode==='orbit'||disposed||externalControl)return;
     const nextYaw=yaw+clamp(dx,-.35,.35),nextPitch=clamp(pitch-clamp(dy,-.35,.35),-1.35,1.35);
     if(nextYaw!==yaw || nextPitch!==pitch)pendingLook=true;
     yaw=((nextYaw+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;pitch=nextPitch;
   }
   function setKey(code,down) {
     if(code==='clear' || code==='Blur' || code===null){clearInputs();return;}
+    if(externalControl)return;
     if(!KEY_CODES.has(code))return;
     if(code==='Space'&&down&&!flying&&!keyState.has(code))jump();
     if(down)keyState.add(code);else keyState.delete(code);
@@ -366,11 +379,26 @@ export function createNavigation({scene,camera,controls,sourceScene,navigationMa
     target.min.copy(capsule.start).min(capsule.end).addScalar(-RADIUS);
     target.max.copy(capsule.start).max(capsule.end).addScalar(RADIUS);return target;
   }
+  function beginExternalControl(){if(disposed||externalControl||mode==='orbit'||flying||!grounded)return false;clearInputs();velocity.set(0,0,0);avatarModel.cancelEmote();externalControl=true;return true;}
+  function setRidingPose(p){if(!externalControl||disposed||!p?.seatPosition?.every(Number.isFinite)||!Number.isFinite(p.yaw))return;avatar.position.fromArray(p.seatPosition);avatar.position.y-=.58;avatar.rotation.y=-p.yaw;avatarModel.setRidePose(p);capsule.start.set(p.seatPosition[0],p.seatPosition[1]+RADIUS,p.seatPosition[2]);capsule.end.copy(capsule.start).add(new Vector3(0,BODY_HEIGHT-2*RADIUS,0));}
+  function placeOnGround(footPosition,nextYaw=0){
+    if(disposed||mode==='orbit'||!Array.isArray(footPosition)||footPosition.length!==3||!footPosition.every(Number.isFinite)||!Number.isFinite(nextYaw))return false;
+    const c=new Capsule(new Vector3(footPosition[0],footPosition[1]+RADIUS,footPosition[2]),new Vector3(footPosition[0],footPosition[1]+BODY_HEIGHT-RADIUS,footPosition[2]),RADIUS);
+    if(!clearAt(c)||!Number.isFinite(localSupport(c,.01,.03)))return false;
+    externalControl=false;clearInputs();avatarModel.clearRidePose();capsule.copy(c);yaw=nextYaw;pitch=0;velocity.set(0,0,0);flying=false;grounded=true;dirty=true;cameraSettling=false;syncCamera();return true;
+  }
+  function endExternalControl({footPosition,yaw:nextYaw}){
+    if(externalControl&&Array.isArray(footPosition)&&footPosition.length===3&&footPosition.every(Number.isFinite)){
+      const destination=new Vector3(footPosition[0],footPosition[1]+RADIUS,footPosition[2]),delta=destination.clone().sub(capsule.start),steps=Math.ceil(delta.length()/.04);if(steps>100)return false;
+      for(let i=1;i<=steps;i++){const c=capsule.clone();c.translate(delta.clone().multiplyScalar(i/steps));if(!clearAt(c))return false;}
+    }
+    return placeOnGround(footPosition,nextYaw);
+  }
   function dispose() {
     if(disposed)return;
     if(mode!=='orbit')setMode('orbit');
     clearInputs();avatarModel.dispose();octree.clear();disposed=true;
   }
   reset();
-  return {setMode,setMove,setLook,setKey,jump,setSprinting,setVertical,setFlying,playEmote,getMotionState,clearInputs,setDynamicCollision,refreshCamera(){pendingLook=true;},update,reset,getMode:()=>mode,getPlayerBounds,getEyePosition:eye,getMapPose(){const p=eye();return {mode,position:[p.x,p.y-eyeHeight,p.z],heading:yaw,flying,grounded};},dispose};
+  return {setMode,setMove,setLook,setKey,jump,setSprinting,setVertical,setFlying,playEmote,getMotionState,clearInputs,setDynamicCollision,setSupplementalCollider,beginExternalControl,setRidingPose,endExternalControl,placeOnGround,rayIntersect:cameraHit,refreshCamera(){pendingLook=true;},update,reset,getMode:()=>mode,getPlayerBounds,getEyePosition:eye,getMapPose(){const p=eye();return {mode,position:[p.x,p.y-eyeHeight,p.z],heading:yaw,flying,grounded};},dispose};
 }

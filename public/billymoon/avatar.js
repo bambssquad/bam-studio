@@ -124,11 +124,11 @@ export function createAvatar() {
   };
   let phase=0,strength=0,airPhase=0,airStrength=0,disposed=false;
   let emote=null,emoteTime=0,emotePhase='none',mode='idle',active=false;
-  let lastGrounded=true,lastFlying=false,lastMoving=false;
+  let lastGrounded=true,lastFlying=false,lastMoving=false,riding=false;
   const set=(object,property,value)=>{if(Math.abs(object[property]-value)<1e-7)return false;object[property]=value;return true;};
   function endEmote(reason){if(!emote)return false;emote=null;emoteTime=0;emotePhase=reason;return true;}
   function playEmote(name){
-    if(disposed||!Object.hasOwn(durations,name)||!lastGrounded||lastFlying||lastMoving)return false;
+    if(disposed||riding||!Object.hasOwn(durations,name)||!lastGrounded||lastFlying||lastMoving)return false;
     emote=name;emoteTime=0;emotePhase='playing';mode='emote';active=root.visible;return true;
   }
   function cancelEmote(){
@@ -138,12 +138,14 @@ export function createAvatar() {
   function getState(){return {mode,emote,emoteTime,emotePhase,phase,strength,headPitch:head.rotation.x,grounded:lastGrounded,flying:lastFlying,moving:lastMoving,visible:root.visible,active,disposed};}
   function reset(){
     if(disposed)return;
-    phase=0;strength=0;airPhase=0;airStrength=0;emote=null;emoteTime=0;emotePhase='none';mode='idle';active=false;
+    riding=false;phase=0;strength=0;airPhase=0;airStrength=0;emote=null;emoteTime=0;emotePhase='none';mode='idle';active=false;
     lastGrounded=true;lastFlying=false;lastMoving=false;
     for(let i=0;i<channels.length;i++){const [object,property]=channels[i];object[property]=rest[i];}
+    legs[0].position.x=-.089;legs[1].position.x=.089;legs[0].rotation.z=legs[1].rotation.z=0;
   }
   function update({distance=0,dt=0,pitch=0,visible=true,grounded=true,flying=false,verticalSpeed=0,sprinting=false,moving=false}={}) {
     if(disposed)return {changed:false,active:false};
+    if(riding)return {changed:false,active:false};
     let changed=root.visible!==Boolean(visible);root.visible=Boolean(visible);
     const elapsed=clamp(dt,0,.1),travel=clamp(distance,0,.4),rise=clamp(verticalSpeed,-100,100);
     const isFlying=Boolean(flying),onGround=Boolean(grounded)&&!isFlying;
@@ -216,6 +218,8 @@ export function createAvatar() {
     active=walking||flyingMoving||strength>0||airStrength>0||settling||Boolean(emote&&(!held||emotePhase!=='held'));
     return {changed,active};
   }
+  function setRidePose({kind='kart',steer=0,lean=0,visible=true}={}){if(disposed)return;reset();riding=true;mode='ride';root.visible=!!visible;legs[0].rotation.x=legs[1].rotation.x=kind==='kart'?1.3:.65;if(kind==='motorcycle'){legs[0].position.x=-.24;legs[1].position.x=.24;legs[0].rotation.z=-.10;legs[1].rotation.z=.10;}arms[0].rotation.x=arms[1].rotation.x=kind==='kart'?1.1:1.22;arms[0].rotation.z=-.08+clamp(steer,-.5,.5)*.18;arms[1].rotation.z=.08+clamp(steer,-.5,.5)*.18;pose.rotation.z=clamp(lean,-.13,.13);}
+  function clearRidePose(){reset();}
   function dispose(){if(disposed)return;disposed=true;active=false;emote=null;emoteTime=0;emotePhase='none';root.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();}
-  reset();return {root,update,reset,dispose,stats,playEmote,cancelEmote,getState};
+  reset();return {root,update,reset,dispose,stats,playEmote,cancelEmote,getState,setRidePose,clearRidePose};
 }

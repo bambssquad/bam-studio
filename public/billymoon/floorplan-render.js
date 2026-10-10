@@ -1,6 +1,6 @@
-import {worldToScreen,mapCanvasSize} from './floorplan-math.js?v=graphics-20261009-v13';
-import {createFurnitureDrawing} from './floorplan-furniture.js?v=graphics-20261009-v13';
-import {layoutDimensions,drawDimensions} from './floorplan-dimensions.js?v=graphics-20261009-v13';
+import {worldToScreen,mapCanvasSize} from './floorplan-math.js?v=drive-20261010-v14';
+import {createFurnitureDrawing} from './floorplan-furniture.js?v=drive-20261010-v14';
+import {layoutDimensions,drawDimensions} from './floorplan-dimensions.js?v=drive-20261010-v14';
 const palette={background:'#fff',context:'#f6f6f6',floor:'#fff',wall:'#171717',stairs:'#777',marker:'#111'};
 function rings(path,items){for(const p of items||[]){path.moveTo(p[0],p[1]);for(let i=2;i<p.length;i+=2)path.lineTo(p[i],p[i+1]);path.closePath();}}
 function lines(path,items){for(let i=0;i<(items||[]).length;i+=4){path.moveTo(items[i],items[i+1]);path.lineTo(items[i+2],items[i+3]);}}

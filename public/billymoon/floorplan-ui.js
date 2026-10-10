@@ -1,7 +1,7 @@
-import {validatePlanData,validMapPose,createMapView,fitMap,panMap,zoomMap,resolveMapLevel,mapLocationStatus,wheelMapFactor} from './floorplan-math.js?v=graphics-20261009-v13';
-import {createPlanRenderer} from './floorplan-render.js?v=graphics-20261009-v13';
-import {createPlanDetails} from './floorplan-detail.js?v=graphics-20261009-v13';
-import {fetchManifest} from './runtime.js?v=graphics-20261009-v13';
+import {validatePlanData,validMapPose,createMapView,fitMap,panMap,zoomMap,resolveMapLevel,mapLocationStatus,wheelMapFactor} from './floorplan-math.js?v=drive-20261010-v14';
+import {createPlanRenderer} from './floorplan-render.js?v=drive-20261010-v14';
+import {createPlanDetails} from './floorplan-detail.js?v=drive-20261010-v14';
+import {fetchManifest} from './runtime.js?v=drive-20261010-v14';
 export function createFloorplan({elements:e,url,onOpen=()=>{},onClose=()=>{},fetcher=fetch,raf=requestAnimationFrame,caf=cancelAnimationFrame,rendererFactory=createPlanRenderer}){
  let data=null,pending=null,drawing=null,pose=null,opened=false,opener=null,selection='auto',level=null,view=null,follow=true,frame=null,disposed=false,previousLevel=null,generatedOptions=[],pointers=new Map(),gesture=null,miniVisible=false,showFurniture=true,showDimensions=true,dimensionScope='plan',detailState='idle',detailId=null,detailGeneration=0;
  const details=createPlanDetails({fetcher,onEvict:()=>drawing?.invalidate?.()});

@@ -7,7 +7,7 @@ import {
 	Vector3,
 	Layers
 } from 'three';
-import { Capsule } from './Capsule.js?v=graphics-20261009-v13';
+import { Capsule } from './Capsule.js?v=drive-20261010-v14';
 
 
 const _v1 = new Vector3();

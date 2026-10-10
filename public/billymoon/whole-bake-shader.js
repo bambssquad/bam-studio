@@ -1,5 +1,5 @@
-import * as T from './vendor/three.module.js?v=graphics-20261009-v13';
-import {exactInstanceNormals} from './model.js?v=graphics-20261009-v13';
+import * as T from './vendor/three.module.js?v=drive-20261010-v14';
+import {exactInstanceNormals} from './model.js?v=drive-20261010-v14';
 export function installWholeBakeShader(material,uniforms){
  const end=T.ShaderChunk.lights_fragment_end,specularCall='RE_IndirectSpecular( radiance, iblIrradiance, clearcoatRadiance, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );';
  if(!end.includes(specularCall))throw new Error('Whole bake specular shader incompatible');
