@@ -1,4 +1,4 @@
-import {worldToScreen} from './floorplan-math.js?v=mono-20261009-v12';
+import {worldToScreen} from './floorplan-math.js?v=graphics-20261009-v13';
 export function dimensionLength(a,b){if(!Array.isArray(a)||!Array.isArray(b)||a.length!==2||b.length!==2||![...a,...b].every(Number.isFinite))throw new Error('Invalid model dimension endpoints');return Math.hypot(b[0]-a[0],b[1]-a[1]);}
 export const dimensionLabel=value=>`${value.toFixed(2)} m`;
 const overlap=(a,b)=>a[0]<b[2]+4&&a[2]+4>b[0]&&a[1]<b[3]+4&&a[3]+4>b[1];

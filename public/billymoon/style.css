@@ -302,3 +302,5 @@ body:not(.ready) #minimap{display:none}#loading-map,#error-map{max-width:280px;m
 @media(forced-colors:active){#minimap{border:2px solid CanvasText}.floorplan-stage{border:2px solid CanvasText}.floorplan-toolbar button{border:1px solid ButtonText}}
 
 #floorplan-dialog{background:#fff;color:#171717}.floorplan-toolbar button{background:#f7f7f7;color:#222}.floorplan-toolbar select{background:#fff;color:#222}.floorplan-footer p{color:#666}
+
+.night-settings{padding:8px 0 4px}.night-settings input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}.night-settings output{float:right;font-variant-numeric:tabular-nums}

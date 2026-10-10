@@ -65,8 +65,8 @@ import {
 	SRGBColorSpace,
 	InstancedBufferAttribute
 } from 'three';
-import { toTrianglesDrawMode } from './BufferGeometryUtils.js?v=mono-20261009-v12';
-import { clone } from './SkeletonUtils.js?v=mono-20261009-v12';
+import { toTrianglesDrawMode } from './BufferGeometryUtils.js?v=graphics-20261009-v13';
+import { clone } from './SkeletonUtils.js?v=graphics-20261009-v13';
 
 /**
  * A loader for the glTF 2.0 format.

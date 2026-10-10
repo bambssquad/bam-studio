@@ -1,4 +1,4 @@
-import * as T from './vendor/three.module.js?v=mono-20261009-v12';
+import * as T from './vendor/three.module.js?v=graphics-20261009-v13';
 const KEYS=['roughness','metalness','opacity','transparent','depthWrite'];
 export function prepareMaterials(sourceScene,config) {
  const profiles=new Map((config.profiles||[]).map(p=>[p.materialIndex,p.settings]));const records=new Map(),variants=new Map();
@@ -15,7 +15,9 @@ export function prepareMaterials(sourceScene,config) {
  });
  return {apply(enhanced){for(const [material,state]of records){const settings=enhanced?{...state.original,...state.enhanced}:state.original;for(const k of KEYS)if(settings[k]!==undefined)material[k]=settings[k];material.needsUpdate=true;}},stats:{materials:records.size,glassVariants:variants.size,profiles:profiles.size}};
 }
-export function createFixtureLights(scene,config){const lights=[],settings=config?.settings||{};
- for(const fixture of (config?.fixtures||[]).slice(0,4)){const light=new T.SpotLight(settings.colorHex||'#ffd3a1',settings.intensityCandela||60,settings.distanceMetres||5,settings.angleRadians||.55,settings.penumbra||.6,settings.decay||2);light.position.fromArray(fixture.position);light.target.position.fromArray(fixture.target);light.castShadow=false;light.visible=false;scene.add(light,light.target);lights.push(light);}
- return {lights,setEnabled(enabled,intensityScale=1){for(const light of lights){light.visible=enabled;light.intensity=(settings.intensityCandela||60)*intensityScale;}},dispose(){for(const light of lights){light.removeFromParent();light.target.removeFromParent();light.dispose();}}};
+export const NIGHT_TINTS=Object.freeze({white:'#fff1dc',warm:'#ffd3a1',orange:'#ffb56b'});
+export function createFixtureLights(scene,config){const lights=[],settings=config?.settings||{};let enabled=false,modeScale=1,brightness=1,preset='warm';
+ for(const fixture of (config?.fixtures||[]).slice(0,4)){const light=new T.SpotLight(settings.colorHex||NIGHT_TINTS.warm,settings.intensityCandela||60,settings.distanceMetres||5,settings.angleRadians||.55,.82,settings.decay||2);light.position.fromArray(fixture.position);light.target.position.fromArray(fixture.target);light.castShadow=false;light.visible=false;scene.add(light,light.target);lights.push(light);}
+ function apply(){for(const light of lights){light.visible=enabled;light.color.set(NIGHT_TINTS[preset]);light.intensity=(settings.intensityCandela||60)*Math.min(1.5,modeScale*brightness);}}
+ return {lights,setEnabled(value,intensityScale=1){enabled=!!value;modeScale=Number.isFinite(intensityScale)?Math.max(0,Math.min(1.5,intensityScale)):1;apply();},setAppearance(tint,value=1){preset=Object.hasOwn(NIGHT_TINTS,tint)?tint:'warm';brightness=Number.isFinite(value)?Math.max(0,Math.min(1.5,value)):1;apply();},dispose(){for(const light of lights){light.removeFromParent();light.target.removeFromParent();light.dispose();}}};
 }

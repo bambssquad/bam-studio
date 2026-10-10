@@ -1,3 +1,4 @@
+export function presentationDefaults(safeMode=false){return safeMode?{graphics:'light',resolution:'auto',shadows:false,nearEdge:false}:{graphics:'cinematic',resolution:'high',shadows:true,nearEdge:true};}
 // Device hints select a conservative default, never a measured FPS guarantee.
 export function deviceBudget({width=1920,height=1080,coarsePointer=false,safeMode=false}={}) {
  const phone=safeMode||(coarsePointer&&Math.min(width,height)<=1024);
