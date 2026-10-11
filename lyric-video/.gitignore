@@ -1,3 +1,6 @@
 data/*.mp3
 data/*.log
 out/
+node_modules/
+dist/
+public/*.mp3

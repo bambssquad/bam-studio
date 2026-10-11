@@ -10,3 +10,7 @@
 - 2026-10-11: Referensi tweet chetaslua tidak bisa diakses (x.com diblok proxy); gaya diambil dari jawaban Bam.
 - HF diblok → Whisper-medium int8 via sherpa-onnx (GitHub release). Hasil: 20 segmen VAD, banyak salah dengar + halusinasi di instrumental. Perlu koreksi lirik.
 - Section (librosa): 0, 8.3, 60.6, 71.7, 84.8, 136.9, 175.3, 191.2, 200.9, 213.8. Energi puncak ~110-135 s, drop 140-165 s, outro 200 s+.
+- Bam pilih: lirik ditebak-koreksi Claude (review nanti), look paper-cut diorama, lirik mask slide-up, mode AUTO sampai MP4.
+- Lirik terkoreksi: build_lyrics.py (GROUPS = waktu per frasa). Baris tidak pasti: "jalanan yang lebar", "menitip mimpi", "Deburan ombak berbisik", "Langit malam yang manis", "waktu yang tak jemu". Bagian 191-200 s & 37-47 s dibiarkan instrumental.
+- Engine: src/world.js (9 scene pop-up, palet per waktu, orb matahari/bulan di tali), src/lyrics.js (strip kertas sobek, mask slide-up per baris + warna karaoke per kata), render.mjs (Playwright swiftshader → ffmpeg, worker paralel).
+- Critique: r1 6.5 (lirik bolong/tumpuk, kertas flat, figur kecil) → r2 7.6 (bayangan orb di langit) → r3 8.1 pass.

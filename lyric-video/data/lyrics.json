@@ -1,0 +1,923 @@
+[
+ {
+  "start": 7.8,
+  "end": 10.67,
+  "text": "Senja datang perlahan",
+  "words": [
+   {
+    "w": "Senja",
+    "s": 7.8,
+    "e": 8.62
+   },
+   {
+    "w": "datang",
+    "s": 8.62,
+    "e": 9.44
+   },
+   {
+    "w": "perlahan",
+    "s": 9.44,
+    "e": 10.67
+   }
+  ]
+ },
+ {
+  "start": 10.67,
+  "end": 15.6,
+  "text": "Menyelimuti kota penuh harapan",
+  "words": [
+   {
+    "w": "Menyelimuti",
+    "s": 10.67,
+    "e": 12.73
+   },
+   {
+    "w": "kota",
+    "s": 12.73,
+    "e": 13.55
+   },
+   {
+    "w": "penuh",
+    "s": 13.55,
+    "e": 14.37
+   },
+   {
+    "w": "harapan",
+    "s": 14.37,
+    "e": 15.6
+   }
+  ]
+ },
+ {
+  "start": 16.6,
+  "end": 21.0,
+  "text": "Suara angin menyapa rindu",
+  "words": [
+   {
+    "w": "Suara",
+    "s": 16.6,
+    "e": 17.58
+   },
+   {
+    "w": "angin",
+    "s": 17.58,
+    "e": 18.56
+   },
+   {
+    "w": "menyapa",
+    "s": 18.56,
+    "e": 20.02
+   },
+   {
+    "w": "rindu",
+    "s": 20.02,
+    "e": 21.0
+   }
+  ]
+ },
+ {
+  "start": 21.5,
+  "end": 25.7,
+  "text": "Menari di bawah langit biru",
+  "words": [
+   {
+    "w": "Menari",
+    "s": 21.5,
+    "e": 22.76
+   },
+   {
+    "w": "di",
+    "s": 22.76,
+    "e": 23.18
+   },
+   {
+    "w": "bawah",
+    "s": 23.18,
+    "e": 24.02
+   },
+   {
+    "w": "langit",
+    "s": 24.02,
+    "e": 24.86
+   },
+   {
+    "w": "biru",
+    "s": 24.86,
+    "e": 25.7
+   }
+  ]
+ },
+ {
+  "start": 27.2,
+  "end": 31.3,
+  "text": "Di jalanan yang lebar ini",
+  "words": [
+   {
+    "w": "Di",
+    "s": 27.2,
+    "e": 27.66
+   },
+   {
+    "w": "jalanan",
+    "s": 27.66,
+    "e": 29.02
+   },
+   {
+    "w": "yang",
+    "s": 29.02,
+    "e": 29.48
+   },
+   {
+    "w": "lebar",
+    "s": 29.48,
+    "e": 30.39
+   },
+   {
+    "w": "ini",
+    "s": 30.39,
+    "e": 31.3
+   }
+  ]
+ },
+ {
+  "start": 31.4,
+  "end": 34.68,
+  "text": "Kita berdua menitip mimpi",
+  "words": [
+   {
+    "w": "Kita",
+    "s": 31.4,
+    "e": 32.13
+   },
+   {
+    "w": "berdua",
+    "s": 32.13,
+    "e": 32.86
+   },
+   {
+    "w": "menitip",
+    "s": 32.86,
+    "e": 33.95
+   },
+   {
+    "w": "mimpi",
+    "s": 33.95,
+    "e": 34.68
+   }
+  ]
+ },
+ {
+  "start": 34.68,
+  "end": 37.6,
+  "text": "Berjalan tanpa berpikir",
+  "words": [
+   {
+    "w": "Berjalan",
+    "s": 34.68,
+    "e": 35.78
+   },
+   {
+    "w": "tanpa",
+    "s": 35.78,
+    "e": 36.51
+   },
+   {
+    "w": "berpikir",
+    "s": 36.51,
+    "e": 37.6
+   }
+  ]
+ },
+ {
+  "start": 47.2,
+  "end": 51.97,
+  "text": "Kutemukan cinta yang sederhana",
+  "words": [
+   {
+    "w": "Kutemukan",
+    "s": 47.2,
+    "e": 48.93
+   },
+   {
+    "w": "cinta",
+    "s": 48.93,
+    "e": 49.8
+   },
+   {
+    "w": "yang",
+    "s": 49.8,
+    "e": 50.23
+   },
+   {
+    "w": "sederhana",
+    "s": 50.23,
+    "e": 51.97
+   }
+  ]
+ },
+ {
+  "start": 51.97,
+  "end": 56.3,
+  "text": "Dalam keheningan yang membawa",
+  "words": [
+   {
+    "w": "Dalam",
+    "s": 51.97,
+    "e": 52.83
+   },
+   {
+    "w": "keheningan",
+    "s": 52.83,
+    "e": 54.57
+   },
+   {
+    "w": "yang",
+    "s": 54.57,
+    "e": 55.0
+   },
+   {
+    "w": "membawa",
+    "s": 55.0,
+    "e": 56.3
+   }
+  ]
+ },
+ {
+  "start": 57.0,
+  "end": 64.5,
+  "text": "Hatiku dan hatimu berbicara",
+  "words": [
+   {
+    "w": "Hatiku",
+    "s": 57.0,
+    "e": 59.05
+   },
+   {
+    "w": "dan",
+    "s": 59.05,
+    "e": 59.73
+   },
+   {
+    "w": "hatimu",
+    "s": 59.73,
+    "e": 61.77
+   },
+   {
+    "w": "berbicara",
+    "s": 61.77,
+    "e": 64.5
+   }
+  ]
+ },
+ {
+  "start": 66.7,
+  "end": 70.3,
+  "text": "Deburan ombak berbisik",
+  "words": [
+   {
+    "w": "Deburan",
+    "s": 66.7,
+    "e": 68.05
+   },
+   {
+    "w": "ombak",
+    "s": 68.05,
+    "e": 68.95
+   },
+   {
+    "w": "berbisik",
+    "s": 68.95,
+    "e": 70.3
+   }
+  ]
+ },
+ {
+  "start": 70.3,
+  "end": 73.45,
+  "text": "Mengajakku bernyanyi",
+  "words": [
+   {
+    "w": "Mengajakku",
+    "s": 70.3,
+    "e": 72.1
+   },
+   {
+    "w": "bernyanyi",
+    "s": 72.1,
+    "e": 73.45
+   }
+  ]
+ },
+ {
+  "start": 73.45,
+  "end": 76.6,
+  "text": "Langit malam yang manis",
+  "words": [
+   {
+    "w": "Langit",
+    "s": 73.45,
+    "e": 74.35
+   },
+   {
+    "w": "malam",
+    "s": 74.35,
+    "e": 75.25
+   },
+   {
+    "w": "yang",
+    "s": 75.25,
+    "e": 75.7
+   },
+   {
+    "w": "manis",
+    "s": 75.7,
+    "e": 76.6
+   }
+  ]
+ },
+ {
+  "start": 77.0,
+  "end": 80.72,
+  "text": "Mau menyentuh hati",
+  "words": [
+   {
+    "w": "Mau",
+    "s": 77.0,
+    "e": 77.62
+   },
+   {
+    "w": "menyentuh",
+    "s": 77.62,
+    "e": 79.48
+   },
+   {
+    "w": "hati",
+    "s": 79.48,
+    "e": 80.72
+   }
+  ]
+ },
+ {
+  "start": 80.72,
+  "end": 86.3,
+  "text": "Hadirkan kamu dalam diri",
+  "words": [
+   {
+    "w": "Hadirkan",
+    "s": 80.72,
+    "e": 82.58
+   },
+   {
+    "w": "kamu",
+    "s": 82.58,
+    "e": 83.82
+   },
+   {
+    "w": "dalam",
+    "s": 83.82,
+    "e": 85.06
+   },
+   {
+    "w": "diri",
+    "s": 85.06,
+    "e": 86.3
+   }
+  ]
+ },
+ {
+  "start": 87.1,
+  "end": 91.17,
+  "text": "Tawa kita berdua menggema",
+  "words": [
+   {
+    "w": "Tawa",
+    "s": 87.1,
+    "e": 88.0
+   },
+   {
+    "w": "kita",
+    "s": 88.0,
+    "e": 88.91
+   },
+   {
+    "w": "berdua",
+    "s": 88.91,
+    "e": 89.81
+   },
+   {
+    "w": "menggema",
+    "s": 89.81,
+    "e": 91.17
+   }
+  ]
+ },
+ {
+  "start": 91.17,
+  "end": 94.78,
+  "text": "Seperti simfoni jiwa",
+  "words": [
+   {
+    "w": "Seperti",
+    "s": 91.17,
+    "e": 92.52
+   },
+   {
+    "w": "simfoni",
+    "s": 92.52,
+    "e": 93.88
+   },
+   {
+    "w": "jiwa",
+    "s": 93.88,
+    "e": 94.78
+   }
+  ]
+ },
+ {
+  "start": 94.78,
+  "end": 98.4,
+  "text": "Hanya ada kau dan aku",
+  "words": [
+   {
+    "w": "Hanya",
+    "s": 94.78,
+    "e": 95.69
+   },
+   {
+    "w": "ada",
+    "s": 95.69,
+    "e": 96.59
+   },
+   {
+    "w": "kau",
+    "s": 96.59,
+    "e": 97.04
+   },
+   {
+    "w": "dan",
+    "s": 97.04,
+    "e": 97.5
+   },
+   {
+    "w": "aku",
+    "s": 97.5,
+    "e": 98.4
+   }
+  ]
+ },
+ {
+  "start": 98.9,
+  "end": 103.6,
+  "text": "Menyelami waktu yang tak jemu",
+  "words": [
+   {
+    "w": "Menyelami",
+    "s": 98.9,
+    "e": 100.78
+   },
+   {
+    "w": "waktu",
+    "s": 100.78,
+    "e": 101.72
+   },
+   {
+    "w": "yang",
+    "s": 101.72,
+    "e": 102.19
+   },
+   {
+    "w": "tak",
+    "s": 102.19,
+    "e": 102.66
+   },
+   {
+    "w": "jemu",
+    "s": 102.66,
+    "e": 103.6
+   }
+  ]
+ },
+ {
+  "start": 103.6,
+  "end": 108.3,
+  "text": "Di bawah lampu kota yang pudar",
+  "words": [
+   {
+    "w": "Di",
+    "s": 103.6,
+    "e": 104.07
+   },
+   {
+    "w": "bawah",
+    "s": 104.07,
+    "e": 105.01
+   },
+   {
+    "w": "lampu",
+    "s": 105.01,
+    "e": 105.95
+   },
+   {
+    "w": "kota",
+    "s": 105.95,
+    "e": 106.89
+   },
+   {
+    "w": "yang",
+    "s": 106.89,
+    "e": 107.36
+   },
+   {
+    "w": "pudar",
+    "s": 107.36,
+    "e": 108.3
+   }
+  ]
+ },
+ {
+  "start": 109.0,
+  "end": 113.91,
+  "text": "Aku temukan cinta yang sederhana",
+  "words": [
+   {
+    "w": "Aku",
+    "s": 109.0,
+    "e": 109.82
+   },
+   {
+    "w": "temukan",
+    "s": 109.82,
+    "e": 111.05
+   },
+   {
+    "w": "cinta",
+    "s": 111.05,
+    "e": 111.86
+   },
+   {
+    "w": "yang",
+    "s": 111.86,
+    "e": 112.27
+   },
+   {
+    "w": "sederhana",
+    "s": 112.27,
+    "e": 113.91
+   }
+  ]
+ },
+ {
+  "start": 113.91,
+  "end": 118.0,
+  "text": "Dalam keheningan yang membawa",
+  "words": [
+   {
+    "w": "Dalam",
+    "s": 113.91,
+    "e": 114.73
+   },
+   {
+    "w": "keheningan",
+    "s": 114.73,
+    "e": 116.36
+   },
+   {
+    "w": "yang",
+    "s": 116.36,
+    "e": 116.77
+   },
+   {
+    "w": "membawa",
+    "s": 116.77,
+    "e": 118.0
+   }
+  ]
+ },
+ {
+  "start": 118.1,
+  "end": 122.4,
+  "text": "Hatiku dan hatimu berbicara",
+  "words": [
+   {
+    "w": "Hatiku",
+    "s": 118.1,
+    "e": 119.27
+   },
+   {
+    "w": "dan",
+    "s": 119.27,
+    "e": 119.66
+   },
+   {
+    "w": "hatimu",
+    "s": 119.66,
+    "e": 120.84
+   },
+   {
+    "w": "berbicara",
+    "s": 120.84,
+    "e": 122.4
+   }
+  ]
+ },
+ {
+  "start": 139.5,
+  "end": 143.6,
+  "text": "Tawa kita berdua menggema",
+  "words": [
+   {
+    "w": "Tawa",
+    "s": 139.5,
+    "e": 140.41
+   },
+   {
+    "w": "kita",
+    "s": 140.41,
+    "e": 141.32
+   },
+   {
+    "w": "berdua",
+    "s": 141.32,
+    "e": 142.23
+   },
+   {
+    "w": "menggema",
+    "s": 142.23,
+    "e": 143.6
+   }
+  ]
+ },
+ {
+  "start": 144.5,
+  "end": 148.55,
+  "text": "Seperti simfoni jiwa",
+  "words": [
+   {
+    "w": "Seperti",
+    "s": 144.5,
+    "e": 146.02
+   },
+   {
+    "w": "simfoni",
+    "s": 146.02,
+    "e": 147.54
+   },
+   {
+    "w": "jiwa",
+    "s": 147.54,
+    "e": 148.55
+   }
+  ]
+ },
+ {
+  "start": 148.55,
+  "end": 152.6,
+  "text": "Hanya ada kau dan aku",
+  "words": [
+   {
+    "w": "Hanya",
+    "s": 148.55,
+    "e": 149.56
+   },
+   {
+    "w": "ada",
+    "s": 149.56,
+    "e": 150.57
+   },
+   {
+    "w": "kau",
+    "s": 150.57,
+    "e": 151.08
+   },
+   {
+    "w": "dan",
+    "s": 151.08,
+    "e": 151.59
+   },
+   {
+    "w": "aku",
+    "s": 151.59,
+    "e": 152.6
+   }
+  ]
+ },
+ {
+  "start": 152.9,
+  "end": 157.9,
+  "text": "Menyelami waktu yang tak jemu",
+  "words": [
+   {
+    "w": "Menyelami",
+    "s": 152.9,
+    "e": 154.9
+   },
+   {
+    "w": "waktu",
+    "s": 154.9,
+    "e": 155.9
+   },
+   {
+    "w": "yang",
+    "s": 155.9,
+    "e": 156.4
+   },
+   {
+    "w": "tak",
+    "s": 156.4,
+    "e": 156.9
+   },
+   {
+    "w": "jemu",
+    "s": 156.9,
+    "e": 157.9
+   }
+  ]
+ },
+ {
+  "start": 157.9,
+  "end": 162.9,
+  "text": "Di bawah lampu kota yang pudar",
+  "words": [
+   {
+    "w": "Di",
+    "s": 157.9,
+    "e": 158.4
+   },
+   {
+    "w": "bawah",
+    "s": 158.4,
+    "e": 159.4
+   },
+   {
+    "w": "lampu",
+    "s": 159.4,
+    "e": 160.4
+   },
+   {
+    "w": "kota",
+    "s": 160.4,
+    "e": 161.4
+   },
+   {
+    "w": "yang",
+    "s": 161.4,
+    "e": 161.9
+   },
+   {
+    "w": "pudar",
+    "s": 161.9,
+    "e": 162.9
+   }
+  ]
+ },
+ {
+  "start": 163.7,
+  "end": 168.23,
+  "text": "Aku temukan cinta yang sederhana",
+  "words": [
+   {
+    "w": "Aku",
+    "s": 163.7,
+    "e": 164.45
+   },
+   {
+    "w": "temukan",
+    "s": 164.45,
+    "e": 165.59
+   },
+   {
+    "w": "cinta",
+    "s": 165.59,
+    "e": 166.34
+   },
+   {
+    "w": "yang",
+    "s": 166.34,
+    "e": 166.72
+   },
+   {
+    "w": "sederhana",
+    "s": 166.72,
+    "e": 168.23
+   }
+  ]
+ },
+ {
+  "start": 168.23,
+  "end": 172.0,
+  "text": "Dalam keheningan yang membawa",
+  "words": [
+   {
+    "w": "Dalam",
+    "s": 168.23,
+    "e": 168.98
+   },
+   {
+    "w": "keheningan",
+    "s": 168.98,
+    "e": 170.49
+   },
+   {
+    "w": "yang",
+    "s": 170.49,
+    "e": 170.87
+   },
+   {
+    "w": "membawa",
+    "s": 170.87,
+    "e": 172.0
+   }
+  ]
+ },
+ {
+  "start": 172.0,
+  "end": 179.0,
+  "text": "Hatiku dan hatimu berbicara",
+  "words": [
+   {
+    "w": "Hatiku",
+    "s": 172.0,
+    "e": 173.91
+   },
+   {
+    "w": "dan",
+    "s": 173.91,
+    "e": 174.55
+   },
+   {
+    "w": "hatimu",
+    "s": 174.55,
+    "e": 176.45
+   },
+   {
+    "w": "berbicara",
+    "s": 176.45,
+    "e": 179.0
+   }
+  ]
+ },
+ {
+  "start": 179.1,
+  "end": 184.7,
+  "text": "na na na na na",
+  "words": [
+   {
+    "w": "na",
+    "s": 179.1,
+    "e": 180.22
+   },
+   {
+    "w": "na",
+    "s": 180.22,
+    "e": 181.34
+   },
+   {
+    "w": "na",
+    "s": 181.34,
+    "e": 182.46
+   },
+   {
+    "w": "na",
+    "s": 182.46,
+    "e": 183.58
+   },
+   {
+    "w": "na",
+    "s": 183.58,
+    "e": 184.7
+   }
+  ]
+ },
+ {
+  "start": 184.7,
+  "end": 190.3,
+  "text": "na na na na na",
+  "words": [
+   {
+    "w": "na",
+    "s": 184.7,
+    "e": 185.82
+   },
+   {
+    "w": "na",
+    "s": 185.82,
+    "e": 186.94
+   },
+   {
+    "w": "na",
+    "s": 186.94,
+    "e": 188.06
+   },
+   {
+    "w": "na",
+    "s": 188.06,
+    "e": 189.18
+   },
+   {
+    "w": "na",
+    "s": 189.18,
+    "e": 190.3
+   }
+  ]
+ }
+]
