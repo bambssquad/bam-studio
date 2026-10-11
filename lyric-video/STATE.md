@@ -14,3 +14,4 @@
 - Lirik terkoreksi: build_lyrics.py (GROUPS = waktu per frasa). Baris tidak pasti: "jalanan yang lebar", "menitip mimpi", "Deburan ombak berbisik", "Langit malam yang manis", "waktu yang tak jemu". Bagian 191-200 s & 37-47 s dibiarkan instrumental.
 - Engine: src/world.js (9 scene pop-up, palet per waktu, orb matahari/bulan di tali), src/lyrics.js (strip kertas sobek, mask slide-up per baris + warna karaoke per kata), render.mjs (Playwright swiftshader → ffmpeg, worker paralel).
 - Critique: r1 6.5 (lirik bolong/tumpuk, kertas flat, figur kecil) → r2 7.6 (bayangan orb di langit) → r3 8.1 pass.
+- Web player: https://claude.ai/artifact/7fymR1Fx6W5rzoZc4PDuyt (privat). Build: vite build --outDir dist-web, lalu player.html (head/body di-strip).
