@@ -204,7 +204,8 @@ function motif(kind, cols, seed) {
       U.hands = [add(g, R(-10, 0, 20, 160, C.ink)), add(g, R(-6, 0, 12, 240, c(1)))]; add(g, M(circleShape(0, 0, 18), C.ink)); break }
     case 'lamp': { add(g, M(poly([[-30, 300], [30, 300], [380, -480], [-380, -480]]), c(0), 0.35), R(-12, -480, 24, 800, C.white), M(poly([[-70, 300], [70, 300], [40, 360], [-40, 360]]), C.white), M(circleShape(0, 300, 34), c(0))); U.glow = g.children[0]; break }
     case 'rain': case 'umbrella': { U.drops = []; for (let i = 0; i < 90; i++) { const d = R(-2, 0, 4, 40 + r() * 50, i % 4 ? C.white : c(0), 0.7); d.rotation.z = 0.25; d.userData = { x: (r() - 0.5) * 1300, o: r() * 1500, v: 900 + r() * 500 }; add(g, d); U.drops.push(d) }
-      if (kind === 'umbrella') { const u = new THREE.Group(); const can = new THREE.Shape(); can.moveTo(-300, 0); can.quadraticCurveTo(0, 330, 300, 0); for (let i = 4; i >= 0; i--) can.quadraticCurveTo(-300 + (i + 0.5) * 120, 40, -300 + i * 120, 0); add(u, M(can, c(0)), R(-7, -330, 14, 330, C.white)); for (const [x, ch] of [[-70, CH.a], [70, CH.b]]) { const p = walker(ch); p.scale.setScalar(1.5); p.position.set(x, -560, 0); add(u, p) } u.position.y = 120; add(g, u); U.umb = u } break }
+      if (kind === 'rain') { const cm = motif('city', [C.ink, C.yellow, '#2a2a34'], seed + 3); cm.position.y = -60; add(g, cm); U.sub = [cm] }
+      { const u = new THREE.Group(); const can = new THREE.Shape(); can.moveTo(-300, 0); can.quadraticCurveTo(0, 330, 300, 0); for (let i = 4; i >= 0; i--) can.quadraticCurveTo(-300 + (i + 0.5) * 120, 40, -300 + i * 120, 0); add(u, M(can, c(0)), R(-7, -330, 14, 330, C.white)); for (const [x, ch] of [[-70, CH.a], [70, CH.b]]) { const p = walker(ch); p.scale.setScalar(1.5); p.position.set(x, -560, 0); add(u, p) } u.position.y = 120; add(g, u); U.umb = u } break }
     case 'flowers': { U.fl = []; for (let i = 0; i < 12; i++) { const f = new THREE.Group(); for (let k = 0; k < 6; k++) { const a = (k / 6) * Math.PI * 2; add(f, M(circleShape(Math.cos(a) * 46, Math.sin(a) * 46, 40), c(i + k % 2))) } add(f, M(circleShape(0, 0, 32), C.ink)); f.position.set(-360 + (i % 4) * 240, 330 - Math.floor(i / 4) * 300, 0); add(g, f); U.fl.push(f) } break }
     case 'birds': { U.birds = []; for (let i = 0; i < 9; i++) { const b = new THREE.Group(), w1 = add(b, M(poly([[0, 0], [70, 22], [64, 4]]), c(i))), w2 = add(b, M(poly([[0, 0], [-70, 22], [-64, 4]]), c(i))); b.userData = { w1, w2 }; add(g, b); U.birds.push(b) } add(g, M(circleShape(220, 300, 140), c(0))); break }
     case 'sunburst': { const b = new THREE.Group(); for (let i = 0; i < 20; i++) { const s = new THREE.Shape(), a0 = (i / 20) * Math.PI * 2, a1 = ((i + 1) / 20) * Math.PI * 2; s.moveTo(0, 0); s.absarc(0, 0, 1300, a0, a1, false); s.closePath(); add(b, M(s, i % 2 ? c(0) : c(1))) } add(g, b); add(g, M(heartShape(220), C.ink), M(heartShape(170), c(2))); U.spin = [b]; break }
@@ -213,6 +214,7 @@ function motif(kind, cols, seed) {
 }
 function animateMotif(g, u, t, beat, en) {
   const U = g.userData
+  U.sub?.forEach(m => animateMotif(m, u, t, beat, en))
   U.spin?.forEach(m => { m.rotation.z = t * 0.25 })
   U.scroll?.forEach(([grp, v]) => { grp.position.x = -680 - ((u * v) % 1360) })
   U.ribbons?.forEach((m, i) => { const p = m.geometry.attributes.position, b = m.userData.base; for (let k = 0; k < p.count; k++) { const x = b[k * 3]; p.array[k * 3 + 1] = b[k * 3 + 1] + Math.sin(x * 0.006 + t * 3 + i) * 70 } p.needsUpdate = true })
@@ -501,7 +503,9 @@ export function buildWorld(canvas, audio, lines) {
         float band = .92 + .08 * sin(px.y * 2.1) + (hs(vec2(0., floor(px.y / 3.))) - .5) * .14, col = 1. - .4 * step(.986, hs(vec2(floor(px.x / 2.), 7.)));
         float on = step(B4(px / 2.) + .03, d * band * col * 1.1); vec3 pc = vec3(.955, .945, .925), ic = vec3(.17, .16, .18) * mix(1., 1.35, hs(floor(px / 3.)));
         return mix(mix(pc, ic, on), pc, .1 * smoothstep(.36, .5, abs(u.x - .5))); }
-      vec3 dith(vec2 u, vec3 D, vec3 L){ vec2 px = u * S, c = (floor(px / 3.) * 3. + 1.5) / S; return lum(smp(c)) > B8(px / 3.) ? L : D; }
+      vec3 dith(vec2 u, vec3 D, vec3 L){ vec2 px = u * S, c = (floor(px / 3.) * 3. + 1.5) / S;
+        float l = smoothstep(.12, .82, lum(smp(c))); l = l * l * (3. - 2. * l); // contrast curve: mid-tones split instead of a flat 50% field
+        return l > B8(px / 3.) ? L : D; }
       vec3 crt(vec2 u){ vec2 q = u * 2. - 1.; q *= 1. + .05 * dot(q, q);
         float on = smoothstep(.15, .9, time); q.y /= max(on * on, .004); // power-on: a bright line opens into the picture
         vec2 c = q * .5 + .5;
