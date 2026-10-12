@@ -238,10 +238,10 @@ function uiCluster(info, cols, seed) {
   const g = new THREE.Group(), r = rng(seed)
   const words = info.line ? info.line.toLowerCase().split(' ') : ['berbicara']
   const chunks = []; for (let i = 0; i < words.length; i += 2) chunks.push(words.slice(i, i + 2).join(' '))
-  const blocks = [[`berbicara/${info.scene}`, `shot ${String(info.n).padStart(3, '0')}`, `bpm 112.3`], chunks.slice(0, 3), [`${info.tc}`, '✦ hati.kau.aku', `L${String(info.li + 1).padStart(2, '0')}/33`]]
-  blocks.forEach((b, i) => { const m = label(b.length ? b : ['—'], { size: 17, color: i === 1 ? cols[0] : C.white, w: 320 }); m.position.set(-500 + r() * 560, 860 - i * (150 + r() * 160), 0); add(g, m) })
+  // words, not counters: title/artist and fragments of the line being sung (no shot numbers, bpm or timecodes)
+  const blocks = [['berbicara', 'sayoe'], chunks.slice(0, 3)].filter(b => b.length)
+  blocks.forEach((b, i) => { const m = label(b, { size: 17, color: i === 1 ? cols[0] : C.white, w: 320 }); m.position.set(-500 + r() * 560, 860 - i * (190 + r() * 200), 0); add(g, m) })
   const sp = sparkle(14, cols[1 % cols.length]); sp.position.set(-480 + r() * 900, 300 + r() * 500, 0); add(g, sp)
-  const line = R(0, -1, 260 + r() * 300, 2, C.white); line.position.set(-540 + r() * 300, -200 + r() * 700, 0); line.rotation.z = -0.5 + r(); add(g, line)
   g.userData.sp = sp; return g
 }
 
@@ -265,7 +265,7 @@ function buildShot(type, ctx) {
     up = (u, t, beat, en, sing) => {
       slideIn(p1, [-1400 * flip, 0], [flip * 380, 0], u); slideIn(p2, [0, 1600], [-flip * 330, 520], u, 0.06)
       f.position.set(fx + Math.sin(t * 0.7) * 10 - u * 14 * flip, fy + u * 6, 0); f.rotation.z = rot; f.scale.setScalar(1).multiply(new THREE.Vector3(2.5 * flip, 2.5, 1)).multiplyScalar(1 + u * 0.012 + beat * 0.01)
-      const ex = 62 * f.scale.x, ey = 18 * f.scale.y; AN[0] = f.position.x + ex * Math.cos(rot) - ey * Math.sin(rot); AN[1] = f.position.y + ex * Math.sin(rot) + ey * Math.cos(rot) // pupil
+      const ex = 65 * f.scale.x, ey = 16 * f.scale.y; AN[0] = f.position.x + ex * Math.cos(rot) - ey * Math.sin(rot); AN[1] = f.position.y + ex * Math.sin(rot) + ey * Math.cos(rot) // pupil
       animateChar(f, t, sing, en, seed); ui.userData.sp.rotation.z = t * 2
     }
   } else if (type === 'rays') {
@@ -284,18 +284,23 @@ function buildShot(type, ctx) {
   } else if (type === 'cards') {
     const cards = [], spec = [[-500, -40, 660, 660], [200, 200, 300, 400], [-500, -600, 420, 500], [-30, -560, 530, 700], [-540, -720, 1080, 110]]
     spec.forEach(([x, y, w, h], i) => { // paper cut-out: drop shadow, slight tilt, a strip of tape
-      const m = new THREE.Group(); add(m, R(14, -16, w, h, '#000000', 0.35), R(0, 0, w, h, i === 4 ? C.white : pick(i)))
+      const m = new THREE.Group(); add(m, R(14, -16, w, h, '#08070c', 0.4), R(0, 0, w, h, i === 4 ? C.white : pick(i)))
       if (i < 4) { const tp = R(-55, -16, 110, 32, '#efe9d8', 0.82); tp.position.set(w * (0.3 + r() * 0.4), h, 0); tp.rotation.z = (r() - 0.5) * 0.5; add(m, tp) }
       m.rotation.z = i === 4 ? 0 : (r() - 0.5) * 0.035; m.userData = { x, y, from: [i % 2 ? 1300 : -1700, y] }; add(g, m); cards.push(m) })
     const mo = motif(mot, [C.ink, C.white, ...cols], seed + 4); mo.scale.setScalar(0.62); add(g, mo)
+    const clip = [new THREE.Plane(new THREE.Vector3(1, 0, 0), 0), new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0), new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)]
+    mo.traverse(o => { if (o.material) o.material.clippingPlanes = clip })
+    const v0 = new THREE.Vector3(), v1 = new THREE.Vector3()
     const face = faceFront(ch); face.scale.setScalar(0.85); add(g, face)
     const big = label([String(ctx.li + 1).padStart(2, '0')], { size: 190, color: C.ink, w: 400, weight: 500, lh: 0.95 }); add(g, big)
     const spk = sparkle(90, C.ink); add(g, spk)
-    const txt = label([ctx.line ? ctx.line.toUpperCase() : 'BERBICARA'], { size: 34, color: C.ink, w: 1060, weight: 500 }); add(g, txt)
+    const txt = label(['BERBICARA   SAYOE'], { size: 34, color: C.ink, w: 1060, weight: 500 }); add(g, txt)
     const ui = uiCluster(ctx, cols, seed); add(g, ui)
     up = (u, t, beat, en, sing) => {
       cards.forEach((m, i) => slideIn(m, m.userData.from, [m.userData.x, m.userData.y], u, i * 0.05))
       mo.position.set(cards[0].position.x + 330, cards[0].position.y + 330, 0); animateMotif(mo, u, t, beat, en); AN[0] = mo.position.x; AN[1] = mo.position.y
+      cards[0].updateWorldMatrix(true, false); cards[0].localToWorld(v0.set(0, 0, 0)); cards[0].localToWorld(v1.set(660, 660, 0))
+      clip[0].constant = -Math.min(v0.x, v1.x); clip[1].constant = Math.max(v0.x, v1.x); clip[2].constant = -Math.min(v0.y, v1.y); clip[3].constant = Math.max(v0.y, v1.y)
       face.position.set(cards[3].position.x + 265, cards[3].position.y + 380, 0); animateChar(face, t, sing, en, seed)
       big.position.set(cards[2].position.x + 30, cards[2].position.y + 470, 0); spk.position.set(cards[1].position.x + 150, cards[1].position.y + 200, 0); spk.rotation.z = t * 1.5
       txt.position.set(cards[4].position.x + 28, cards[4].position.y + 76, 0)
@@ -359,7 +364,7 @@ function buildShot(type, ctx) {
     if (ann) { if (type === 'close') ann.position.set(AN[0], AN[1], 0); ann.userData.reveal(smooth(0.55, 1.25, u)) }
   }
   const flipSide = type === 'close' ? (g.children.find(o => o.userData?.eyes)?.scale.x ?? 1) : 1
-  const cap = { close: [flipSide > 0 ? 64 : 560, 1170, 2], rays: [64, 1560, 0], cards: [64, 64, 0], duo: [64, 84, 0], motif: [64, 1560, 0], walk: [64, 1600, 1], title: [64, 1560, 0] }[type]
+  const cap = { close: [flipSide > 0 ? 64 : 560, 1170, 2], rays: [64, 1560, 0], cards: [64, 64, 0], duo: [64, 84, 0], motif: [64, 110, 0], walk: [64, 1600, 1], title: [64, 1560, 0] }[type]
   return { g, update: up, anchor: AN, color: type === 'cards' ? pick(0) : null, cap }
 }
 
@@ -367,7 +372,7 @@ function buildShot(type, ctx) {
 export function buildWorld(canvas, audio, lines) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
   renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false); renderer.outputColorSpace = THREE.SRGBColorSpace
-  renderer.setClearColor(C.ink); renderer.autoClear = false // accumulation clears explicitly
+  renderer.setClearColor(C.ink); renderer.autoClear = false; renderer.localClippingEnabled = true // accumulation clears explicitly
   const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-540, 540, 960, -960, -10, 10)
   const root = new THREE.Group(); scene.add(root) // full frame, compositions centred
 
@@ -407,7 +412,7 @@ export function buildWorld(canvas, audio, lines) {
     else if (a.type === 'cards') kind = T.block
     else if (a.type === 'walk') kind = T.bands
     else kind = T.iris
-    const d = kind === T.pupil ? 0.62 : sec ? 0.56 : reff ? 0.36 : 0.48
+    const d = kind === T.pupil ? 0.5 : sec ? 0.56 : reff ? 0.36 : 0.48
     c.tr = { kind, d, t0: c.t - d * 0.5, dir: n % 2 ? 1 : -1 }
   })
   const easeIO = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
@@ -450,9 +455,10 @@ export function buildWorld(canvas, audio, lines) {
         else if (kind == 4) { // diagonal slash: three accent bands sweep, B behind them
           vec2 n = normalize(vec2(1., .42 * dir)); float s = dot(vUv * S - S * .5, n) / 1300. + .5, f = eio(p) * 1.5 - .2;
           o = s < f - .16 ? tB(vUv) : s < f - .1 ? c3 : s < f - .05 ? c2 : s < f ? c1 : tA(vUv); }
-        else if (kind == 5) { // into the pupil: zoom A toward the eye until it is all pupil, then the pupil opens onto B
-          float z = eo(p / .55), zoom = 1. + z * z * 34.; vec2 ua = c + (vUv - c) / zoom;
-          if (p < .55) o = tA(ua); else { float e = eo((p - .55) / .45), R = e * 2300.; o = mix(vec3(.0058), tB(vUv), aa(length(q) - R)); } }
+        else if (kind == 5) { // into the pupil: zoom toward it while the pupil (a black disc at c) swallows the frame, then it opens onto B
+          if (p < .5) { float z = eio(p / .5), zoom = 1. + z * 26., Rp = 35. * zoom * (1. + z * 2.5); vec2 ua = c + (vUv - c) / zoom;
+            o = mix(tA(ua), vec3(.0058), aa(length(q) - Rp)); }
+          else { float e = eo((p - .5) / .5), R = e * 2400.; o = mix(vec3(.0058), tB(vUv), aa(length(q) - R)); } }
         else if (kind == 6) { float k = eio(p); vec2 ua = vUv + vec2(dir * k, 0.), ub = vUv - vec2(dir * (1. - k), 0.);
           o = (ua.x >= 0. && ua.x <= 1.) ? tA(ua) : tB(ub); }
         else { // bands: 8 horizontal strips slide across, alternating sides, staggered

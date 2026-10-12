@@ -53,8 +53,8 @@ export function buildLyrics(root, lines, scenes, audio, info) {
     root.parentElement.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0)`; const mode = (e < 0.5 ? nf.capPrev : nf.cap)[2]; root.classList.toggle('dark', mode === 1); root.classList.toggle('plate', mode === 2)
     const [r, g, b] = [1, 3, 5].map(i => parseInt(nf.accent.slice(i, i + 2), 16) / 255), lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
     root.style.setProperty('--hl-ink', lum > 0.42 ? 'var(--bg)' : 'var(--ink)') // legible text on the marker
-    label.textContent = `✦ ${sc.label} · shot ${String(nf.shot).padStart(3, '0')}/${nf.total}`
-    tc.textContent = `${fmt(t)} / ${fmt(audio.duration)}`
+    label.textContent = sc.label.split(' · ')[0] // plain section name, no counters
+    tc.textContent = 'sayoe'
     dot.style.transform = `scale(${(0.6 + audio.pulse(t, 9) * 0.8).toFixed(3)})`
     bar.style.transform = `scaleX(${clamp(t / audio.duration).toFixed(4)})`
     root.classList.toggle('idle', shown === 0)

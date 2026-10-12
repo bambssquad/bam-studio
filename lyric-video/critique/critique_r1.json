@@ -1,0 +1,7 @@
+{"round": 1, "range": "0-40s",
+ "scores": {"composition": 7, "typography": 7, "color": 8, "motion": 8, "transitions": 7, "lyric_sync": 8, "craft": 6},
+ "flags": {"centered_text_on_gradient": false, "fade_in_everything": false, "logo_slapped_at_end": false},
+ "issues": [
+  {"t": 36.0, "problem": "pupil transition close->cards opens from the wrong point: frame is almost all black, only a corner revealed"},
+  {"t": 12.6, "problem": "lyric caption sits on the busy skyline of the motif shot (also 15s): poor legibility"},
+  {"t": 39.0, "problem": "motif spills outside its card in cards shots (also 18.5s) and the card strip repeats the same lyric as the caption"}]}

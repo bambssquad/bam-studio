@@ -1,0 +1,7 @@
+{"round": 2, "range": "0-40s",
+ "scores": {"composition": 8, "typography": 8, "color": 8, "motion": 8, "transitions": 8, "lyric_sync": 8, "craft": 8},
+ "flags": {"centered_text_on_gradient": false, "fade_in_everything": false, "logo_slapped_at_end": false},
+ "issues": [
+  {"t": 35.9, "problem": "pupil transition holds full black for 2 frames; reads as a deliberate blink, keep under watch"},
+  {"t": 36.08, "problem": "caption block crosses card content while sliding to its new slot (0.45 s)"},
+  {"t": 2.0, "problem": "intro is 7.8 s of one ray burst; title is the only change, could feel long on Reels"}]}

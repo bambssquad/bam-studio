@@ -29,7 +29,7 @@ html, body { margin: 0; height: 100%; background: var(--page); color: var(--ink)
 #lyr.dark { --ink: #0f0f12; --ink-soft: rgba(15, 15, 18, .38); --sh: rgba(244, 241, 234, .9) }
 .meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 500 15px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); opacity: .7; text-shadow: 2px 2px 0 var(--sh) }
 .tc-wrap { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums }
-.dot { width: 10px; height: 10px; background: var(--accent); display: inline-block; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%) }
+.dot { display: none; width: 10px; height: 10px; background: var(--accent); display: inline-block; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%) }
 .slot { position: relative; height: 190px; margin-top: 12px }
 .line { position: absolute; left: 0; right: 0; top: 0; font: 700 40px/1.14 var(--display); letter-spacing: -0.02em; text-transform: uppercase; text-shadow: 3px 3px 0 var(--sh) }
 .next { position: relative; height: 28px; margin-top: 6px }
