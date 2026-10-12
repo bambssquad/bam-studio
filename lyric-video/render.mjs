@@ -30,6 +30,7 @@ async function page() {
 }
 const shot = async (pg, t) => { await pg.evaluate(t => window.__seek(t), t); return pg.screenshot({ type: 'jpeg', quality: 92, clip: { x: 0, y: 0, width: W, height: H } }) }
 
+if (process.argv.includes('--dumpcuts')) { const pg = await page(); fs.writeFileSync(arg('dumpcuts', 'out/cuts.json'), JSON.stringify(await pg.evaluate(() => window.__cuts))); await browser.close(); server.close(); process.exit(0) }
 const stills = arg('stills')
 if (stills) {
   const out = arg('out', 'out/stills'); fs.mkdirSync(out, { recursive: true })

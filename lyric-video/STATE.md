@@ -24,3 +24,5 @@
 - align_words.py: start kata di-snap ke onset vokal (DP monoton, geser ≤0.6 s): 101 kata, median 0.09 s.
 - flat.js: motion blur sub-frame (shutter 180°, 4 sampel; 10 sampel di 0.36 s awal cut), grain di display space (12 fps), push/whip antar section 0.26 s (shot baru tidak animasi masuk sendiri saat push), spring overshoot untuk slide-in, boil dikunci ke frame time. Lirik: kata masuk blur→tajam. Player live tanpa sub-frame.
 - Bug ditemukan & diperbaiki: grain di ruang linear (warna kusam), autoClear menghapus akumulasi (energi 1/4), nama still 1 desimal saling timpa.
+- 2026-10-12 v4 transisi (permintaan Bam: transisi unik & saling menyambung): yt-dlp juga ditolak proxy (403) untuk 3 reel IG + YouTube → belum dipakai.
+- Semua 64 cut sekarang transisi yang tumbuh dari anchor shot sebelumnya, titik tengah = beat: pupil zoom (close→, 12), heart iris (duo/heart→, 18), star iris (rays/title→, 7), card colour block (cards→, 9), circle iris + rim aksen (motif→, 8), bands (walk→, 1), section: slash 3 warna (5) / whip push (4). Shader komposit A/B per sub-frame (motion blur tetap). Shot clock lead = d/2+0.3 s supaya isi sudah ada saat reveal.

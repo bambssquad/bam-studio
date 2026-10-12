@@ -21,6 +21,7 @@ window.__ready = (async () => {
   const lyr = buildLyrics(strip, lyrics, SCENES, audio, world.info)
   const title = buildTitle(document.getElementById('title'))
   seek = t => { world.seek(t); lyr(t); title(t) }
+  window.__cuts = world.cuts.map(c => ({ t: c.t, type: c.type, kind: c.tr?.kind ?? -1, d: c.tr?.d ?? 0, t0: c.tr?.t0 ?? 0 }))
   seek(0); return true
 })()
 window.__seek = t => { seek(t); return new Promise(res => requestAnimationFrame(() => res(true))) }

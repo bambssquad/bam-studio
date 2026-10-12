@@ -202,6 +202,7 @@ function buildShot(type, ctx) {
   const okFor = who => { const cs = cols.filter(c => c !== who.skin && c !== who.hair); return cs.length ? cs : [C.red, C.blue] }
   const pick = (i, who = ch) => { const cs = okFor(who); return cs[i % cs.length] }
   let up = () => {}
+  const AN = [0, 0] // transition anchor: where the next shot grows out of this one
   if (type === 'close') {
     const p1 = R(-300, -360, 600, 1500, pick(0)), p2 = R(-200, -150, 400, 700, pick(1))
     add(g, p1, p2)
@@ -211,9 +212,11 @@ function buildShot(type, ctx) {
     up = (u, t, beat, en, sing) => {
       slideIn(p1, [-1400 * flip, 0], [flip * 380, 0], u); slideIn(p2, [0, 1600], [-flip * 330, 520], u, 0.06)
       f.position.set(fx + Math.sin(t * 0.7) * 10 - u * 14 * flip, fy + u * 6, 0); f.rotation.z = rot; f.scale.setScalar(1).multiply(new THREE.Vector3(2.5 * flip, 2.5, 1)).multiplyScalar(1 + u * 0.012 + beat * 0.01)
+      const ex = 62 * f.scale.x, ey = 18 * f.scale.y; AN[0] = f.position.x + ex * Math.cos(rot) - ey * Math.sin(rot); AN[1] = f.position.y + ex * Math.sin(rot) + ey * Math.cos(rot) // pupil
       animateChar(f, t, sing, en, seed); ui.userData.sp.rotation.z = t * 2
     }
   } else if (type === 'rays') {
+    AN[0] = 0; AN[1] = 180
     const rays = []; for (let i = 0; i < 16; i++) { const m = tri(cols[i % cols.length]); m.userData = { a: (i / 16) * Math.PI * 2 + r() * 0.2, L: 700 + r() * 600, w: 0.7 + r() * 1.3 }; add(g, m); rays.push(m) }
     const lines = []; for (let i = 0; i < 10; i++) { const l = R(0, -1, 300 + r() * 300, 3, C.white); l.userData = { a: r() * Math.PI * 2, o: r() }; add(g, l); lines.push(l) }
     const f = faceFront(ch); add(g, f); const ui = uiCluster(ctx, cols, seed); add(g, ui)
@@ -236,12 +239,13 @@ function buildShot(type, ctx) {
     const ui = uiCluster(ctx, cols, seed); add(g, ui)
     up = (u, t, beat, en, sing) => {
       cards.forEach((m, i) => slideIn(m, m.userData.from, [m.userData.x, m.userData.y], u, i * 0.05))
-      mo.position.set(cards[0].position.x + 330, cards[0].position.y + 330, 0); animateMotif(mo, u, t, beat, en)
+      mo.position.set(cards[0].position.x + 330, cards[0].position.y + 330, 0); animateMotif(mo, u, t, beat, en); AN[0] = mo.position.x; AN[1] = mo.position.y
       face.position.set(cards[3].position.x + 265, cards[3].position.y + 380, 0); animateChar(face, t, sing, en, seed)
       big.position.set(cards[2].position.x + 30, cards[2].position.y + 470, 0); spk.position.set(cards[1].position.x + 150, cards[1].position.y + 200, 0); spk.rotation.z = t * 1.5
       txt.position.set(cards[4].position.x + 28, cards[4].position.y + 76, 0)
     }
   } else if (type === 'duo') {
+    AN[0] = 0; AN[1] = 300
     const bl = R(-540, -720, 540, 1440, pick(0, CH.a)), br = R(0, -720, 540, 1440, pick(1, CH.b)); add(g, bl, br)
     const A = profile(CH.a), B = profile(CH.b); B.scale.x = -1; add(g, A, B)
     const mo = motif(mot === 'heart' || mot === 'arcs' ? mot : 'arcs', [C.white, C.ink, ...cols], seed); mo.scale.setScalar(0.55); add(g, mo)
@@ -259,6 +263,7 @@ function buildShot(type, ctx) {
     const ui = uiCluster(ctx, [C.ink, ...cols], seed); add(g, ui)
     up = (u, t, beat, en) => { const k = outExpo(u / 0.3); mo.scale.setScalar(0.6 + 0.4 * k + beat * 0.02); animateMotif(mo, u, t, beat, en); bg.scale.y = k }
   } else if (type === 'walk') {
+    AN[0] = 0; AN[1] = -60
     const skyc = cols.find(c => ![C.white, C.yellow, C.violet].includes(c)) ?? C.blue, sky = R(-540, -720, 1080, 1440, skyc); add(g, sky)
     const city = motif('city', [C.ink, C.yellow, '#2a2a34'], seed); city.position.y = 520; add(g, city)
     add(g, R(-540, -720, 1080, 520, C.white), R(-540, -205, 1080, 10, C.ink))
@@ -269,6 +274,7 @@ function buildShot(type, ctx) {
       A.position.set(-130, -200, 0); B.position.set(130, -200, 0); walk(A, t * 0.95); walk(B, t * 0.95 + 0.1)
     }
   } else if (type === 'title') {
+    AN[0] = 0; AN[1] = 240
     const rays = []; for (let i = 0; i < 22; i++) { const m = tri(cols[i % cols.length]); m.userData = { a: (i / 22) * Math.PI * 2 + r() * 0.15, L: 800 + r() * 700, w: 0.8 + r() }; add(g, m); rays.push(m) }
     add(g, M(circleShape(0, 0, 210), C.ink))
     const sps = [0, 1, 2, 3].map(i => { const s = sparkle(24 + i * 10, C.white); s.position.set(-420 + r() * 840, -300 + r() * 1100, 0); add(g, s); return s })
@@ -278,7 +284,7 @@ function buildShot(type, ctx) {
       sps.forEach((s, i) => { s.rotation.z = t * (0.8 + i * 0.2); s.scale.setScalar(0.7 + 0.3 * Math.sin(t * 3 + i)) })
     }
   }
-  return { g, update: up }
+  return { g, update: up, anchor: AN, color: type === 'cards' ? pick(0) : null }
 }
 
 // ---------- world ----------
@@ -310,21 +316,77 @@ export function buildWorld(canvas, audio, lines) {
   })
   const cutAt = t => { let lo = 0; for (let i = 0; i < cuts.length; i++) if (cuts[i].t <= t) lo = i; return lo }
   const singing = t => lines.some(l => l.words.some(w => t >= w.s && t < w.e)) ? 1 : 0
-  // section changes get a push transition; cuts inside a section stay hard (on the beat)
-  const TR = 0.26
-  cuts.forEach((c, n) => { c.push = n > 0 && cuts[n - 1].s !== c.s ? (n % 2 ? 1 : -1) : 0 })
-  const ease = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
+  // ---------- linked transitions ----------
+  // Every cut grows out of something already on screen in the outgoing shot (its anchor): the pupil, the heart,
+  // the ray centre, a card's colour. Window is centred on the beat so the hand-over lands on it.
+  const T = { iris: 0, heart: 1, star: 2, block: 3, slash: 4, pupil: 5, push: 6, bands: 7 }
+  cuts.forEach((c, n) => {
+    if (n === 0) return
+    const a = cuts[n - 1], sec = a.s !== c.s, reff = c.s.every <= 4
+    let kind
+    if (sec) kind = n % 2 ? T.slash : T.push
+    else if (a.type === 'close') kind = T.pupil
+    else if (a.type === 'duo' || a.mot === 'heart') kind = T.heart
+    else if (a.type === 'rays' || a.type === 'title') kind = T.star
+    else if (a.type === 'cards') kind = T.block
+    else if (a.type === 'walk') kind = T.bands
+    else kind = T.iris
+    const d = kind === T.pupil ? 0.62 : sec ? 0.56 : reff ? 0.36 : 0.48
+    c.tr = { kind, d, t0: c.t - d * 0.5, dir: n % 2 ? 1 : -1 }
+  })
+  const easeIO = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
+  const trAt = t => { for (let i = 1; i < cuts.length; i++) { const r = cuts[i].tr; if (t >= r.t0 && t < r.t0 + r.d) return i } return -1 }
 
-  // post: sub-frame accumulation (180° shutter motion blur) + film grain, lyric zone masked to ink
-  const RT = () => new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType, samples: 4 })
-  const frame = RT(), accum = new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType })
+  const RT = (samples = 4) => new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType, samples })
+  const frame = RT(), rtA = RT(), rtB = RT(), accum = RT(0)
   const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2))
   const quadScene = new THREE.Scene(); quadScene.add(quad)
   const addMat = new THREE.MeshBasicMaterial({ map: frame.texture, transparent: true, blending: THREE.AdditiveBlending, depthTest: false })
+  const VS = 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }'
+  const col = () => new THREE.Color()
+  const trMat = new THREE.ShaderMaterial({
+    uniforms: { A: { value: rtA.texture }, B: { value: rtB.texture }, p: { value: 0 }, kind: { value: 0 }, c: { value: new THREE.Vector2() },
+      c1: { value: col() }, c2: { value: col() }, c3: { value: col() }, dir: { value: 1 } },
+    vertexShader: VS,
+    fragmentShader: `uniform sampler2D A, B; uniform float p, dir; uniform int kind; uniform vec2 c; uniform vec3 c1, c2, c3; varying vec2 vUv;
+      const vec2 S = vec2(1080., 1920.);
+      float eio(float x){ x = clamp(x, 0., 1.); return x < .5 ? 4.*x*x*x : 1. - pow(-2.*x + 2., 3.) / 2.; }
+      float eo(float x){ x = clamp(x, 0., 1.); return 1. - pow(1. - x, 3.); }
+      float aa(float d){ return clamp(.5 - d / 1.5, 0., 1.); }            // 1 inside (d<0), 1.5px soft edge
+      float sdHeart(vec2 q){ q.x = abs(q.x); if (q.y + q.x > 1.) return sqrt(dot(q - vec2(.25, .75), q - vec2(.25, .75))) - sqrt(2.) / 4.;
+        return sqrt(min(dot(q - vec2(0., 1.), q - vec2(0., 1.)), dot(q - .5 * max(q.x + q.y, 0.), q - .5 * max(q.x + q.y, 0.)))) * sign(q.x - q.y); }
+      vec3 tA(vec2 u){ return texture2D(A, u).rgb; } vec3 tB(vec2 u){ return texture2D(B, u).rgb; }
+      // shape iris: B inside a growing shape, accent rim riding its edge
+      vec3 iris(float d, float w, vec2 u){ vec3 o = mix(tA(u), tB(u), aa(d)); return mix(o, c1, aa(abs(d + w * .5) - w * .5) * step(.001, w)); }
+      void main(){
+        vec2 px = vUv * S, cp = c * S, q = px - cp; vec3 o;
+        if (kind == 0) { float e = eio(p), R = e * 2400.; o = iris(length(q) - R, 34. * (1. - e), vUv); }
+        else if (kind == 1) { float e = eio(p), k = max(e * 3400., 1.); float d = sdHeart(vec2(q.x, q.y + .5 * k) / k) * k;
+          o = iris(d, 40. * (1. - e), vUv); }
+        else if (kind == 2) { float e = eio(p), a = atan(q.y, q.x) + e * 1.6, r = length(q);
+          float R = e * 4400. * (.45 + .55 * pow(abs(cos(a * 2.)), 6.)); o = iris(r - R, 30. * (1. - e), vUv); }
+        else if (kind == 3) { // card colour block carries over: covers A, then peels off to B (three layered edges)
+          float x = dir > 0. ? vUv.x : 1. - vUv.x, a = eio(p * 1.25), b = eio(p * 1.25 - .25);
+          o = x < b ? tB(vUv) : x < a ? c1 : tA(vUv);
+          if (x < a && x > a - .05 && x >= b) o = c2; if (x < b + .03 && x >= b) o = c3; }
+        else if (kind == 4) { // diagonal slash: three accent bands sweep, B behind them
+          vec2 n = normalize(vec2(1., .42 * dir)); float s = dot(vUv * S - S * .5, n) / 1300. + .5, f = eio(p) * 1.5 - .2;
+          o = s < f - .16 ? tB(vUv) : s < f - .1 ? c3 : s < f - .05 ? c2 : s < f ? c1 : tA(vUv); }
+        else if (kind == 5) { // into the pupil: zoom A toward the eye until it is all pupil, then the pupil opens onto B
+          float z = eo(p / .55), zoom = 1. + z * z * 34.; vec2 ua = c + (vUv - c) / zoom;
+          if (p < .55) o = tA(ua); else { float e = eo((p - .55) / .45), R = e * 2300.; o = mix(vec3(.0058), tB(vUv), aa(length(q) - R)); } }
+        else if (kind == 6) { float k = eio(p); vec2 ua = vUv + vec2(dir * k, 0.), ub = vUv - vec2(dir * (1. - k), 0.);
+          o = (ua.x >= 0. && ua.x <= 1.) ? tA(ua) : tB(ub); }
+        else { // bands: 8 horizontal strips slide across, alternating sides, staggered
+          float i = floor(vUv.y * 8.), side = mod(i, 2.) < 1. ? 1. : -1., k = eio(p * 1.5 - i * .06);
+          float x = side > 0. ? vUv.x : 1. - vUv.x; o = x < k ? tB(vUv) : (x < k + .02 ? c1 : tA(vUv)); }
+        gl_FragColor = vec4(o, 1.);
+      }`,
+  })
   const ink = new THREE.Color(C.ink)
   const outMat = new THREE.ShaderMaterial({
     uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, ink: { value: ink } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }',
+    vertexShader: VS,
     fragmentShader: `uniform sampler2D tex; uniform float seed; uniform vec3 ink; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
       void main(){ vec3 c = texture2D(tex, vUv).rgb; if (vUv.y < 0.25) c = ink;
@@ -334,32 +396,36 @@ export function buildWorld(canvas, audio, lines) {
         gl_FragColor.rgb += g * .035;
       }`,
   })
-  let shown = new Set()
-  function pose(t) {
-    const n = cutAt(t), c = cuts[n], u = t - c.t, beat = audio.pulse(t), en = audio.rms(t), sing = singing(t)
-    const vis = new Set([n]), dir = c.push
-    shots[n].update(dir ? u + 0.6 : u, t, beat, en, sing) // on a push the push is the entry; internal slide-ins already settled
-    if (dir && u < TR && n > 0) { // push: old shot leaves, new shot arrives, same direction
-      const k = ease(u / TR), p = cuts[n - 1]; vis.add(n - 1)
-      shots[n - 1].update(t - p.t, t, beat, en, sing)
-      shots[n - 1].g.position.x = -dir * 1080 * k; shots[n].g.position.x = dir * 1080 * (1 - k)
-    } else shots[n].g.position.x = 0
-    for (const i of shown) if (!vis.has(i)) shots[i].g.visible = false
-    for (const i of vis) shots[i].g.visible = true
-    shown = vis
-    const hot = c.s.every <= 4 ? 1 : 0 // reff: small camera punch on strong beats
-    root.position.set(hot * boil(t * 2, 7, 10) * beat, 240 + hot * boil(t * 2, 9, 10) * beat, 0)
+
+  function showOnly(i) { shots.forEach((s, k) => { s.g.visible = k === i }) }
+  function poseShot(i, t) {
+    const c = cuts[i], beat = audio.pulse(t), en = audio.rms(t), hot = c.s.every <= 4 ? 1 : 0
+    const lead = c.tr ? c.tr.d * 0.5 + 0.3 : 0
+    shots[i].update(Math.max(0, t - c.t + lead), t, beat, en, singing(t))
+    root.position.set(hot * boil(t * 2, 7, 10) * beat, 240 + hot * boil(t * 2, 9, 10) * beat, 0) // reff: camera punch
     root.scale.setScalar(1 + hot * beat * 0.012)
+  }
+  const draw = target => { renderer.setRenderTarget(target); renderer.setClearColor(C.ink, 1); renderer.clear(); renderer.render(scene, cam) }
+  function renderAt(t) { // one sub-frame into `frame`
+    const m = trAt(t)
+    if (m < 0) { const n = cutAt(t); showOnly(n); poseShot(n, t); draw(frame); return }
+    const r = cuts[m].tr, a = shots[m - 1]
+    showOnly(m - 1); poseShot(m - 1, t); draw(rtA)
+    const ax = (a.anchor[0] * root.scale.x + root.position.x + 540) / 1080, ay = (a.anchor[1] * root.scale.y + root.position.y + 960) / 1920
+    showOnly(m); poseShot(m, t); draw(rtB)
+    const U = trMat.uniforms, cs = cuts[m].s.cols
+    U.p.value = (t - r.t0) / r.d; U.kind.value = r.kind; U.dir.value = r.dir; U.c.value.set(ax, ay)
+    U.c1.value.set(a.color ?? cuts[m].s.accent); U.c2.value.set(cs[1 % cs.length]); U.c3.value.set(cs[2 % cs.length])
+    quad.material = trMat; renderer.setRenderTarget(frame); renderer.render(quadScene, quadCam)
   }
   let SUB = 4
   function seek(t) {
     renderer.setRenderTarget(accum); renderer.setClearColor(0x000000, 1); renderer.clear()
-    // fast moves (cut entries, pushes) need more samples or the blur steps into ghost copies
-    const N = SUB > 1 && t - cuts[cutAt(t)].t < 0.36 ? 10 : SUB
+    // fast moves (transitions, cut entries) need more samples or the blur steps into ghost copies
+    const N = SUB > 1 && (trAt(t) >= 0 || t - cuts[cutAt(t)].t < 0.36) ? 10 : SUB
     for (let s = 0; s < N; s++) {
       const dt = (s / N) * (0.5 / 30); clock.off = dt
-      pose(t - dt)
-      renderer.setRenderTarget(frame); renderer.setClearColor(C.ink, 1); renderer.clear(); renderer.render(scene, cam)
+      renderAt(t - dt)
       addMat.opacity = 1 / N; quad.material = addMat; renderer.setRenderTarget(accum); renderer.render(quadScene, quadCam)
     }
     clock.off = 0
