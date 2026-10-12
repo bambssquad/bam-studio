@@ -302,7 +302,7 @@ function buildShot(type, ctx) {
     }
   } else if (type === 'duo') {
     AN[0] = 0; AN[1] = 300
-    const bl = R(-540, -720, 540, 1440, pick(0, CH.a)), br = R(0, -720, 540, 1440, pick(1, CH.b)); add(g, bl, br)
+    const bl = R(-540, -960, 540, 1920, pick(0, CH.a)), br = R(0, -960, 540, 1920, pick(1, CH.b)); add(g, bl, br)
     const A = profile(CH.a), B = profile(CH.b); B.scale.x = -1; add(g, A, B)
     const mo = motif(mot === 'heart' || mot === 'arcs' ? mot : 'arcs', [C.white, C.ink, ...cols], seed); mo.scale.setScalar(0.55); add(g, mo)
     const ui = uiCluster(ctx, cols, seed); add(g, ui)
@@ -314,15 +314,15 @@ function buildShot(type, ctx) {
       mo.position.set(0, 300, 0); animateMotif(mo, u, t, beat, en)
     }
   } else if (type === 'motif') {
-    const bgc = pick(2), bg = R(-540, -720, 1080, 1440, bgc); add(g, bg)
+    const bgc = pick(2), bg = R(-540, -960, 1080, 1920, bgc); add(g, bg)
     const mo = motif(mot, cols.filter(c => c !== bgc), seed); add(g, mo)
     const ui = uiCluster(ctx, [C.ink, ...cols], seed); add(g, ui)
     up = (u, t, beat, en) => { const k = outExpo(u / 0.3); mo.scale.setScalar(0.6 + 0.4 * k + beat * 0.02); animateMotif(mo, u, t, beat, en); bg.scale.y = k }
   } else if (type === 'walk') {
     AN[0] = 0; AN[1] = -60
-    const skyc = cols.find(c => ![C.white, C.yellow, C.violet].includes(c)) ?? C.blue, sky = R(-540, -720, 1080, 1440, skyc); add(g, sky)
+    const skyc = cols.find(c => ![C.white, C.yellow, C.violet].includes(c)) ?? C.blue, sky = R(-540, -960, 1080, 1920, skyc); add(g, sky)
     const city = motif('city', [C.ink, C.yellow, '#2a2a34'], seed); city.position.y = 520; add(g, city)
-    add(g, R(-540, -720, 1080, 520, C.white), R(-540, -205, 1080, 10, C.ink))
+    add(g, R(-540, -960, 1080, 760, C.white), R(-540, -205, 1080, 10, C.ink))
     const A = walker(CH.a), B = walker(CH.b); A.scale.setScalar(2.6); B.scale.setScalar(2.6); add(g, A, B)
     const ui = uiCluster(ctx, cols, seed); add(g, ui)
     up = (u, t, beat, en) => {
@@ -358,7 +358,9 @@ function buildShot(type, ctx) {
     base(u, t, beat, en, sing)
     if (ann) { if (type === 'close') ann.position.set(AN[0], AN[1], 0); ann.userData.reveal(smooth(0.55, 1.25, u)) }
   }
-  return { g, update: up, anchor: AN, color: type === 'cards' ? pick(0) : null }
+  const flipSide = type === 'close' ? (g.children.find(o => o.userData?.eyes)?.scale.x ?? 1) : 1
+  const cap = { close: [flipSide > 0 ? 64 : 560, 1170, 2], rays: [64, 1560, 0], cards: [64, 64, 0], duo: [64, 84, 0], motif: [64, 1560, 0], walk: [64, 1600, 1], title: [64, 1560, 0] }[type]
+  return { g, update: up, anchor: AN, color: type === 'cards' ? pick(0) : null, cap }
 }
 
 // ---------- world ----------
@@ -367,7 +369,7 @@ export function buildWorld(canvas, audio, lines) {
   renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false); renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.setClearColor(C.ink); renderer.autoClear = false // accumulation clears explicitly
   const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-540, 540, 960, -960, -10, 10)
-  const root = new THREE.Group(); root.position.y = 240; scene.add(root) // shot area centre (top 1440 px)
+  const root = new THREE.Group(); scene.add(root) // full frame, compositions centred
 
   const lineAt = t => { let k = -1; lines.forEach((l, i) => { if (t >= l.start - 0.4 && t < l.end + 0.8) k = i }); return k }
   const fmt = t => `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(Math.floor(t % 60)).padStart(2, '0')}`
@@ -466,13 +468,13 @@ export function buildWorld(canvas, audio, lines) {
     vertexShader: VS,
     fragmentShader: `uniform sampler2D tex, paper; uniform float seed; uniform vec3 ink; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
-      void main(){ vec3 c = texture2D(tex, vUv).rgb; if (vUv.y < 0.25) c = ink;
+      void main(){ vec3 c = texture2D(tex, vUv).rgb;
         gl_FragColor = vec4(c, 1.);
         #include <colorspace_fragment>
         // print layer: paper fibre + 45° halftone in the mid-tones (shot area only), then grain
         vec2 px = vUv * vec2(1080., 1920.);
         float pf = texture2D(paper, vUv * vec2(2.11, 3.75)).r; gl_FragColor.rgb *= mix(.9, 1.025, pf);
-        if (vUv.y >= .25) { float l = dot(gl_FragColor.rgb, vec3(.333)); vec2 q = mat2(.7071, -.7071, .7071, .7071) * px / 7.;
+        { float l = dot(gl_FragColor.rgb, vec3(.333)); vec2 q = mat2(.7071, -.7071, .7071, .7071) * px / 7.;
           float d = length(fract(q) - .5), r = .62 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.04, .3, l) * smoothstep(.98, .6, l);
           gl_FragColor.rgb *= 1. - .085 * smoothstep(r, r - .12, d); }
         float g = h(floor(px / 1.5)) - .5; // grain in display space
@@ -485,7 +487,7 @@ export function buildWorld(canvas, audio, lines) {
     const c = cuts[i], beat = audio.pulse(t), en = audio.rms(t), hot = c.s.every <= 4 ? 1 : 0
     const lead = c.tr ? c.tr.d * 0.5 + 0.3 : 0
     shots[i].update(Math.max(0, t - c.t + lead), t, beat, en, singing(t))
-    root.position.set(hot * boil(t * 2, 7, 10) * beat, 240 + hot * boil(t * 2, 9, 10) * beat, 0) // reff: camera punch
+    root.position.set(hot * boil(t * 2, 7, 10) * beat, hot * boil(t * 2, 9, 10) * beat, 0) // reff: camera punch
     root.scale.setScalar((1 + hot * beat * 0.012) * (1 + 0.035 * smooth(0, 4.5, t - c.t))) // + slow Ken Burns push
   }
   const draw = target => { renderer.setRenderTarget(target); renderer.setClearColor(C.ink, 1); renderer.clear(); renderer.render(scene, cam) }
@@ -517,5 +519,5 @@ export function buildWorld(canvas, audio, lines) {
     quad.material = outMat; renderer.setRenderTarget(null); renderer.render(quadScene, quadCam)
   }
   seek.setQuality = q => { SUB = q }
-  return { seek, info: t => { const n = cutAt(t), c = cuts[n]; return { shot: n + 1, total: cuts.length, accent: c.s.accent, type: c.type } }, cuts }
+  return { seek, info: t => { const n = cutAt(t), c = cuts[n]; return { shot: n + 1, total: cuts.length, accent: c.s.accent, type: c.type, cap: shots[n].cap, capPrev: shots[Math.max(0, n - 1)].cap, cutT: c.t } }, cuts }
 }

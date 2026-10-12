@@ -47,6 +47,10 @@ export function buildLyrics(root, lines, scenes, audio, info) {
     })
     const sc = scenes.find(s => t >= s.t0 && t < s.t1) ?? scenes[scenes.length - 1]
     const nf = info(t); root.style.setProperty('--accent', nf.accent)
+    // caption block travels to the new shot's slot with a short ease (small in-frame lyric, not a subtitle bar)
+    const k = clamp((t - nf.cutT) / 0.45), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
+    const px = nf.capPrev[0] + (nf.cap[0] - nf.capPrev[0]) * e, py = nf.capPrev[1] + (nf.cap[1] - nf.capPrev[1]) * e
+    root.parentElement.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0)`; const mode = (e < 0.5 ? nf.capPrev : nf.cap)[2]; root.classList.toggle('dark', mode === 1); root.classList.toggle('plate', mode === 2)
     const [r, g, b] = [1, 3, 5].map(i => parseInt(nf.accent.slice(i, i + 2), 16) / 255), lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
     root.style.setProperty('--hl-ink', lum > 0.42 ? 'var(--bg)' : 'var(--ink)') // legible text on the marker
     label.textContent = `✦ ${sc.label} · shot ${String(nf.shot).padStart(3, '0')}/${nf.total}`
