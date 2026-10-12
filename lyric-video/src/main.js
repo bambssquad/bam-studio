@@ -20,7 +20,7 @@ window.__ready = (async () => {
   if (!RENDER) world.seek.setQuality(1) // live player: no sub-frame blur
   const lyr = buildLyrics(strip, lyrics, SCENES, audio, world.info)
   const title = buildTitle(document.getElementById('title'))
-  seek = t => { world.seek(t); lyr(t); title(t) }
+  seek = t => { world.seek(t); const tq = Math.floor(t * 12 + 1e-6) / 12; lyr(tq); title(tq) } // type on twos
   window.__cuts = world.cuts.map(c => ({ t: c.t, type: c.type, kind: c.tr?.kind ?? -1, d: c.tr?.d ?? 0, t0: c.tr?.t0 ?? 0 }))
   seek(0); return true
 })()

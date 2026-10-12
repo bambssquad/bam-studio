@@ -361,7 +361,7 @@ function buildShot(type, ctx) {
   const base = up
   up = (u, t, beat, en, sing) => {
     base(u, t, beat, en, sing)
-    if (ann) { if (type === 'close') ann.position.set(AN[0], AN[1], 0); ann.userData.reveal(smooth(0.55, 1.25, u)) }
+    if (ann) { if (type === 'close') ann.position.set(AN[0], AN[1], 0); ann.userData.reveal(smooth(0.55, 1.25, Math.floor(u * 8) / 8)) } // annotations on threes
   }
   const flipSide = type === 'close' ? (g.children.find(o => o.userData?.eyes)?.scale.x ?? 1) : 1
   const cap = { close: [flipSide > 0 ? 64 : 560, 1170, 2], rays: [64, 1560, 0], cards: [64, 64, 0], duo: [64, 84, 0], motif: [64, 110, 0], walk: [64, 1600, 1], title: [64, 1560, 0] }[type]
@@ -469,22 +469,34 @@ export function buildWorld(canvas, audio, lines) {
   })
   const ink = new THREE.Color(C.ink)
   const paperTx = new THREE.CanvasTexture(paperCanvas(512, 33)); paperTx.wrapS = paperTx.wrapT = THREE.RepeatWrapping
+  // comic-print post (Spider-Verse-like technique, no borrowed characters): colour misregistration, ink edges,
+  // Ben-Day dots in mid-tones, hatching in shadows, then paper + grain. Glitch widens on strong beats / transitions.
   const outMat = new THREE.ShaderMaterial({
-    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, ink: { value: ink }, paper: { value: paperTx } },
+    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, paper: { value: paperTx }, mis: { value: 2.5 } },
     vertexShader: VS,
-    fragmentShader: `uniform sampler2D tex, paper; uniform float seed; uniform vec3 ink; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tex, paper; uniform float seed, mis; varying vec2 vUv;
+      const vec2 S = vec2(1080., 1920.);
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
-      void main(){ vec3 c = texture2D(tex, vUv).rgb;
+      float lum(vec3 c){ return dot(c, vec3(.2126, .7152, .0722)); }
+      void main(){
+        vec2 px = vUv * S, o = vec2(.7071, -.7071) * mis / S;
+        vec3 c = vec3(texture2D(tex, vUv + o).r, texture2D(tex, vUv).g, texture2D(tex, vUv - o).b);
+        // ink outline: Sobel on luminance at 1.5 px
+        vec2 e = 1.5 / S; float tl = lum(texture2D(tex, vUv + vec2(-e.x, e.y)).rgb), tr = lum(texture2D(tex, vUv + e).rgb),
+          bl = lum(texture2D(tex, vUv - e).rgb), br = lum(texture2D(tex, vUv + vec2(e.x, -e.y)).rgb);
+        float gx = (tr + br) - (tl + bl), gy = (tl + tr) - (bl + br), edge = smoothstep(.035, .11, sqrt(gx * gx + gy * gy));
+        c *= 1. - .82 * edge;
         gl_FragColor = vec4(c, 1.);
         #include <colorspace_fragment>
-        // print layer: paper fibre + 45° halftone in the mid-tones (shot area only), then grain
-        vec2 px = vUv * vec2(1080., 1920.);
-        float pf = texture2D(paper, vUv * vec2(2.11, 3.75)).r; gl_FragColor.rgb *= mix(.9, 1.025, pf);
-        { float l = dot(gl_FragColor.rgb, vec3(.333)); vec2 q = mat2(.7071, -.7071, .7071, .7071) * px / 7.;
-          float d = length(fract(q) - .5), r = .62 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.04, .3, l) * smoothstep(.98, .6, l);
-          gl_FragColor.rgb *= 1. - .085 * smoothstep(r, r - .12, d); }
-        float g = h(floor(px / 1.5)) - .5; // grain in display space
-        gl_FragColor.rgb += g * .035;
+        float l = lum(gl_FragColor.rgb);
+        // Ben-Day dots (15°, 10 px cell) in mid-tones
+        vec2 q = mat2(.9659, -.2588, .2588, .9659) * px / 10.; float d = length(fract(q) - .5);
+        float r = .55 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.18, .4, l) * smoothstep(.84, .64, l); // whites stay clean
+        gl_FragColor.rgb *= 1. - .16 * smoothstep(r, r - .1, d);
+        // hatching in shadows (not on the ink ground)
+        float hl = abs(fract((px.x + px.y) / 9.) - .5); gl_FragColor.rgb *= 1. - .14 * smoothstep(.12, .05, hl) * smoothstep(.06, .12, l) * smoothstep(.32, .18, l);
+        float pf = texture2D(paper, vUv * vec2(2.11, 3.75)).r; gl_FragColor.rgb *= mix(.94, 1.02, pf);
+        gl_FragColor.rgb += (h(floor(px / 1.5)) - .5) * .035; // grain
       }`,
   })
 
@@ -492,7 +504,8 @@ export function buildWorld(canvas, audio, lines) {
   function poseShot(i, t) {
     const c = cuts[i], beat = audio.pulse(t), en = audio.rms(t), hot = c.s.every <= 4 ? 1 : 0
     const lead = c.tr ? c.tr.d * 0.5 + 0.3 : 0
-    shots[i].update(Math.max(0, t - c.t + lead), t, beat, en, singing(t))
+    const tq = Math.floor((t + clock.off) * 12 + 1e-6) / 12 // on twos: shot content steps at 12 fps, camera/transitions stay on ones
+    shots[i].update(Math.max(0, tq - c.t + lead), tq, audio.pulse(tq), audio.rms(tq), singing(tq))
     root.position.set(hot * boil(t * 2, 7, 10) * beat, hot * boil(t * 2, 9, 10) * beat, 0) // reff: camera punch
     root.scale.setScalar((1 + hot * beat * 0.012) * (1 + 0.035 * smooth(0, 4.5, t - c.t))) // + slow Ken Burns push
   }
@@ -522,6 +535,8 @@ export function buildWorld(canvas, audio, lines) {
     }
     clock.off = 0; cam.clearViewOffset()
     outMat.uniforms.seed.value = Math.floor(t * 12) * 1.37 % 97
+    const m = trAt(t), hotc = cuts[cutAt(t)].s.every <= 4 ? 1 : 0, trk = m >= 0 ? Math.sin(Math.PI * clamp((t - cuts[m].tr.t0) / cuts[m].tr.d)) : 0
+    outMat.uniforms.mis.value = 2.5 + 7 * Math.max(trk, hotc * Math.pow(audio.pulse(t, 10), 2))
     quad.material = outMat; renderer.setRenderTarget(null); renderer.render(quadScene, quadCam)
   }
   seek.setQuality = q => { SUB = q }
