@@ -1,7 +1,7 @@
 // Flat 2D motion-graphics engine (style_guide.md). Ortho camera in pixels, origin centre, y up.
 // Everything is a pure function of t: cuts are snapped to the beat grid, shots are prebuilt and toggled.
 import * as THREE from 'three'
-import { clamp, lerp, smooth, outExpo, inCubic, hash, rng, boil } from './util.js'
+import { clamp, lerp, smooth, outExpo, inCubic, hash, rng, boil, clock } from './util.js'
 import { rectShape, circleShape, heartShape, starShape, ridge, skyline, noteShape } from './paper.js'
 
 export const C = { ink: '#0f0f12', red: '#ff2a55', yellow: '#ffc21a', violet: '#7b3cff', blue: '#2f4bff', lime: '#d8f03c', white: '#f4f1ea', orange: '#ff8a1e', dark: '#1d1d24' }
@@ -193,7 +193,9 @@ function uiCluster(info, cols, seed) {
 }
 
 // ---------- shots ----------
-function slideIn(m, from, to, u, d = 0, dur = 0.32) { const k = outExpo((u - d) / dur); m.position.x = lerp(from[0], to[0], k); m.position.y = lerp(from[1], to[1], k) }
+// damped spring (small overshoot) reads hand-keyed; pure expo ease reads generated
+const spring = x => (x <= 0 ? 0 : 1 - Math.exp(-6 * x) * (Math.cos(9.5 * x) + 0.55 * Math.sin(9.5 * x)))
+function slideIn(m, from, to, u, d = 0, dur = 0.32) { const k = spring((u - d) / dur * 1.6); m.position.x = lerp(from[0], to[0], k); m.position.y = lerp(from[1], to[1], k) }
 
 function buildShot(type, ctx) {
   const g = new THREE.Group(), { cols, ch, seed, mot } = ctx, r = rng(seed), other = ch.id === 'a' ? CH.b : CH.a
@@ -283,7 +285,7 @@ function buildShot(type, ctx) {
 export function buildWorld(canvas, audio, lines) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
   renderer.setPixelRatio(1); renderer.setSize(1080, 1920, false); renderer.outputColorSpace = THREE.SRGBColorSpace
-  renderer.setClearColor(C.ink)
+  renderer.setClearColor(C.ink); renderer.autoClear = false // accumulation clears explicitly
   const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-540, 540, 960, -960, -10, 10)
   const root = new THREE.Group(); root.position.y = 240; scene.add(root) // shot area centre (top 1440 px)
 
@@ -308,17 +310,62 @@ export function buildWorld(canvas, audio, lines) {
   })
   const cutAt = t => { let lo = 0; for (let i = 0; i < cuts.length; i++) if (cuts[i].t <= t) lo = i; return lo }
   const singing = t => lines.some(l => l.words.some(w => t >= w.s && t < w.e)) ? 1 : 0
-  let last = -1
-  function seek(t) {
-    const n = cutAt(t), c = cuts[n]
-    if (n !== last) { if (last >= 0) shots[last].g.visible = false; shots[n].g.visible = true; last = n }
-    const beat = audio.pulse(t), en = audio.rms(t), u = t - c.t
-    shots[n].update(u, t, beat, en, singing(t))
-    // reff shake on strong beats
-    const hot = c.s.every <= 4 ? 1 : 0
+  // section changes get a push transition; cuts inside a section stay hard (on the beat)
+  const TR = 0.26
+  cuts.forEach((c, n) => { c.push = n > 0 && cuts[n - 1].s !== c.s ? (n % 2 ? 1 : -1) : 0 })
+  const ease = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
+
+  // post: sub-frame accumulation (180° shutter motion blur) + film grain, lyric zone masked to ink
+  const RT = () => new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType, samples: 4 })
+  const frame = RT(), accum = new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType })
+  const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2))
+  const quadScene = new THREE.Scene(); quadScene.add(quad)
+  const addMat = new THREE.MeshBasicMaterial({ map: frame.texture, transparent: true, blending: THREE.AdditiveBlending, depthTest: false })
+  const ink = new THREE.Color(C.ink)
+  const outMat = new THREE.ShaderMaterial({
+    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, ink: { value: ink } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }',
+    fragmentShader: `uniform sampler2D tex; uniform float seed; uniform vec3 ink; varying vec2 vUv;
+      float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
+      void main(){ vec3 c = texture2D(tex, vUv).rgb; if (vUv.y < 0.25) c = ink;
+        gl_FragColor = vec4(c, 1.);
+        #include <colorspace_fragment>
+        float g = h(floor(vUv * vec2(1080., 1920.) / 1.5)) - .5; // grain in display space
+        gl_FragColor.rgb += g * .035;
+      }`,
+  })
+  let shown = new Set()
+  function pose(t) {
+    const n = cutAt(t), c = cuts[n], u = t - c.t, beat = audio.pulse(t), en = audio.rms(t), sing = singing(t)
+    const vis = new Set([n]), dir = c.push
+    shots[n].update(dir ? u + 0.6 : u, t, beat, en, sing) // on a push the push is the entry; internal slide-ins already settled
+    if (dir && u < TR && n > 0) { // push: old shot leaves, new shot arrives, same direction
+      const k = ease(u / TR), p = cuts[n - 1]; vis.add(n - 1)
+      shots[n - 1].update(t - p.t, t, beat, en, sing)
+      shots[n - 1].g.position.x = -dir * 1080 * k; shots[n].g.position.x = dir * 1080 * (1 - k)
+    } else shots[n].g.position.x = 0
+    for (const i of shown) if (!vis.has(i)) shots[i].g.visible = false
+    for (const i of vis) shots[i].g.visible = true
+    shown = vis
+    const hot = c.s.every <= 4 ? 1 : 0 // reff: small camera punch on strong beats
     root.position.set(hot * boil(t * 2, 7, 10) * beat, 240 + hot * boil(t * 2, 9, 10) * beat, 0)
-    renderer.setScissorTest(false); renderer.clear(); renderer.setScissorTest(true); renderer.setScissor(0, 480, 1080, 1440); renderer.setViewport(0, 0, 1080, 1920)
-    renderer.render(scene, cam)
+    root.scale.setScalar(1 + hot * beat * 0.012)
   }
+  let SUB = 4
+  function seek(t) {
+    renderer.setRenderTarget(accum); renderer.setClearColor(0x000000, 1); renderer.clear()
+    // fast moves (cut entries, pushes) need more samples or the blur steps into ghost copies
+    const N = SUB > 1 && t - cuts[cutAt(t)].t < 0.36 ? 10 : SUB
+    for (let s = 0; s < N; s++) {
+      const dt = (s / N) * (0.5 / 30); clock.off = dt
+      pose(t - dt)
+      renderer.setRenderTarget(frame); renderer.setClearColor(C.ink, 1); renderer.clear(); renderer.render(scene, cam)
+      addMat.opacity = 1 / N; quad.material = addMat; renderer.setRenderTarget(accum); renderer.render(quadScene, quadCam)
+    }
+    clock.off = 0
+    outMat.uniforms.seed.value = Math.floor(t * 12) * 1.37 % 97
+    quad.material = outMat; renderer.setRenderTarget(null); renderer.render(quadScene, quadCam)
+  }
+  seek.setQuality = q => { SUB = q }
   return { seek, info: t => { const n = cutAt(t), c = cuts[n]; return { shot: n + 1, total: cuts.length, accent: c.s.accent, type: c.type } }, cuts }
 }

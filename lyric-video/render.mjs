@@ -34,7 +34,7 @@ const stills = arg('stills')
 if (stills) {
   const out = arg('out', 'out/stills'); fs.mkdirSync(out, { recursive: true })
   const pg = await page(), ts = stills.split(',').map(Number), files = []
-  for (const t of ts) { const f = path.join(out, `t${String(t.toFixed(1)).padStart(6, '0')}.jpg`); const t0 = Date.now(); fs.writeFileSync(f, await shot(pg, t)); files.push(f); console.log(`still ${t}s ${Date.now() - t0}ms`) }
+  for (const t of ts) { const f = path.join(out, `t${t.toFixed(3).padStart(8, '0')}.jpg`); const t0 = Date.now(); fs.writeFileSync(f, await shot(pg, t)); files.push(f); console.log(`still ${t}s ${Date.now() - t0}ms`) }
   const cols = Math.min(6, files.length), rows = Math.ceil(files.length / cols)
   if (files.length === 1) fs.copyFileSync(files[0], path.join(out, 'contact.jpg')); else
   execFileSync('ffmpeg', ['-v', 'error', '-y', ...files.flatMap(f => ['-i', f]), '-filter_complex',

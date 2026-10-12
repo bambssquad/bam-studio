@@ -11,4 +11,6 @@ export function rng(seed) {
   return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296 }
 }
 // deterministic "boil" (stop-motion jitter) quantised to 8 fps
-export const boil = (t, seed, amp = 1) => (hash(Math.floor(t * 8) * 13 + seed) - 0.5) * amp
+// clock.off: sub-frame offset back to the frame time, so motion-blur samples share one boil step
+export const clock = { off: 0 }
+export const boil = (t, seed, amp = 1) => (hash(Math.floor((t + clock.off) * 8) * 13 + seed) - 0.5) * amp

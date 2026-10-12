@@ -20,3 +20,7 @@
 - Engine v2: src/flat.js (Three.js ortho, scissor 1440 px atas). world.js/figures.js dihapus. Render ~0.2-0.6 s/frame.
 - Critique v2: r1 6.8 (kontras bob putih, kartu keluar frame, motif kosong, label idle tumpuk) → r2 8.0 pass (+ fix label nomor terpotong).
 - v2 MP4 selesai: out/berbicara.mp4 (1080x1920, 30 fps, 219 s, h264+aac, 85.7 MB, 6570 frame, render 19.6 min). Decode check OK. Web player v2 di URL artifact yang sama (version 2).
+- 2026-10-12 v3 polish ("ga keliatan AI"): IG reel (3 link) tidak bisa diakses — www.instagram.com/scontent.cdninstagram.com diblok network policy; Bam perlu buka di Network access environment. Belum ada isi reel yang dipakai.
+- align_words.py: start kata di-snap ke onset vokal (DP monoton, geser ≤0.6 s): 101 kata, median 0.09 s.
+- flat.js: motion blur sub-frame (shutter 180°, 4 sampel; 10 sampel di 0.36 s awal cut), grain di display space (12 fps), push/whip antar section 0.26 s (shot baru tidak animasi masuk sendiri saat push), spring overshoot untuk slide-in, boil dikunci ke frame time. Lirik: kata masuk blur→tajam. Player live tanpa sub-frame.
+- Bug ditemukan & diperbaiki: grain di ruang linear (warna kusam), autoClear menghapus akumulasi (energi 1/4), nama still 1 desimal saling timpa.

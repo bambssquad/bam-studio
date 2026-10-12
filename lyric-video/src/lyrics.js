@@ -28,7 +28,8 @@ export function buildLyrics(root, lines, scenes, audio, info) {
         let y
         if (t < o.exit) y = (1 - outExpo((t - o.enter - j * 0.045) / 0.6)) * 112
         else y = -112 * inCubic((t - o.exit - j * 0.025) / 0.32)
-        const s = o.a.spans[j]; s.style.transform = `translate3d(0,${y.toFixed(2)}%,0)`
+        const s = o.a.spans[j], bl = t < o.exit ? (1 - clamp((t - o.enter - j * 0.045) / 0.35)) * 10 : clamp((t - o.exit - j * 0.025) / 0.32) * 6
+        s.style.transform = `translate3d(0,${y.toFixed(2)}%,0)`; s.style.filter = bl > 0.2 ? `blur(${bl.toFixed(1)}px)` : ''
         s.style.color = t >= w.s ? (t < w.e ? 'var(--accent)' : 'var(--ink)') : 'var(--ink-soft)'
       })
       if (t >= o.enter && t < o.exit) cur = k
