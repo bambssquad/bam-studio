@@ -15,3 +15,4 @@
 - Engine: src/world.js (9 scene pop-up, palet per waktu, orb matahari/bulan di tali), src/lyrics.js (strip kertas sobek, mask slide-up per baris + warna karaoke per kata), render.mjs (Playwright swiftshader → ffmpeg, worker paralel).
 - Critique: r1 6.5 (lirik bolong/tumpuk, kertas flat, figur kecil) → r2 7.6 (bayangan orb di langit) → r3 8.1 pass.
 - Web player: https://claude.ai/artifact/7fymR1Fx6W5rzoZc4PDuyt (privat). Build: vite build --outDir dist-web, lalu player.html (head/body di-strip).
+- 2026-10-12: Bam koreksi lirik: 'meniti mimpi', 'Berjalan tanpa suara'. Referensi desain baru: YouTube mcHiJn7NgII (diblok di container) → menunggu screenshot dari Bam. Render v1 dihentikan (~30%, kena batas waktu background).

@@ -6,7 +6,7 @@ GROUPS = [
  (16.6, 21.0, ["Suara angin menyapa rindu"]),
  (21.5, 25.7, ["Menari di bawah langit biru"]),
  (27.2, 31.3, ["Di jalanan yang lebar ini"]),
- (31.4, 37.6, ["Kita berdua menitip mimpi", "Berjalan tanpa berpikir"]),
+ (31.4, 37.6, ["Kita berdua meniti mimpi", "Berjalan tanpa suara"]),
  (47.2, 56.3, ["Kutemukan cinta yang sederhana", "Dalam keheningan yang membawa"]),
  (57.0, 64.5, ["Hatiku dan hatimu berbicara"]),
  (66.7, 76.6, ["Deburan ombak berbisik", "Mengajakku bernyanyi", "Langit malam yang manis"]),
