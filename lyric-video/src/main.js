@@ -14,7 +14,7 @@ let seek = () => {}
 
 // fonts first: shot labels are rasterised into canvas textures at build time
 window.__ready = (async () => {
-  await Promise.all(['700 64px Unbounded', '800 120px Unbounded', '500 18px "IBM Plex Mono"', '400 24px "IBM Plex Mono"'].map(f => document.fonts.load(f)))
+  await Promise.all(['700 64px Unbounded', '800 120px Unbounded', '500 18px "IBM Plex Mono"', '400 24px "IBM Plex Mono"', '700 64px Caveat'].map(f => document.fonts.load(f)))
   await document.fonts.ready
   const world = buildWorld(document.getElementById('gl'), audio, lyrics)
   if (!RENDER) world.seek.setQuality(1) // live player: no sub-frame blur

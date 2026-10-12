@@ -2,6 +2,7 @@
 @import '@fontsource/unbounded/800.css';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/caveat/700.css';
 
 /* flat motion-graphics look (style_guide.md): black ground, white bold sans, section accent on the sung word */
 :root { color-scheme: dark; --ink: #f4f1ea; --ink-soft: rgba(244, 241, 234, .26); --accent: #ff2a55; --bg: #0f0f12; --page: #08080a; --mono: 'IBM Plex Mono', ui-monospace, monospace; --display: 'Unbounded', 'Arial Black', sans-serif }
@@ -17,7 +18,9 @@ html, body { margin: 0; height: 100%; background: var(--page); color: var(--ink)
 #title .sub { margin-top: 22px; font: 500 22px var(--mono); letter-spacing: .3em; text-transform: uppercase; opacity: 0 }
 
 .m { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 0.02em 0.1em; margin-bottom: -0.1em }
-.i { display: inline-block; will-change: transform }
+.i { display: inline-block; will-change: transform; position: relative }
+.hl { position: absolute; left: -0.1em; right: -0.1em; top: 0.08em; bottom: 0.02em; background: var(--accent); transform-origin: left center; transform: scaleX(0); z-index: -1 }
+.line .i { isolation: isolate }
 
 /* lyric zone: bottom 480 px */
 #strip { position: absolute; left: 0; right: 0; bottom: 0; height: 480px }

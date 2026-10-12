@@ -10,6 +10,7 @@ export function buildLyrics(root, lines, scenes, audio, info) {
     const el = document.createElement('div'); el.className = cls
     const spans = l.words.map(w => {
       const m = document.createElement('span'); m.className = 'm'; const i = document.createElement('span'); i.className = 'i'; i.textContent = w.w
+      if (cls === 'line') { const hl = document.createElement('span'); hl.className = 'hl'; const k = (w.w.length * 7 + Math.round(w.s * 13)) % 5; hl.style.clipPath = `polygon(0 ${8 + k}%, 100% ${2 + k}%, 99% ${92 - k}%, 1% 100%)`; i.prepend(hl); i.hl = hl }
       m.appendChild(i); el.appendChild(m); el.appendChild(document.createTextNode(' ')); return i
     })
     return { el, spans }
@@ -30,7 +31,10 @@ export function buildLyrics(root, lines, scenes, audio, info) {
         else y = -112 * inCubic((t - o.exit - j * 0.025) / 0.32)
         const s = o.a.spans[j], bl = t < o.exit ? (1 - clamp((t - o.enter - j * 0.045) / 0.35)) * 10 : clamp((t - o.exit - j * 0.025) / 0.32) * 6
         s.style.transform = `translate3d(0,${y.toFixed(2)}%,0)`; s.style.filter = bl > 0.2 ? `blur(${bl.toFixed(1)}px)` : ''
-        s.style.color = t >= w.s ? (t < w.e ? 'var(--accent)' : 'var(--ink)') : 'var(--ink-soft)'
+        const nx = o.l.words[j + 1]?.s ?? w.e + 0.35, off = Math.min(nx, w.e + 0.35) // one marked word at a time
+        const on = t >= w.s && t < off, sw = clamp((t - w.s + 0.04) / 0.16) * (1 - clamp((t - off + 0.1) / 0.1))
+        s.style.color = on ? 'var(--hl-ink)' : t >= w.s ? 'var(--ink)' : 'var(--ink-soft)'
+        if (s.hl) s.hl.style.transform = `scaleX(${sw.toFixed(3)}) skewX(-8deg)`
       })
       if (t >= o.enter && t < o.exit) cur = k
       // preview of the following line, shown while this one is current
@@ -43,6 +47,8 @@ export function buildLyrics(root, lines, scenes, audio, info) {
     })
     const sc = scenes.find(s => t >= s.t0 && t < s.t1) ?? scenes[scenes.length - 1]
     const nf = info(t); root.style.setProperty('--accent', nf.accent)
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(nf.accent.slice(i, i + 2), 16) / 255), lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    root.style.setProperty('--hl-ink', lum > 0.42 ? 'var(--bg)' : 'var(--ink)') // legible text on the marker
     label.textContent = `✦ ${sc.label} · shot ${String(nf.shot).padStart(3, '0')}/${nf.total}`
     tc.textContent = `${fmt(t)} / ${fmt(audio.duration)}`
     dot.style.transform = `scale(${(0.6 + audio.pulse(t, 9) * 0.8).toFixed(3)})`

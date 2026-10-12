@@ -2,7 +2,7 @@
 // Everything is a pure function of t: cuts are snapped to the beat grid, shots are prebuilt and toggled.
 import * as THREE from 'three'
 import { clamp, lerp, smooth, outExpo, inCubic, hash, rng, boil, clock } from './util.js'
-import { rectShape, circleShape, heartShape, starShape, ridge, skyline, noteShape } from './paper.js'
+import { rectShape, circleShape, heartShape, starShape, ridge, skyline, noteShape, paperCanvas } from './paper.js'
 
 export const C = { ink: '#0f0f12', red: '#ff2a55', yellow: '#ffc21a', violet: '#7b3cff', blue: '#2f4bff', lime: '#d8f03c', white: '#f4f1ea', orange: '#ff8a1e', dark: '#1d1d24' }
 const CH = {
@@ -52,6 +52,59 @@ function label(lines, { size = 18, color = C.white, w = 300, weight = 500, lh = 
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.minFilter = THREE.LinearFilter
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }))
   m.geometry.translate(w / 2, -h / 2, 0); m.renderOrder = order++; return m
+}
+
+// ---------- hand-drawn annotation layer (explainer style) ----------
+// rough polyline -> ribbon mesh; drawRange reveals it like a pen stroke
+function stroke(pts, width, color, seed) {
+  const r = rng(seed), n = pts.length, pos = new Float32Array(n * 2 * 3), idx = []
+  for (let i = 0; i < n; i++) {
+    const [x, y] = pts[i], [x2, y2] = pts[Math.min(n - 1, i + 1)], [x0, y0] = pts[Math.max(0, i - 1)]
+    let dx = x2 - x0, dy = y2 - y0; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l
+    const taper = Math.min(1, i / 4, (n - 1 - i) / 4) * 0.7 + 0.3, w = width * taper * (0.8 + r() * 0.4) / 2
+    pos.set([x - dy * w, y + dx * w, 0, x + dy * w, y - dx * w, 0], i * 6)
+    if (i < n - 1) idx.push(i * 2, i * 2 + 1, i * 2 + 2, i * 2 + 1, i * 2 + 3, i * 2 + 2)
+  }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setIndex(idx)
+  const m = new THREE.Mesh(geo, mat(color)); m.renderOrder = order++; m.userData.total = idx.length; return m
+}
+function roughEllipse(cx, cy, rx, ry, seed, turns = 1.18) {
+  const r = rng(seed), pts = [], a0 = r() * 6.28, N = 70
+  for (let i = 0; i <= N; i++) { const a = a0 + (i / N) * turns * Math.PI * 2, k = 1 + (r() - 0.5) * 0.06 + (i / N) * 0.08; pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]) }
+  return pts
+}
+function roughLine(x0, y0, x1, y1, seed, bow = 0.12) {
+  const r = rng(seed), pts = [], N = 30, nx = -(y1 - y0), ny = x1 - x0
+  for (let i = 0; i <= N; i++) { const u = i / N, b = Math.sin(u * Math.PI) * bow + (r() - 0.5) * 0.008; pts.push([lerp(x0, x1, u) + nx * b, lerp(y0, y1, u) + ny * b]) }
+  return pts
+}
+// annotation = ink shadow stroke + white stroke (+ optional arrow head + handwritten label), revealed by p
+function annotation(parts, label, seed) {
+  const g = new THREE.Group(), strokes = []
+  parts.forEach((pts, i) => {
+    const sh = stroke(pts.map(([x, y]) => [x + 5, y - 5]), 13, C.ink, seed + i), wh = stroke(pts, 10, C.white, seed + i)
+    add(g, sh, wh); strokes.push([sh, wh])
+  })
+  let lab = null
+  if (label) { lab = labelHand(label.text); lab.position.set(label.x, label.y, 0); add(g, lab) }
+  g.userData.reveal = p => {
+    strokes.forEach(([a, b], i) => { const k = clamp(p * strokes.length - i); for (const m of [a, b]) m.geometry.setDrawRange(0, Math.floor(m.userData.total * k / 6) * 6) })
+    if (lab) { lab.material.opacity = clamp(p * 3 - 1.2); lab.position.y = label.y + (1 - clamp(p * 3 - 1.2)) * -14 }
+  }
+  g.userData.reveal(0); return g
+}
+function labelHand(text) {
+  const size = 64, c = document.createElement('canvas'), g0 = c.getContext('2d'); g0.font = `700 ${size}px Caveat, cursive`
+  const w = Math.ceil(g0.measureText(text).width) + 24, h = size + 26; c.width = w; c.height = h
+  const g = c.getContext('2d'); g.font = `700 ${size}px Caveat, cursive`; g.textBaseline = 'top'
+  g.fillStyle = C.ink; g.fillText(text, 15, 9); g.fillStyle = C.white; g.fillText(text, 11, 5)
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }))
+  m.geometry.translate(w / 2, -h / 2, 0); m.renderOrder = order++; m.rotation.z = -0.05; return m
+}
+function arrowParts(x0, y0, x1, y1, seed) {
+  const a = Math.atan2(y1 - y0, x1 - x0), L = 34
+  return [roughLine(x0, y0, x1, y1, seed), roughLine(x1, y1, x1 - Math.cos(a - 0.5) * L, y1 - Math.sin(a - 0.5) * L, seed + 1, 0.02), roughLine(x1, y1, x1 - Math.cos(a + 0.5) * L, y1 - Math.sin(a + 0.5) * L, seed + 2, 0.02)]
 }
 
 // ---------- characters (original) ----------
@@ -230,7 +283,10 @@ function buildShot(type, ctx) {
     }
   } else if (type === 'cards') {
     const cards = [], spec = [[-500, -40, 660, 660], [200, 200, 300, 400], [-500, -600, 420, 500], [-30, -560, 530, 700], [-540, -720, 1080, 110]]
-    spec.forEach(([x, y, w, h], i) => { const m = R(0, 0, w, h, i === 4 ? C.white : pick(i)); m.userData = { x, y, from: [i % 2 ? 1300 : -1700, y] }; add(g, m); cards.push(m) })
+    spec.forEach(([x, y, w, h], i) => { // paper cut-out: drop shadow, slight tilt, a strip of tape
+      const m = new THREE.Group(); add(m, R(14, -16, w, h, '#000000', 0.35), R(0, 0, w, h, i === 4 ? C.white : pick(i)))
+      if (i < 4) { const tp = R(-55, -16, 110, 32, '#efe9d8', 0.82); tp.position.set(w * (0.3 + r() * 0.4), h, 0); tp.rotation.z = (r() - 0.5) * 0.5; add(m, tp) }
+      m.rotation.z = i === 4 ? 0 : (r() - 0.5) * 0.035; m.userData = { x, y, from: [i % 2 ? 1300 : -1700, y] }; add(g, m); cards.push(m) })
     const mo = motif(mot, [C.ink, C.white, ...cols], seed + 4); mo.scale.setScalar(0.62); add(g, mo)
     const face = faceFront(ch); face.scale.setScalar(0.85); add(g, face)
     const big = label([String(ctx.li + 1).padStart(2, '0')], { size: 190, color: C.ink, w: 400, weight: 500, lh: 0.95 }); add(g, big)
@@ -283,6 +339,24 @@ function buildShot(type, ctx) {
       rays.forEach((m, i) => { const d = m.userData; m.rotation.z = d.a + t * 0.05; m.scale.set(d.L * k * (0.9 + beat * 0.2), d.w * 90 * k + 1, 1); m.position.set(0, 240, 0) })
       sps.forEach((s, i) => { s.rotation.z = t * (0.8 + i * 0.2); s.scale.setScalar(0.7 + 0.3 * Math.sin(t * 3 + i)) })
     }
+  }
+  const kwd = ctx.line ? (ctx.line.toLowerCase().split(' ').find(w => KEYWORD.some(([k]) => w.startsWith(k))) ?? null) : null
+  const word = kwd ?? (ctx.scene === 'intro' || type === 'title' ? null : 'kita')
+  let ann = null, annPos = null
+  if (word && type !== 'title') {
+    const sd = seed + 900, L = (x, y) => ({ text: word, x, y })
+    if (type === 'close') annPos = () => annotation([roughEllipse(0, 0, 190, 120, sd)], L(-120, 330), sd)
+    else if (type === 'rays') annPos = () => annotation([roughEllipse(0, 150, 220, 250, sd)], L(170, 520), sd)
+    else if (type === 'cards') annPos = () => annotation(arrowParts(-250, -230, -40, 140, sd), L(-470, -170), sd)
+    else if (type === 'duo') annPos = () => annotation([roughLine(-150, 110, 150, 110, sd, 0.05), roughLine(-130, 85, 140, 92, sd + 5, 0.04)], L(-60, 70), sd)
+    else if (type === 'motif') annPos = () => annotation([roughLine(-260, -420, 260, -420, sd, 0.03), roughLine(-220, -445, 240, -440, sd + 5, 0.03)], L(-90, -455), sd)
+    else if (type === 'walk') annPos = () => annotation(arrowParts(-360, 330, -170, 60, sd), L(-470, 420), sd)
+    if (annPos) { ann = annPos(); add(g, ann) }
+  }
+  const base = up
+  up = (u, t, beat, en, sing) => {
+    base(u, t, beat, en, sing)
+    if (ann) { if (type === 'close') ann.position.set(AN[0], AN[1], 0); ann.userData.reveal(smooth(0.55, 1.25, u)) }
   }
   return { g, update: up, anchor: AN, color: type === 'cards' ? pick(0) : null }
 }
@@ -386,15 +460,22 @@ export function buildWorld(canvas, audio, lines) {
       }`,
   })
   const ink = new THREE.Color(C.ink)
+  const paperTx = new THREE.CanvasTexture(paperCanvas(512, 33)); paperTx.wrapS = paperTx.wrapT = THREE.RepeatWrapping
   const outMat = new THREE.ShaderMaterial({
-    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, ink: { value: ink } },
+    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, ink: { value: ink }, paper: { value: paperTx } },
     vertexShader: VS,
-    fragmentShader: `uniform sampler2D tex; uniform float seed; uniform vec3 ink; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tex, paper; uniform float seed; uniform vec3 ink; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
       void main(){ vec3 c = texture2D(tex, vUv).rgb; if (vUv.y < 0.25) c = ink;
         gl_FragColor = vec4(c, 1.);
         #include <colorspace_fragment>
-        float g = h(floor(vUv * vec2(1080., 1920.) / 1.5)) - .5; // grain in display space
+        // print layer: paper fibre + 45° halftone in the mid-tones (shot area only), then grain
+        vec2 px = vUv * vec2(1080., 1920.);
+        float pf = texture2D(paper, vUv * vec2(2.11, 3.75)).r; gl_FragColor.rgb *= mix(.9, 1.025, pf);
+        if (vUv.y >= .25) { float l = dot(gl_FragColor.rgb, vec3(.333)); vec2 q = mat2(.7071, -.7071, .7071, .7071) * px / 7.;
+          float d = length(fract(q) - .5), r = .62 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.04, .3, l) * smoothstep(.98, .6, l);
+          gl_FragColor.rgb *= 1. - .085 * smoothstep(r, r - .12, d); }
+        float g = h(floor(px / 1.5)) - .5; // grain in display space
         gl_FragColor.rgb += g * .035;
       }`,
   })
@@ -405,7 +486,7 @@ export function buildWorld(canvas, audio, lines) {
     const lead = c.tr ? c.tr.d * 0.5 + 0.3 : 0
     shots[i].update(Math.max(0, t - c.t + lead), t, beat, en, singing(t))
     root.position.set(hot * boil(t * 2, 7, 10) * beat, 240 + hot * boil(t * 2, 9, 10) * beat, 0) // reff: camera punch
-    root.scale.setScalar(1 + hot * beat * 0.012)
+    root.scale.setScalar((1 + hot * beat * 0.012) * (1 + 0.035 * smooth(0, 4.5, t - c.t))) // + slow Ken Burns push
   }
   const draw = target => { renderer.setRenderTarget(target); renderer.setClearColor(C.ink, 1); renderer.clear(); renderer.render(scene, cam) }
   function renderAt(t) { // one sub-frame into `frame`
