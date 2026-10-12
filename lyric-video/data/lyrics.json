@@ -141,49 +141,49 @@
  },
  {
   "start": 31.4,
-  "end": 34.68,
-  "text": "Kita berdua menitip mimpi",
+  "end": 34.89,
+  "text": "Kita berdua meniti mimpi",
   "words": [
    {
     "w": "Kita",
     "s": 31.4,
-    "e": 32.13
+    "e": 32.17
    },
    {
     "w": "berdua",
-    "s": 32.13,
-    "e": 32.86
+    "s": 32.17,
+    "e": 32.95
    },
    {
-    "w": "menitip",
-    "s": 32.86,
-    "e": 33.95
+    "w": "meniti",
+    "s": 32.95,
+    "e": 34.11
    },
    {
     "w": "mimpi",
-    "s": 33.95,
-    "e": 34.68
+    "s": 34.11,
+    "e": 34.89
    }
   ]
  },
  {
-  "start": 34.68,
+  "start": 34.89,
   "end": 37.6,
-  "text": "Berjalan tanpa berpikir",
+  "text": "Berjalan tanpa suara",
   "words": [
    {
     "w": "Berjalan",
-    "s": 34.68,
-    "e": 35.78
+    "s": 34.89,
+    "e": 36.05
    },
    {
     "w": "tanpa",
-    "s": 35.78,
-    "e": 36.51
+    "s": 36.05,
+    "e": 36.83
    },
    {
-    "w": "berpikir",
-    "s": 36.51,
+    "w": "suara",
+    "s": 36.83,
     "e": 37.6
    }
   ]
