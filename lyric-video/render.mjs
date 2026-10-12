@@ -36,6 +36,7 @@ if (stills) {
   const pg = await page(), ts = stills.split(',').map(Number), files = []
   for (const t of ts) { const f = path.join(out, `t${String(t.toFixed(1)).padStart(6, '0')}.jpg`); const t0 = Date.now(); fs.writeFileSync(f, await shot(pg, t)); files.push(f); console.log(`still ${t}s ${Date.now() - t0}ms`) }
   const cols = Math.min(6, files.length), rows = Math.ceil(files.length / cols)
+  if (files.length === 1) fs.copyFileSync(files[0], path.join(out, 'contact.jpg')); else
   execFileSync('ffmpeg', ['-v', 'error', '-y', ...files.flatMap(f => ['-i', f]), '-filter_complex',
     files.map((_, i) => `[${i}]scale=270:480,drawtext=text='${ts[i]}s':x=8:y=8:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.5[v${i}]`).join(';') + ';' +
     files.map((_, i) => `[v${i}]`).join('') + `xstack=inputs=${files.length}:layout=${files.map((_, i) => `${(i % cols) * 270}_${Math.floor(i / cols) * 480}`).join('|')}:fill=black`,

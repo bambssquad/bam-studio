@@ -2,31 +2,24 @@ import './style.css'
 import lyrics from '../data/lyrics.json'
 import audioData from '../data/audio.json'
 import { makeAudio } from './audio.js'
-import { buildWorld, SCENES } from './world.js'
+import { buildWorld, SCENES } from './flat.js'
 import { buildLyrics, buildTitle } from './lyrics.js'
-import { paperCanvas } from './paper.js'
-import { rng } from './util.js'
 
 const RENDER = new URLSearchParams(location.search).has('render')
 document.body.classList.toggle('render', RENDER)
 
-// torn top edge + grain for the lyric strip (deterministic)
-const r = rng(5), pts = ['0% 100%', '100% 100%']
-for (let x = 100; x >= 0; x -= 1.6) pts.push(`${x.toFixed(1)}% ${(1.2 + r() * 2.2 + (x % 9 < 1.6 ? 1.4 : 0)).toFixed(2)}%`)
 const strip = document.getElementById('lyr')
-strip.style.setProperty('--torn', `polygon(${pts.join(',')})`)
-strip.style.setProperty('--grain', `url(${paperCanvas(512, 21).toDataURL()})`)
-
 const audio = makeAudio(audioData)
-const world = buildWorld(document.getElementById('gl'), audio)
-const lyr = buildLyrics(strip, lyrics, SCENES, audio)
-const title = buildTitle(document.getElementById('title'))
+let seek = () => {}
 
-function seek(t) { world.seek(t); lyr(t); title(t) }
-
+// fonts first: shot labels are rasterised into canvas textures at build time
 window.__ready = (async () => {
+  await Promise.all(['700 64px Unbounded', '800 120px Unbounded', '500 18px "IBM Plex Mono"', '400 24px "IBM Plex Mono"'].map(f => document.fonts.load(f)))
   await document.fonts.ready
-  await Promise.all(['600 84px Fraunces', 'italic 400 38px Fraunces', 'italic 700 172px Fraunces', '500 22px "Space Grotesk"'].map(f => document.fonts.load(f)))
+  const world = buildWorld(document.getElementById('gl'), audio, lyrics)
+  const lyr = buildLyrics(strip, lyrics, SCENES, audio, world.info)
+  const title = buildTitle(document.getElementById('title'))
+  seek = t => { world.seek(t); lyr(t); title(t) }
   seek(0); return true
 })()
 window.__seek = t => { seek(t); return new Promise(res => requestAnimationFrame(() => res(true))) }

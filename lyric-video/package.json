@@ -8,9 +8,11 @@
     "render": "node render.mjs"
   },
   "dependencies": {
-    "three": "^0.186.0",
     "@fontsource/fraunces": "^5.2.5",
-    "@fontsource/space-grotesk": "^5.2.5"
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.2.5",
+    "@fontsource/unbounded": "^5.3.0",
+    "three": "^0.186.0"
   },
   "devDependencies": {
     "vite": "^8.3.0"

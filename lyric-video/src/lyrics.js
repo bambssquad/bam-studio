@@ -3,7 +3,7 @@ import { clamp, outExpo, inCubic, smooth } from './util.js'
 
 const fmt = t => `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(Math.floor(t % 60)).padStart(2, '0')}`
 
-export function buildLyrics(root, lines, scenes, audio) {
+export function buildLyrics(root, lines, scenes, audio, info) {
   const meta = root.querySelector('.meta'), label = meta.querySelector('.label'), tc = meta.querySelector('.tc'), dot = meta.querySelector('.dot')
   const slot = root.querySelector('.slot'), next = root.querySelector('.next'), bar = root.querySelector('.bar')
   const mkLine = (l, cls) => {
@@ -20,16 +20,16 @@ export function buildLyrics(root, lines, scenes, audio) {
     return { l, a, b, enter, exit }
   })
   return function seek(t) {
-    let cur = -1
+    let cur = -1, shown = 0
     L.forEach((o, k) => {
       const vis = t >= o.enter - 0.05 && t < o.exit + 0.5
-      o.a.el.style.display = vis ? '' : 'none'
+      o.a.el.style.display = vis ? '' : 'none'; if (vis) shown++
       if (vis) o.l.words.forEach((w, j) => {
         let y
         if (t < o.exit) y = (1 - outExpo((t - o.enter - j * 0.045) / 0.6)) * 112
         else y = -112 * inCubic((t - o.exit - j * 0.025) / 0.32)
         const s = o.a.spans[j]; s.style.transform = `translate3d(0,${y.toFixed(2)}%,0)`
-        s.style.color = t >= w.s ? 'var(--ink)' : 'var(--ink-soft)'
+        s.style.color = t >= w.s ? (t < w.e ? 'var(--accent)' : 'var(--ink)') : 'var(--ink-soft)'
       })
       if (t >= o.enter && t < o.exit) cur = k
       // preview of the following line, shown while this one is current
@@ -41,11 +41,12 @@ export function buildLyrics(root, lines, scenes, audio) {
       }
     })
     const sc = scenes.find(s => t >= s.t0 && t < s.t1) ?? scenes[scenes.length - 1]
-    label.textContent = `${String(scenes.indexOf(sc) + 1).padStart(2, '0')} — ${sc.label}`
+    const nf = info(t); root.style.setProperty('--accent', nf.accent)
+    label.textContent = `✦ ${sc.label} · shot ${String(nf.shot).padStart(3, '0')}/${nf.total}`
     tc.textContent = `${fmt(t)} / ${fmt(audio.duration)}`
     dot.style.transform = `scale(${(0.6 + audio.pulse(t, 9) * 0.8).toFixed(3)})`
     bar.style.transform = `scaleX(${clamp(t / audio.duration).toFixed(4)})`
-    root.classList.toggle('idle', cur < 0)
+    root.classList.toggle('idle', shown === 0)
   }
 }
 
@@ -53,7 +54,7 @@ export function buildLyrics(root, lines, scenes, audio) {
 export function buildTitle(el) {
   const word = el.querySelector('.word'), sub = el.querySelector('.sub'), text = word.textContent; word.textContent = ''
   const letters = [...text].map(ch => { const m = document.createElement('span'); m.className = 'm'; const i = document.createElement('span'); i.className = 'i'; i.textContent = ch; m.appendChild(i); word.appendChild(m); return i })
-  const shows = [[0.6, 7.0], [206.5, 217.8]]
+  const shows = [[0.4, 7.2], [206.5, 217.8]]
   return t => {
     const s = shows.find(([a, b]) => t > a - 0.1 && t < b + 1)
     el.style.display = s ? '' : 'none'; if (!s) return

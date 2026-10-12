@@ -16,3 +16,6 @@
 - Critique: r1 6.5 (lirik bolong/tumpuk, kertas flat, figur kecil) → r2 7.6 (bayangan orb di langit) → r3 8.1 pass.
 - Web player: https://claude.ai/artifact/7fymR1Fx6W5rzoZc4PDuyt (privat). Build: vite build --outDir dist-web, lalu player.html (head/body di-strip).
 - 2026-10-12: Bam koreksi lirik: 'meniti mimpi', 'Berjalan tanpa suara'. Referensi desain baru: YouTube mcHiJn7NgII (diblok di container) → menunggu screenshot dari Bam. Render v1 dihentikan (~30%, kena batas waktu background).
+- 2026-10-12 v2: Bam upload referensi (_us__ Motion Graphics, 13.5 s) → ganti total ke flat 2D (style_guide.md). Lirik bold sans (Unbounded) di hitam, hard cut on-beat (verse 8 beat, reff 4, outro 16), 65 shot, motif dari kata kunci lirik. Karakter orisinal A (kuning/keriting/kacamata lime) & B (ungu/bob putih/anting merah).
+- Engine v2: src/flat.js (Three.js ortho, scissor 1440 px atas). world.js/figures.js dihapus. Render ~0.2-0.6 s/frame.
+- Critique v2: r1 6.8 (kontras bob putih, kartu keluar frame, motif kosong, label idle tumpuk) → r2 8.0 pass (+ fix label nomor terpotong).
