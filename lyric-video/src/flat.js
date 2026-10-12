@@ -337,8 +337,10 @@ export function buildWorld(canvas, audio, lines) {
   const easeIO = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
   const trAt = t => { for (let i = 1; i < cuts.length; i++) { const r = cuts[i].tr; if (t >= r.t0 && t < r.t0 + r.d) return i } return -1 }
 
-  const RT = (samples = 4) => new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType, samples })
-  const frame = RT(), rtA = RT(), rtB = RT(), accum = RT(0)
+  // 8-bit sRGB targets without MSAA (MSAA + float is very slow in software GL); AA comes from sub-pixel jitter across the blur samples
+  const RT = () => { const r = new THREE.WebGLRenderTarget(1080, 1920); r.texture.colorSpace = THREE.SRGBColorSpace; return r }
+  const frame = RT(), rtA = RT(), rtB = RT(), accum = new THREE.WebGLRenderTarget(1080, 1920, { type: THREE.HalfFloatType })
+  const halton = (i, b) => { let f = 1, r = 0; while (i > 0) { f /= b; r += f * (i % b); i = Math.floor(i / b) } return r }
   const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2))
   const quadScene = new THREE.Scene(); quadScene.add(quad)
   const addMat = new THREE.MeshBasicMaterial({ map: frame.texture, transparent: true, blending: THREE.AdditiveBlending, depthTest: false })
@@ -418,17 +420,18 @@ export function buildWorld(canvas, audio, lines) {
     U.c1.value.set(a.color ?? cuts[m].s.accent); U.c2.value.set(cs[1 % cs.length]); U.c3.value.set(cs[2 % cs.length])
     quad.material = trMat; renderer.setRenderTarget(frame); renderer.render(quadScene, quadCam)
   }
-  let SUB = 4
+  let SUB = 3
   function seek(t) {
     renderer.setRenderTarget(accum); renderer.setClearColor(0x000000, 1); renderer.clear()
     // fast moves (transitions, cut entries) need more samples or the blur steps into ghost copies
-    const N = SUB > 1 && (trAt(t) >= 0 || t - cuts[cutAt(t)].t < 0.36) ? 10 : SUB
+    const N = SUB > 1 && (trAt(t) >= 0 || t - cuts[cutAt(t)].t < 0.36) ? 6 : SUB
     for (let s = 0; s < N; s++) {
       const dt = (s / N) * (0.5 / 30); clock.off = dt
+      if (N > 1) cam.setViewOffset(1080, 1920, halton(s + 1, 2) - 0.5, halton(s + 1, 3) - 0.5, 1080, 1920); else cam.clearViewOffset()
       renderAt(t - dt)
       addMat.opacity = 1 / N; quad.material = addMat; renderer.setRenderTarget(accum); renderer.render(quadScene, quadCam)
     }
-    clock.off = 0
+    clock.off = 0; cam.clearViewOffset()
     outMat.uniforms.seed.value = Math.floor(t * 12) * 1.37 % 97
     quad.material = outMat; renderer.setRenderTarget(null); renderer.render(quadScene, quadCam)
   }

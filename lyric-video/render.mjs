@@ -20,17 +20,19 @@ const server = http.createServer((q, s) => {
 }).listen(0)
 const URL = `http://127.0.0.1:${server.address().port}/?render`
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
-async function page() {
-  const pg = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE })
+const launch = () => chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
+const browsers = []
+async function page() { // one browser (own GPU process) per worker; a shared one serialises SwiftShader
+  const b = await launch(); browsers.push(b)
+  const pg = await b.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: SCALE })
   const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => m.type() === 'error' && errs.push(m.text()))
   await pg.goto(URL); await pg.evaluate(() => window.__ready)
   if (errs.length) throw new Error('page errors: ' + errs.join(' | '))
   return pg
 }
-const shot = async (pg, t) => { await pg.evaluate(t => window.__seek(t), t); return pg.screenshot({ type: 'jpeg', quality: 92, clip: { x: 0, y: 0, width: W, height: H } }) }
+const shot = async (pg, t) => { await pg.evaluate(t => window.__seek(t), t); return pg.screenshot({ type: 'jpeg', quality: 92, clip: { x: 0, y: 0, width: W, height: H }, timeout: 180000 }) }
 
-if (process.argv.includes('--dumpcuts')) { const pg = await page(); fs.writeFileSync(arg('dumpcuts', 'out/cuts.json'), JSON.stringify(await pg.evaluate(() => window.__cuts))); await browser.close(); server.close(); process.exit(0) }
+if (process.argv.includes('--dumpcuts')) { const pg = await page(); fs.writeFileSync(arg('dumpcuts', 'out/cuts.json'), JSON.stringify(await pg.evaluate(() => window.__cuts))); await Promise.all(browsers.map(b => b.close())); server.close(); process.exit(0) }
 const stills = arg('stills')
 if (stills) {
   const out = arg('out', 'out/stills'); fs.mkdirSync(out, { recursive: true })
@@ -66,4 +68,4 @@ if (stills) {
   for (const p of parts.filter(Boolean)) fs.unlinkSync(p); fs.unlinkSync(list)
   console.log(`done ${out} · ${n} frames in ${((Date.now() - t0) / 60000).toFixed(1)} min`)
 }
-await browser.close(); server.close()
+await Promise.all(browsers.map(b => b.close())); server.close()
