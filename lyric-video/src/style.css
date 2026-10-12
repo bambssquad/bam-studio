@@ -26,6 +26,8 @@ html, body { margin: 0; height: 100%; background: var(--page); color: var(--ink)
 #strip { position: absolute; left: 0; top: 0; width: 440px; will-change: transform }
 #lyr { position: relative; color: var(--ink); --sh: var(--bg) }
 #lyr.plate { background: var(--bg); padding: 16px 20px 6px; margin: -16px -20px; transform: rotate(-1.2deg); box-shadow: 10px 12px 0 rgba(0, 0, 0, .35) } /* label card over busy close-ups */
+#lyr.paper { --ink: #2a2622; --ink-soft: rgba(42, 38, 34, .36); --sh: rgba(243, 239, 230, .85) }
+#lyr.paper.plate { background: #f3efe6 }
 #lyr.dark { --ink: #0f0f12; --ink-soft: rgba(15, 15, 18, .38); --sh: rgba(244, 241, 234, .9) }
 .meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 500 15px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); opacity: .7; text-shadow: 2px 2px 0 var(--sh) }
 .tc-wrap { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums }

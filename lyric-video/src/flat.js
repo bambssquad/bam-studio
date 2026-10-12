@@ -11,16 +11,16 @@ const CH = {
 }
 
 export const SCENES = [
-  { id: 'intro', t0: 0, t1: 7.8, label: 'intro', accent: C.red, cols: [C.red, C.yellow, C.violet, C.lime, C.blue], shots: ['title'], every: 64, motifs: ['sun'] },
-  { id: 'dusk', t0: 7.8, t1: 27.0, label: 'verse · senja', accent: C.orange, cols: [C.orange, C.yellow, C.red, C.violet], shots: ['close', 'motif', 'cards', 'rays', 'walk'], every: 8, motifs: ['sun', 'city', 'wind', 'sky'] },
-  { id: 'road', t0: 27.0, t1: 47.0, label: 'verse · jalan', accent: C.yellow, cols: [C.yellow, C.violet, C.blue, C.white], shots: ['walk', 'close', 'cards', 'motif', 'rays'], every: 8, motifs: ['street', 'stars', 'city', 'stars'] },
-  { id: 'hill', t0: 47.0, t1: 66.5, label: 'reff', accent: C.red, cols: [C.red, C.white, C.violet, C.yellow], shots: ['duo', 'close', 'rays', 'cards', 'duo', 'motif'], every: 4, motifs: ['heart', 'arcs', 'moon', 'heart'] },
-  { id: 'ocean', t0: 66.5, t1: 86.8, label: 'verse · ombak', accent: C.lime, cols: [C.blue, C.lime, C.white, C.violet], shots: ['motif', 'close', 'cards', 'walk', 'rays'], every: 8, motifs: ['wave', 'boat', 'notes', 'moon'] },
-  { id: 'symph', t0: 86.8, t1: 108.6, label: 'verse · simfoni', accent: C.violet, cols: [C.violet, C.red, C.yellow, C.lime], shots: ['rays', 'cards', 'close', 'motif', 'duo'], every: 8, motifs: ['rings', 'notes', 'clock', 'lamp'] },
-  { id: 'heart', t0: 108.6, t1: 137.0, label: 'reff', accent: C.lime, cols: [C.red, C.yellow, C.lime, C.violet, C.blue], shots: ['rays', 'duo', 'close', 'motif', 'cards'], every: 4, motifs: ['heart', 'arcs', 'sunburst', 'heart'] },
-  { id: 'rain', t0: 137.0, t1: 163.4, label: 'bridge · hujan', accent: C.blue, cols: [C.blue, C.white, C.violet], shots: ['motif', 'close', 'cards', 'duo'], every: 8, motifs: ['rain', 'umbrella', 'lamp', 'city'] },
-  { id: 'dawn', t0: 163.4, t1: 191.0, label: 'reff · fajar', accent: C.yellow, cols: [C.yellow, C.orange, C.lime, C.red], shots: ['rays', 'duo', 'motif', 'close', 'cards'], every: 4, motifs: ['sun', 'flowers', 'heart', 'birds'] },
-  { id: 'outro', t0: 191.0, t1: 219.5, label: 'outro', accent: C.red, cols: [C.red, C.violet, C.yellow], shots: ['close', 'motif', 'rays'], every: 16, motifs: ['sun', 'city', 'heart'] },
+  { id: 'intro', fx: 4, t0: 0, t1: 7.8, label: 'intro', accent: C.red, cols: [C.red, C.yellow, C.violet, C.lime, C.blue], shots: ['title'], every: 64, motifs: ['sun'] },
+  { id: 'dusk', fx: 1, t0: 7.8, t1: 27.0, label: 'verse · senja', accent: C.orange, cols: [C.orange, C.yellow, C.red, C.violet], shots: ['close', 'motif', 'cards', 'rays', 'walk'], every: 8, motifs: ['sun', 'city', 'wind', 'sky'] },
+  { id: 'road', fx: 2, t0: 27.0, t1: 47.0, label: 'verse · jalan', accent: C.yellow, cols: [C.yellow, C.violet, C.blue, C.white], shots: ['walk', 'close', 'cards', 'motif', 'rays'], every: 8, motifs: ['street', 'stars', 'city', 'stars'] },
+  { id: 'hill', fx: 0, t0: 47.0, t1: 66.5, label: 'reff', accent: C.red, cols: [C.red, C.white, C.violet, C.yellow], shots: ['duo', 'close', 'rays', 'cards', 'duo', 'motif'], every: 4, motifs: ['heart', 'arcs', 'moon', 'heart'] },
+  { id: 'ocean', fx: 3, dD: '#1d2a8f', dL: '#dfe9ff', t0: 66.5, t1: 86.8, label: 'verse · ombak', accent: C.lime, cols: [C.blue, C.lime, C.white, C.violet], shots: ['motif', 'close', 'cards', 'walk', 'rays'], every: 8, motifs: ['wave', 'boat', 'notes', 'moon'] },
+  { id: 'symph', fx: 4, t0: 86.8, t1: 108.6, label: 'verse · simfoni', accent: C.violet, cols: [C.violet, C.red, C.yellow, C.lime], shots: ['rays', 'cards', 'close', 'motif', 'duo'], every: 8, motifs: ['rings', 'notes', 'clock', 'lamp'] },
+  { id: 'heart', fx: 0, t0: 108.6, t1: 137.0, label: 'reff', accent: C.lime, cols: [C.red, C.yellow, C.lime, C.violet, C.blue], shots: ['rays', 'duo', 'close', 'motif', 'cards'], every: 4, motifs: ['heart', 'arcs', 'sunburst', 'heart'] },
+  { id: 'rain', fx: 3, dD: '#121218', dL: '#e8e6dc', t0: 137.0, t1: 163.4, label: 'bridge · hujan', accent: C.blue, cols: [C.blue, C.white, C.violet], shots: ['motif', 'close', 'cards', 'duo'], every: 8, motifs: ['rain', 'umbrella', 'lamp', 'city'] },
+  { id: 'dawn', fx: 1, t0: 163.4, t1: 191.0, label: 'reff · fajar', accent: C.yellow, cols: [C.yellow, C.orange, C.lime, C.red], shots: ['rays', 'duo', 'motif', 'close', 'cards'], every: 4, motifs: ['sun', 'flowers', 'heart', 'birds'] },
+  { id: 'outro', fx: 2, t0: 191.0, t1: 219.5, label: 'outro', accent: C.red, cols: [C.red, C.violet, C.yellow], shots: ['close', 'motif', 'rays'], every: 16, motifs: ['sun', 'city', 'heart'] },
 ]
 // lyric keyword -> motif, so the illustration follows the words being sung
 const KEYWORD = [['senja', 'sun'], ['kota', 'city'], ['angin', 'wind'], ['langit', 'sky'], ['jalan', 'street'], ['mimpi', 'stars'], ['cinta', 'heart'], ['hening', 'moon'],
@@ -469,34 +469,54 @@ export function buildWorld(canvas, audio, lines) {
   })
   const ink = new THREE.Color(C.ink)
   const paperTx = new THREE.CanvasTexture(paperCanvas(512, 33)); paperTx.wrapS = paperTx.wrapT = THREE.RepeatWrapping
-  // comic-print post (Spider-Verse-like technique, no borrowed characters): colour misregistration, ink edges,
-  // Ben-Day dots in mid-tones, hatching in shadows, then paper + grain. Glitch widens on strong beats / transitions.
+  // Print/screen media per section, computed in display space: 0 comic, 1 risograph, 2 thermal receipt, 3 1-bit dither, 4 CRT.
+  // At a section change the two media cross over inside the transition window.
   const outMat = new THREE.ShaderMaterial({
-    uniforms: { tex: { value: accum.texture }, seed: { value: 0 }, paper: { value: paperTx }, mis: { value: 2.5 } },
+    uniforms: { tex: { value: accum.texture }, paper: { value: paperTx }, seed: { value: 0 }, mis: { value: 2.5 }, time: { value: 0 }, k: { value: 0 },
+      mA: { value: 0 }, mB: { value: 0 }, aD: { value: new THREE.Color() }, aL: { value: new THREE.Color() }, bD: { value: new THREE.Color() }, bL: { value: new THREE.Color() } },
     vertexShader: VS,
-    fragmentShader: `uniform sampler2D tex, paper; uniform float seed, mis; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tex, paper; uniform float seed, mis, time, k; uniform int mA, mB; uniform vec3 aD, aL, bD, bL; varying vec2 vUv;
       const vec2 S = vec2(1080., 1920.);
-      float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
+      vec3 toS(vec3 c){ c = max(c, 0.); return mix(c * 12.92, 1.055 * pow(c, vec3(1. / 2.4)) - .055, step(.0031308, c)); }
+      vec3 smp(vec2 u){ return toS(texture2D(tex, u).rgb); }
       float lum(vec3 c){ return dot(c, vec3(.2126, .7152, .0722)); }
+      float hs(vec2 p){ return fract(sin(dot(p, vec2(41.3, 289.1))) * 43758.5453); }
+      float B2(vec2 a){ a = floor(a); return fract(a.x / 2. + a.y * a.y * .75); }
+      float B4(vec2 a){ return B2(.5 * a) * .25 + B2(a); }
+      float B8(vec2 a){ return B4(.5 * a) * .25 + B2(a); }
+      vec3 comic(vec2 u){ vec2 px = u * S, o = vec2(.7071, -.7071) * mis / S;
+        vec3 c = vec3(smp(u + o).r, smp(u).g, smp(u - o).b); vec2 e = 1.5 / S;
+        float tl = lum(smp(u + vec2(-e.x, e.y))), tr = lum(smp(u + e)), bl = lum(smp(u - e)), br = lum(smp(u + vec2(e.x, -e.y)));
+        float gx = (tr + br) - (tl + bl), gy = (tl + tr) - (bl + br); c *= 1. - .82 * smoothstep(.07, .2, sqrt(gx * gx + gy * gy));
+        float l = lum(c); vec2 q = mat2(.9659, -.2588, .2588, .9659) * px / 10.; float d = length(fract(q) - .5);
+        float r = .55 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.18, .4, l) * smoothstep(.84, .64, l); c *= 1. - .16 * smoothstep(r, r - .1, d);
+        float hl = abs(fract((px.x + px.y) / 9.) - .5); c *= 1. - .14 * smoothstep(.12, .05, hl) * smoothstep(.06, .12, l) * smoothstep(.32, .18, l);
+        return c * mix(.94, 1.02, texture2D(paper, u * vec2(2.11, 3.75)).r); }
+      vec3 riso(vec2 u){ vec2 px = u * S, g = floor(px / 1.6);           // three spot inks, each slightly off-register, grainy coverage, multiplied (overprint)
+        float dP = clamp(1. - smp(u + vec2(3., -2.) / S).g, 0., 1.), dB = clamp(1. - smp(u + vec2(-2., 2.) / S).r, 0., 1.), dY = clamp(1. - smp(u).b, 0., 1.) * .8;
+        float kP = smoothstep(hs(g) - .1, hs(g) + .1, dP * .96), kB = smoothstep(hs(g + 17.) - .1, hs(g + 17.) + .1, dB * .96), kY = smoothstep(hs(g + 41.) - .1, hs(g + 41.) + .1, dY);
+        vec3 o = vec3(.95, .92, .86) * mix(vec3(1.), vec3(1., .28, .62), kP) * mix(vec3(1.), vec3(.2, .33, .68), kB) * mix(vec3(1.), vec3(1., .89, .1), kY);
+        return o * mix(.92, 1.03, texture2D(paper, u * vec2(2.11, 3.75)).r); }
+      vec3 receipt(vec2 u){ vec2 px = u * S; float d = 1. - lum(smp(u));  // thermal print: one faded ink, 2 px ordered dots, print-head banding
+        float band = .92 + .08 * sin(px.y * 2.1) + (hs(vec2(0., floor(px.y / 3.))) - .5) * .14, col = 1. - .4 * step(.986, hs(vec2(floor(px.x / 2.), 7.)));
+        float on = step(B4(px / 2.) + .03, d * band * col * 1.1); vec3 pc = vec3(.955, .945, .925), ic = vec3(.17, .16, .18) * mix(1., 1.35, hs(floor(px / 3.)));
+        return mix(mix(pc, ic, on), pc, .1 * smoothstep(.36, .5, abs(u.x - .5))); }
+      vec3 dith(vec2 u, vec3 D, vec3 L){ vec2 px = u * S, c = (floor(px / 3.) * 3. + 1.5) / S; return lum(smp(c)) > B8(px / 3.) ? L : D; }
+      vec3 crt(vec2 u){ vec2 q = u * 2. - 1.; q *= 1. + .05 * dot(q, q);
+        float on = smoothstep(.15, .9, time); q.y /= max(on * on, .004); // power-on: a bright line opens into the picture
+        vec2 c = q * .5 + .5;
+        if (c.x < 0. || c.x > 1. || c.y < 0. || c.y > 1.) return vec3(.015);
+        vec3 col = smp(c), g = (smp(c + vec2(5., 0.) / S) + smp(c - vec2(5., 0.) / S) + smp(c + vec2(0., 5.) / S) + smp(c - vec2(0., 5.) / S)) * .25;
+        col = col * .9 + g * .2 + (1. - on) * .6; float m = mod(floor(u.x * S.x), 3.);
+        vec3 mask = m < 1. ? vec3(1., .7, .7) : m < 2. ? vec3(.7, 1., .7) : vec3(.7, .7, 1.);
+        col *= (.62 + .38 * pow(abs(sin(c.y * S.y * 3.14159 / 4.)), .6)) * mask * 1.38 + .018; // scanlines + phosphor floor so they read on black
+        col *= 1. - .22 * dot(q, q) - .05 * smoothstep(.0, .02, abs(fract(c.y - time * .11) - .5) - .47);
+        return col * (.975 + .025 * sin(time * 71.)); }
+      vec3 look(int m, vec2 u, vec3 D, vec3 L){ return m == 1 ? riso(u) : m == 2 ? receipt(u) : m == 3 ? dith(u, D, L) : m == 4 ? crt(u) : comic(u); }
       void main(){
-        vec2 px = vUv * S, o = vec2(.7071, -.7071) * mis / S;
-        vec3 c = vec3(texture2D(tex, vUv + o).r, texture2D(tex, vUv).g, texture2D(tex, vUv - o).b);
-        // ink outline: Sobel on luminance at 1.5 px
-        vec2 e = 1.5 / S; float tl = lum(texture2D(tex, vUv + vec2(-e.x, e.y)).rgb), tr = lum(texture2D(tex, vUv + e).rgb),
-          bl = lum(texture2D(tex, vUv - e).rgb), br = lum(texture2D(tex, vUv + vec2(e.x, -e.y)).rgb);
-        float gx = (tr + br) - (tl + bl), gy = (tl + tr) - (bl + br), edge = smoothstep(.035, .11, sqrt(gx * gx + gy * gy));
-        c *= 1. - .82 * edge;
-        gl_FragColor = vec4(c, 1.);
-        #include <colorspace_fragment>
-        float l = lum(gl_FragColor.rgb);
-        // Ben-Day dots (15°, 10 px cell) in mid-tones
-        vec2 q = mat2(.9659, -.2588, .2588, .9659) * px / 10.; float d = length(fract(q) - .5);
-        float r = .55 * sqrt(clamp(1. - l, 0., 1.)) * smoothstep(.18, .4, l) * smoothstep(.84, .64, l); // whites stay clean
-        gl_FragColor.rgb *= 1. - .16 * smoothstep(r, r - .1, d);
-        // hatching in shadows (not on the ink ground)
-        float hl = abs(fract((px.x + px.y) / 9.) - .5); gl_FragColor.rgb *= 1. - .14 * smoothstep(.12, .05, hl) * smoothstep(.06, .12, l) * smoothstep(.32, .18, l);
-        float pf = texture2D(paper, vUv * vec2(2.11, 3.75)).r; gl_FragColor.rgb *= mix(.94, 1.02, pf);
-        gl_FragColor.rgb += (h(floor(px / 1.5)) - .5) * .035; // grain
+        vec3 o = look(mA, vUv, aD, aL); if (mB != mA && k > 0.) o = mix(o, look(mB, vUv, bD, bL), k);
+        o += (fract(sin(dot(floor(vUv * S / 1.5), vec2(12.9898, 78.233)) + seed) * 43758.5453) - .5) * .03; // grain
+        gl_FragColor = vec4(o, 1.);
       }`,
   })
 
@@ -534,11 +554,15 @@ export function buildWorld(canvas, audio, lines) {
       addMat.opacity = 1 / N; quad.material = addMat; renderer.setRenderTarget(accum); renderer.render(quadScene, quadCam)
     }
     clock.off = 0; cam.clearViewOffset()
-    outMat.uniforms.seed.value = Math.floor(t * 12) * 1.37 % 97
+    outMat.uniforms.seed.value = Math.floor(t * 12) * 1.37 % 97; outMat.uniforms.time.value = t
+    { const U = outMat.uniforms, mt = trAt(t), cur = cuts[cutAt(t)].s, sec = mt >= 0 && cuts[mt].s !== cuts[mt - 1].s
+      const A = sec ? cuts[mt - 1].s : cur, Bs = sec ? cuts[mt].s : cur
+      U.mA.value = A.fx; U.mB.value = Bs.fx; U.k.value = sec ? easeIO((t - cuts[mt].tr.t0) / cuts[mt].tr.d) : 0
+      U.aD.value.set(A.dD ?? C.ink); U.aL.value.set(A.dL ?? C.white); U.bD.value.set(Bs.dD ?? C.ink); U.bL.value.set(Bs.dL ?? C.white) }
     const m = trAt(t), hotc = cuts[cutAt(t)].s.every <= 4 ? 1 : 0, trk = m >= 0 ? Math.sin(Math.PI * clamp((t - cuts[m].tr.t0) / cuts[m].tr.d)) : 0
     outMat.uniforms.mis.value = 2.5 + 7 * Math.max(trk, hotc * Math.pow(audio.pulse(t, 10), 2))
     quad.material = outMat; renderer.setRenderTarget(null); renderer.render(quadScene, quadCam)
   }
   seek.setQuality = q => { SUB = q }
-  return { seek, info: t => { const n = cutAt(t), c = cuts[n]; return { shot: n + 1, total: cuts.length, accent: c.s.accent, type: c.type, cap: shots[n].cap, capPrev: shots[Math.max(0, n - 1)].cap, cutT: c.t } }, cuts }
+  return { seek, info: t => { const n = cutAt(t), c = cuts[n]; return { shot: n + 1, total: cuts.length, accent: c.s.accent, type: c.type, fx: c.s.fx, cap: shots[n].cap, capPrev: shots[Math.max(0, n - 1)].cap, cutT: c.t } }, cuts }
 }
