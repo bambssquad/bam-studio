@@ -8,7 +8,7 @@ import { spawn, execFileSync } from 'node:child_process'
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs'
 
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d }
-const DIST = path.resolve('dist'), FPS = +arg('fps', 24), SCALE = +arg('scale', 1), W = 1080, H = 1920
+const DIST = path.resolve(arg('dist', 'dist')), FPS = +arg('fps', 24), SCALE = +arg('scale', 1), W = 1080, H = 1920
 const AUDIO = path.resolve('data/berbicara.mp3'), DUR = JSON.parse(fs.readFileSync('data/audio.json')).duration
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.woff': 'font/woff', '.json': 'application/json', '.mp3': 'audio/mpeg' }

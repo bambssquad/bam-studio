@@ -6,3 +6,4 @@ dist/
 public/*.mp3
 dist-web/
 vite.config.js.timestamp*
+dist-dev/

@@ -58,7 +58,7 @@ export function buildLyrics(root, lines, scenes, audio, info) {
     dot.style.transform = `scale(${(0.6 + audio.pulse(t, 9) * 0.8).toFixed(3)})`
     bar.style.transform = `scaleX(${clamp(t / audio.duration).toFixed(4)})`
     root.classList.toggle('idle', shown === 0)
-    root.classList.toggle('paper', nf.fx === 2) // receipt: dark ink captions (riso renders dark, keep white)
+    root.classList.toggle('paper', nf.fx === 2 || nf.fx === 6) // receipt / scribble paper: dark ink captions
   }
 }
 

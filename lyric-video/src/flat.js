@@ -14,8 +14,8 @@ export const SCENES = [
   { id: 'intro', fx: 4, t0: 0, t1: 7.8, label: 'intro', accent: C.red, cols: [C.red, C.yellow, C.violet, C.lime, C.blue], shots: ['title'], every: 64, motifs: ['sun'] },
   { id: 'dusk', fx: 1, t0: 7.8, t1: 27.0, label: 'verse · senja', accent: C.orange, cols: [C.orange, C.yellow, C.red, C.violet], shots: ['close', 'motif', 'cards', 'rays', 'walk'], every: 8, motifs: ['sun', 'city', 'wind', 'sky'] },
   { id: 'road', fx: 2, t0: 27.0, t1: 47.0, label: 'verse · jalan', accent: C.yellow, cols: [C.yellow, C.violet, C.blue, C.white], shots: ['walk', 'close', 'cards', 'motif', 'rays'], every: 8, motifs: ['street', 'stars', 'city', 'stars'] },
-  { id: 'hill', fx: 0, t0: 47.0, t1: 66.5, label: 'reff', accent: C.red, cols: [C.red, C.white, C.violet, C.yellow], shots: ['duo', 'close', 'rays', 'cards', 'duo', 'motif'], every: 4, motifs: ['heart', 'arcs', 'moon', 'heart'] },
-  { id: 'ocean', fx: 3, dD: '#1d2a8f', dL: '#dfe9ff', t0: 66.5, t1: 86.8, label: 'verse · ombak', accent: C.lime, cols: [C.blue, C.lime, C.white, C.violet], shots: ['motif', 'close', 'cards', 'walk', 'rays'], every: 8, motifs: ['wave', 'boat', 'notes', 'moon'] },
+  { id: 'hill', fx: 6, t0: 47.0, t1: 66.5, label: 'reff', accent: C.red, cols: [C.red, C.white, C.violet, C.yellow], shots: ['duo', 'close', 'rays', 'cards', 'duo', 'motif'], every: 4, motifs: ['heart', 'arcs', 'moon', 'heart'] },
+  { id: 'ocean', fx: 5, t0: 66.5, t1: 86.8, label: 'verse · ombak', accent: C.lime, cols: [C.blue, C.lime, C.white, C.violet], shots: ['motif', 'close', 'cards', 'walk', 'rays'], every: 8, motifs: ['wave', 'boat', 'notes', 'moon'] },
   { id: 'symph', fx: 4, t0: 86.8, t1: 108.6, label: 'verse · simfoni', accent: C.violet, cols: [C.violet, C.red, C.yellow, C.lime], shots: ['rays', 'cards', 'close', 'motif', 'duo'], every: 8, motifs: ['rings', 'notes', 'clock', 'lamp'] },
   { id: 'heart', fx: 0, t0: 108.6, t1: 137.0, label: 'reff', accent: C.lime, cols: [C.red, C.yellow, C.lime, C.violet, C.blue], shots: ['rays', 'duo', 'close', 'motif', 'cards'], every: 4, motifs: ['heart', 'arcs', 'sunburst', 'heart'] },
   { id: 'rain', fx: 3, dD: '#121218', dL: '#e8e6dc', t0: 137.0, t1: 163.4, label: 'bridge · hujan', accent: C.blue, cols: [C.blue, C.white, C.violet], shots: ['motif', 'close', 'cards', 'duo'], every: 8, motifs: ['rain', 'umbrella', 'lamp', 'city'] },
@@ -402,19 +402,21 @@ export function buildWorld(canvas, audio, lines) {
   // ---------- linked transitions ----------
   // Every cut grows out of something already on screen in the outgoing shot (its anchor): the pupil, the heart,
   // the ray centre, a card's colour. Window is centred on the beat so the hand-over lands on it.
-  const T = { iris: 0, heart: 1, star: 2, block: 3, slash: 4, pupil: 5, push: 6, bands: 7 }
+  const T = { iris: 0, heart: 1, star: 2, block: 3, slash: 4, pupil: 5, push: 6, bands: 7, scribble: 8 }
   cuts.forEach((c, n) => {
     if (n === 0) return
     const a = cuts[n - 1], sec = a.s !== c.s, reff = c.s.every <= 4
     let kind
-    if (sec) kind = n % 2 ? T.slash : T.push
+    if (sec && (a.s.fx === 6 || c.s.fx === 6)) kind = T.scribble
+    else if (c.s.fx === 6 && n % 2) kind = T.scribble
+    else if (sec) kind = n % 2 ? T.slash : T.push
     else if (a.type === 'close') kind = T.pupil
     else if (a.type === 'duo' || a.mot === 'heart') kind = T.heart
     else if (a.type === 'rays' || a.type === 'title') kind = T.star
     else if (a.type === 'cards') kind = T.block
     else if (a.type === 'walk') kind = T.bands
     else kind = T.iris
-    const d = kind === T.pupil ? 0.5 : sec ? 0.56 : reff ? 0.36 : 0.48
+    const d = kind === T.scribble ? 0.5 : kind === T.pupil ? 0.5 : sec ? 0.56 : reff ? 0.36 : 0.48
     c.tr = { kind, d, t0: c.t - d * 0.5, dir: n % 2 ? 1 : -1 }
   })
   const easeIO = x => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2 }
@@ -463,6 +465,12 @@ export function buildWorld(canvas, audio, lines) {
           else { float e = eo((p - .5) / .5), R = e * 2400.; o = mix(vec3(.0058), tB(vUv), aa(length(q) - R)); } }
         else if (kind == 6) { float k = eio(p); vec2 ua = vUv + vec2(dir * k, 0.), ub = vUv - vec2(dir * (1. - k), 0.);
           o = (ua.x >= 0. && ua.x <= 1.) ? tA(ua) : tB(ub); }
+        else if (kind == 8) { // scribble out: ink scribble thickens over A until solid, then thins away off B (boils on twos)
+          float tq = floor(p * 12.), dens = p < .5 ? p * 2. : (1. - p) * 2.;
+          float y = px.y + sin(px.x * .031 + tq * 1.7) * 46. + sin(px.x * .007 + tq) * 90.;
+          float ln = abs(fract(y / 26.) - .5), ln2 = abs(fract((px.x * .6 + px.y * .8 + sin(px.y * .02 + tq) * 30.) / 31.) - .5);
+          float m = max(step(ln, dens * .56), step(ln2, dens * .56 - .12));
+          o = mix(p < .5 ? tA(vUv) : tB(vUv), vec3(.0058), m); }
         else { // bands: 8 horizontal strips slide across, alternating sides, staggered
           float i = floor(vUv.y * 8.), side = mod(i, 2.) < 1. ? 1. : -1., k = eio(p * 1.5 - i * .06);
           float x = side > 0. ? vUv.x : 1. - vUv.x; o = x < k ? tB(vUv) : (x < k + .02 ? c1 : tA(vUv)); }
@@ -516,7 +524,31 @@ export function buildWorld(canvas, audio, lines) {
         col *= (.62 + .38 * pow(abs(sin(c.y * S.y * 3.14159 / 4.)), .6)) * mask * 1.38 + .018; // scanlines + phosphor floor so they read on black
         col *= 1. - .22 * dot(q, q) - .05 * smoothstep(.0, .02, abs(fract(c.y - time * .11) - .5) - .47);
         return col * (.975 + .025 * sin(time * 71.)); }
-      vec3 look(int m, vec2 u, vec3 D, vec3 L){ return m == 1 ? riso(u) : m == 2 ? receipt(u) : m == 3 ? dith(u, D, L) : m == 4 ? crt(u) : comic(u); }
+      float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+        return mix(mix(hs(i), hs(i + vec2(1., 0.)), f.x), mix(hs(i + vec2(0., 1.)), hs(i + vec2(1., 1.)), f.x), f.y); }
+      vec3 paint(vec2 u){ vec2 px = u * S; float tq = floor(time * 8.);       // brush smear along a flow field, impasto ridges, canvas weave; strokes re-lay on threes
+        float a = vn(px * .0035 + tq * .13) * 6.283; vec2 d = vec2(cos(a), sin(a)), n = vec2(-d.y, d.x);
+        vec3 acc = vec3(0.); float w = 0.;
+        for (int i = -4; i <= 4; i++) { float f = float(i), k = 1. - abs(f) / 5.; acc += smp(u + d * f * 3.2 / S) * k; w += k; }
+        vec3 c = acc / w; float ridge = sin(dot(px, n) * .85 + vn(px * .06 + tq) * 7.) * .5 + .5;
+        c *= .86 + .2 * ridge; c *= .95 + .06 * (sin(px.x * 1.25) * sin(px.y * 1.25) * .5 + .5);
+        return c * mix(.93, 1.03, texture2D(paper, u * vec2(2.11, 3.75)).r); }
+      vec3 scribble(vec2 u){ vec2 px = u * S; float tq = floor(time * 8.), cell = 11.; // crayon: one short stroke per 11 px cell, colour taken at the stroke centre,
+        vec3 o = vec3(.97, .955, .925); vec2 g = floor(px / cell);                   // density from colour; dark ground = paper with sparse graphite; re-drawn on threes
+        for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+          vec2 id = g + vec2(float(x), float(y)), ctr = (id + vec2(hs(id + tq * .37), hs(id + tq * .37 + 3.1))) * cell;
+          vec3 cc = smp(ctr / S); float dk = 1. - lum(cc), sat = max(cc.r, max(cc.g, cc.b)) - min(cc.r, min(cc.g, cc.b)), ground = step(.86, dk);
+          if (hs(id + tq * .11 + 7.) > mix(clamp(.42 + sat * .6 + dk * .4, 0., 1.), .14, ground)) continue;
+          float ang = .6 + (vn(id * .08) - .5) * 1.4 + (hs(id + 9.) - .5) * .5; vec2 d = vec2(cos(ang), sin(ang));
+          float L = cell * (1.1 + hs(id + 4.) * .9), w = 1.6 + hs(id + 2.) * 1.2; vec2 q = px - ctr;
+          float k = smoothstep(w + .8, w - .4, length(q - d * clamp(dot(q, d), -L, L)));
+          o = mix(o, mix(cc, vec3(.3, .29, .32), ground) * (.9 + .1 * hs(id + 5.)), k * .92);
+        }
+        vec2 jj = (vec2(vn(px * .03 + tq), vn(px * .03 + tq + 5.)) - .5) * 5. / S, e = 1.5 / S;  // wobbly ink outline
+        float tl = lum(smp(u + jj + vec2(-e.x, e.y))), tr = lum(smp(u + jj + e)), bl = lum(smp(u + jj - e)), br = lum(smp(u + jj + vec2(e.x, -e.y)));
+        float gx = (tr + br) - (tl + bl), gy = (tl + tr) - (bl + br);
+        return o * (1. - .85 * smoothstep(.07, .2, sqrt(gx * gx + gy * gy))); }
+      vec3 look(int m, vec2 u, vec3 D, vec3 L){ return m == 1 ? riso(u) : m == 2 ? receipt(u) : m == 3 ? dith(u, D, L) : m == 4 ? crt(u) : m == 5 ? paint(u) : m == 6 ? scribble(u) : comic(u); }
       void main(){
         vec3 o = look(mA, vUv, aD, aL); if (mB != mA && k > 0.) o = mix(o, look(mB, vUv, bD, bL), k);
         o += (fract(sin(dot(floor(vUv * S / 1.5), vec2(12.9898, 78.233)) + seed) * 43758.5453) - .5) * .03; // grain
