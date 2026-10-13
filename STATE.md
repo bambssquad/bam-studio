@@ -39,3 +39,7 @@
 - Chrome live YouTube playback verified: first song playing at 32.926s before closing menu, 57.694s after closing and changing view, paused=false; second song Cu verified playing at 80.976s. Pause control used after testing. Closed menu preserves the iframe. In-app browser still blocks YouTube playback; UI reports unavailable honestly.
 - Production preview served at http://127.0.0.1:5182/ to avoid stale Vite watcher cache from OneDrive. Visual proof: jelly-preview.png.
 - Publication succeeded: commit 0ea782df39344c64fadee90ee0fd2437215a112c; version appgprj_6ab1031764ec8191be234944e04f1c0c~appgver_089613a2fb3c8191bff902b7adec37df; deployment appgdep_6ab99847da848191a27142c10528bef7. Owner-private URL unchanged. Chrome test audio confirmed Paused before closing test tab.
+
+## 2026-10-13 — huashu-art-motion skill
+- Vendored alchaincyf/huashu-art-motion (MIT, e47f792) ke .claude/skills/huashu-art-motion (tanpa assets/showcase 41MB). Wrapper Indonesia: .claude/skills/bam-artmotion.
+- Env: Playwright harus dipin 1.56.0 (chromium-1194). Smoke test Van Gogh still + klip 3s, film_gate lulus.
