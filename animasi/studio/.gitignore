@@ -1,0 +1,15 @@
+# Engine copy (= skill scripts/engine), renders, QA frames: regenerable
+/代码工程/*
+!/代码工程/eras_vg.js
+!/代码工程/eras_studio.js
+!/代码工程/scenes/
+/代码工程/scenes/*
+!/代码工程/scenes/studio_lib.js
+!/代码工程/scenes/vg_*.js
+!/代码工程/scenes/ba_*.js
+/渲染/
+/qa/
+/审片/frames/
+/审片/extra/
+*.mp4
+*.wav
