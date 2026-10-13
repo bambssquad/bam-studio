@@ -25,6 +25,8 @@ SCENES['vg_sketch'] = (() => {
       const fl = 0.85 + 0.15 * Math.sin(t * 9) * Math.sin(t * 3.7);
       const gr = c.createRadialGradient(900, 210, 20, 900, 210, 700); gr.addColorStop(0, `rgba(255,214,90,${0.45 * fl})`); gr.addColorStop(1, 'rgba(255,214,90,0)');
       c.fillStyle = gr; c.fillRect(0, 0, W, 1000);
+      c.lineCap = 'round'; for (let i = 0; i < 160; i++) { const r0 = 110 + (i % 8) * 26, a = i * 2.39 + t * (0.9 - (i % 8) * 0.06); c.strokeStyle = ['#ffe27a', '#f2b730', '#fff1b8'][i % 3]; c.lineWidth = 8; c.globalAlpha = 0.8 - (i % 8) * 0.08;
+        c.beginPath(); c.arc(900, 210, r0, a, a + 0.35); c.stroke(); } c.globalAlpha = 1;
       VG.stars(c, t, [[900, 210, 90]], '#ffe27a');
       // coffee cup top-down + steam swirls (motif)
       c.fillStyle = '#f0e3c0'; c.strokeStyle = C.ink; c.lineWidth = 6; c.beginPath(); c.arc(130, 1500, 95, 0, TAU); c.fill(); c.stroke();
@@ -34,7 +36,7 @@ SCENES['vg_sketch'] = (() => {
         c.beginPath(); for (let i = 0; i <= 20; i++) { const a = i / 20 * TAU * 1.2 + t * 2 + k, r = 12 + i * 2.2 + ph * 30; const x = 130 + Math.cos(a) * r, y = 1500 - ph * 260 + Math.sin(a) * r * 0.5; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
       c.globalAlpha = 1;
       // the sketch (main action)
-      const p = U.ss(0.25, 4.4, lt);
+      const p = U.clamp(0.06 + U.ease.out(U.clamp(lt / 4.2)) * 0.94);
       c.save(); c.translate(540, 970); c.rotate(-0.04); c.translate(-540, -970);
       const tip = VG.revealLines(c, lines, p, { strokeStyle: C.ink, lineWidth: 7 });
       c.restore();

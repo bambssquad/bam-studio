@@ -94,6 +94,11 @@
     SL.strokes(g, head, { colors: C.skin, angFn: (x, y) => Math.atan2(y - 1360, x - 205) + 1.57, len: 16, w: 6, density: 0.07, seed: 32, box: [100, 1230, 310, 1490], outline: [C.ink, 5] });
     g.fillStyle = C.skin[0]; g.strokeStyle = C.ink; g.lineWidth = 5; g.beginPath(); g.moveTo(295, 1330); g.quadraticCurveTo(335, 1372, 298, 1384); g.fill(); g.stroke();
     g.beginPath(); g.ellipse(150, 1365, 18, 28, 0, 0, TAU); g.fill(); g.stroke();
+    const hair = new Path2D(); hair.ellipse(150, 1300, 60, 70, -0.3, 0, TAU);
+    SL.strokes(g, hair, { colors: C.beard, angFn: () => 1.9, len: 22, w: 6, density: 0.08, seed: 36, box: [80, 1220, 220, 1380], outline: [C.ink, 4] });
+    const head2 = new Path2D(); head2.ellipse(215, 1365, 90, 112, -0.15, 0, TAU);
+    SL.strokes(g, head2, { colors: C.skin, angFn: (x, y) => Math.atan2(y - 1360, x - 205) + 1.57, len: 16, w: 6, density: 0.07, seed: 37, box: [120, 1250, 310, 1480] });
+    g.beginPath(); g.ellipse(150, 1365, 18, 28, 0, 0, TAU); g.fillStyle = C.skin[0]; g.fill(); g.strokeStyle = C.ink; g.lineWidth = 5; g.stroke();
     const beard = new Path2D(); beard.moveTo(140, 1390); beard.bezierCurveTo(170, 1500, 280, 1500, 300, 1400); beard.lineTo(280, 1400); beard.bezierCurveTo(240, 1420, 200, 1420, 160, 1380); beard.closePath();
     SL.strokes(g, beard, { colors: C.beard, angFn: () => 1.4, len: 18, w: 5, density: 0.09, seed: 33, box: [130, 1370, 310, 1500], outline: [C.ink, 4] }); });
   const hat = () => P.cached('vga_hat', W, H, g => {
@@ -110,18 +115,31 @@
     c.fillStyle = '#2a6a4a'; c.beginPath(); c.arc(ex + 4, ey, 6 * blink, 0, TAU); c.fill();
     c.lineWidth = 6; c.strokeStyle = '#b84e1e'; c.beginPath(); c.moveTo(240, 1318 - smile * 6); c.lineTo(285, 1322 - smile * 10); c.stroke();
     if (smile > 0) { c.strokeStyle = '#7a2a12'; c.lineWidth = 6; c.beginPath(); c.moveTo(250, 1418); c.quadraticCurveTo(272, 1418 + 16 * smile, 292, 1408); c.stroke(); }
+    if (hatLift > 0.02) { const hx = 205 + 40 * hatLift + 120, hy = 1262 - 90 * hatLift + 10;
+      c.lineCap = 'round'; c.strokeStyle = C.ink; c.lineWidth = 58; c.beginPath(); c.moveTo(330, 1560); c.quadraticCurveTo(430, 1450, hx, hy); c.stroke();
+      c.strokeStyle = C.coat[1]; c.lineWidth = 46; c.stroke(); }
     c.save(); c.translate(205, 1262); c.translate(40 * hatLift, -90 * hatLift); c.rotate(-0.35 * hatLift); c.translate(-205, -1262); c.drawImage(hat(), 0, 0); c.restore();
+    if (hatLift > 0.02) { const hx = 205 + 40 * hatLift + 120, hy = 1262 - 90 * hatLift + 10;
+      c.fillStyle = C.skin[0]; c.strokeStyle = C.ink; c.lineWidth = 5; c.beginPath(); c.ellipse(hx, hy, 32, 26, 0.3, 0, TAU); c.fill(); c.stroke();
+      c.beginPath(); c.ellipse(hx - 22, hy - 16, 16, 10, -0.6, 0, TAU); c.fill(); c.stroke(); }
     c.restore();
   };
   // arm from shoulder to a hand holding a pencil at tip
   VG.hand = (c, t, tip, shoulder, writing) => {
-    const hx = tip[0] - 20, hy = tip[1] - 30 + (writing ? Math.sin(t * 18) * 2 : 0);
-    c.strokeStyle = C.ink; c.lineWidth = 54; c.lineCap = 'round'; c.beginPath(); c.moveTo(shoulder[0], shoulder[1]); c.quadraticCurveTo((shoulder[0] + hx) / 2 + 40, Math.max(shoulder[1], hy) + 90, hx - 30, hy + 20); c.stroke();
-    c.strokeStyle = C.coat[1]; c.lineWidth = 44; c.stroke();
-    c.strokeStyle = C.ink; c.lineWidth = 11; c.beginPath(); c.moveTo(hx + 10, hy + 26); c.lineTo(hx + 72, hy - 62); c.stroke();
-    c.strokeStyle = '#e9c54a'; c.lineWidth = 7; c.beginPath(); c.moveTo(hx + 14, hy + 20); c.lineTo(hx + 68, hy - 56); c.stroke();
-    c.fillStyle = C.skin[0]; c.strokeStyle = C.ink; c.lineWidth = 5; c.beginPath(); c.ellipse(hx, hy, 36, 28, -0.5, 0, TAU); c.fill(); c.stroke();
-    c.strokeStyle = C.skin[1]; c.lineWidth = 4; c.beginPath(); c.moveTo(hx - 10, hy - 14); c.lineTo(hx + 14, hy - 4); c.stroke();
+    const hx = tip[0] - 20, hy = tip[1] - 30 + (writing ? Math.sin(t * 18) * 2 : 0), mx = (shoulder[0] + hx) / 2 + 40, my = Math.max(shoulder[1], hy) + 90;
+    const arm = () => { c.beginPath(); c.moveTo(shoulder[0], shoulder[1]); c.quadraticCurveTo(mx, my, hx - 34, hy + 22); };
+    c.lineCap = 'round'; c.strokeStyle = C.ink; c.lineWidth = 62; arm(); c.stroke(); c.strokeStyle = C.coat[1]; c.lineWidth = 50; arm(); c.stroke();
+    c.lineWidth = 7; for (let i = 0; i < 14; i++) { const f = i / 14, x = (1 - f) ** 2 * shoulder[0] + 2 * f * (1 - f) * mx + f * f * (hx - 34), y = (1 - f) ** 2 * shoulder[1] + 2 * f * (1 - f) * my + f * f * (hy + 22);
+      c.strokeStyle = C.coat[i % 3]; c.beginPath(); c.moveTo(x - 14, y + 10); c.lineTo(x + 12, y - 12); c.stroke(); }
+    c.fillStyle = '#f0e3c0'; c.strokeStyle = C.ink; c.lineWidth = 5; c.beginPath(); c.ellipse(hx - 30, hy + 20, 30, 24, -0.6, 0, TAU); c.fill(); c.stroke();   // cuff
+    c.strokeStyle = C.ink; c.lineWidth = 11; c.beginPath(); c.moveTo(hx + 4, hy + 30); c.lineTo(hx + 72, hy - 62); c.stroke();
+    c.strokeStyle = '#e9c54a'; c.lineWidth = 7; c.beginPath(); c.moveTo(hx + 8, hy + 24); c.lineTo(hx + 68, hy - 56); c.stroke();
+    c.fillStyle = C.skin[0]; c.strokeStyle = C.ink; c.lineWidth = 5;
+    c.beginPath(); c.ellipse(hx - 4, hy, 38, 30, -0.5, 0, TAU); c.fill(); c.stroke();                                    // palm/back of hand
+    for (let k = 0; k < 3; k++) { c.beginPath(); c.ellipse(hx + 18 + k * 4, hy + 4 + k * 14, 17, 11, 0.4, 0, TAU); c.fill(); c.stroke(); }   // curled fingers
+    c.beginPath(); c.ellipse(hx + 22, hy - 22, 22, 11, -0.9, 0, TAU); c.fill(); c.stroke();                              // index on pencil
+    c.beginPath(); c.ellipse(hx + 4, hy - 26, 20, 12, 0.2, 0, TAU); c.fill(); c.stroke();                                // thumb
+    c.strokeStyle = C.skin[1]; c.lineWidth = 4; c.beginPath(); c.moveTo(hx - 24, hy - 4); c.lineTo(hx - 4, hy + 6); c.stroke();
   };
   // camera: scale s around focus (fx,fy), plus pan dx
   VG.cam = (c, s, fx, fy, dx = 0, dy = 0) => { c.translate(fx + dx, fy + dy); c.scale(s, s); c.translate(-fx, -fy); };

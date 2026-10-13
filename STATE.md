@@ -43,3 +43,8 @@
 ## 2026-10-13 — huashu-art-motion skill
 - Vendored alchaincyf/huashu-art-motion (MIT, e47f792) ke .claude/skills/huashu-art-motion (tanpa assets/showcase 41MB). Wrapper Indonesia: .claude/skills/bam-artmotion.
 - Env: Playwright harus dipin 1.56.0 (chromium-1194). Smoke test Van Gogh still + klip 3s, film_gate lulus.
+
+## 2026-10-13 — Animasi Studio Bam (Van Gogh, 15s 9:16)
+- 3 arah (VG/Matisse/Bauhaus), Bam pilih Van Gogh. Shot: sketsa→rumah tumbuh→jendela+papan STUDIO BAM+angkat topi. Musik sintesis 96 BPM, -13.5 LUFS.
+- Wajah dibuat kode atas permintaan Bam (melanggar default skill). Review 1: 5/10 (4 merah) → diperbaiki; review 2: 7/10, tanpa merah. deliver.py hijau.
+- Sisa kuning: lengan seperti tabung, lompatan ukuran rumah di cut 10s, papan kosong 10–12s.

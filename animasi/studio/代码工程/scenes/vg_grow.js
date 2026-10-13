@@ -11,7 +11,7 @@ SCENES['vg_grow'] = (() => {
       c.save(); VG.cam(c, U.lerp(1.55, 1, pull), 730, 1720);
       VG.sky(c, t, { swirls: SW, stars: STARS });
       VG.land(c, 'grow');
-      VG.house(c, 'grow', 300, 1095, 480, U.ss(0.5, 3.6, lt), t, [U.ss(3.4, 3.7, lt), U.ss(3.7, 4, lt), U.ss(4, 4.3, lt)]);
+      VG.house(c, 'grow', 300, 1095, 480, U.ss(0.5, 3.6, lt), t, [0, 0, 0]);
       c.save(); c.translate(560, 1720); c.rotate(-0.06); c.translate(-560, -1720);
       c.drawImage(P.cached('gr_paper', W, H, g => { const p = new Path2D(); p.rect(400, 1520, 640, 380); SL.strokes(g, p, { colors: C.paper, angFn: () => 0.05, len: 26, w: 7, density: 0.06, seed: 41, box: [400, 1520, 1040, 1900], outline: [C.ink, 5] }); }), 0, 0);
       VG.revealLines(c, sketch, 1, { strokeStyle: C.ink, lineWidth: 6 });
