@@ -821,6 +821,34 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 .gfx-info span{color:#6b6b6b;text-transform:uppercase;letter-spacing:.08em}.gfx-info b{font-weight:500;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gfx-note{margin:10px 0 0;font-size:11.5px;line-height:1.45;color:#555}
 @media (max-width:760px){.gpill b{display:none}}
+/* Revisi 25 — journal scroll guidance */
+.jx{position:absolute;inset:0;pointer-events:none;z-index:6}
+.jx-rail{position:absolute;right:clamp(12px,2vw,26px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:22px;align-items:flex-end;font:500 11px/1 var(--HV);letter-spacing:.1em;text-transform:uppercase;color:rgba(11,11,11,.38)}
+.jx-rail span{display:flex;gap:6px;align-items:center;transition:color .3s}.jx-rail span em{font-style:normal;opacity:.6}
+.jx-rail span::after{content:"";width:7px;height:7px;border:1px solid currentColor;border-radius:50%;transition:background .3s,transform .3s}
+.jx-rail span.done{color:rgba(11,11,11,.6)}.jx-rail span.done::after{background:currentColor}
+.jx-rail span.on{color:#0B0B0B;font-weight:700}.jx-rail span.on::after{background:#0B0B0B;transform:scale(1.5)}
+.jx-track{position:absolute;right:3px;top:3px;bottom:3px;width:1px;background:rgba(11,11,11,.15);z-index:-1}
+.jx-fill{position:absolute;inset:0;background:#0B0B0B;transform-origin:top;transform:scaleY(var(--p,0))}
+.jx-cue{position:absolute;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translate(-50%,14px);display:flex;align-items:center;gap:12px;padding:8px 8px 8px 14px;background:#0B0B0B;color:#F7F7F5;border-radius:999px;opacity:0;transition:opacity .45s,transform .55s cubic-bezier(.2,.75,.15,1);white-space:nowrap;box-shadow:0 12px 34px rgba(0,0,0,.18)}
+.jx-cue.show{opacity:1;transform:translate(-50%,0)}.jx-cue.show .jx-go{pointer-events:auto}
+.jx-cue b{font:500 13px/1.2 var(--HV);letter-spacing:.01em}
+.jx-go{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;background:#F7F7F5;color:#0B0B0B;font:700 12px/1 var(--HV);letter-spacing:.04em;touch-action:manipulation}
+.jx-go:hover{background:#fff}
+.jx-ico{display:inline-flex;width:22px;height:30px;align-items:center;justify-content:center}
+.jx-mouse{position:relative;width:16px;height:25px;border:1.6px solid currentColor;border-radius:9px}.jx-mouse>i{position:absolute;left:50%;top:4px;width:3px;height:5px;margin-left:-1.5px;border-radius:2px;background:currentColor;animation:jxWheel 1.6s cubic-bezier(.5,0,.2,1) infinite}
+.jx-finger{display:none;position:relative;width:20px;height:30px}.jx-finger>i{position:absolute;left:4px;bottom:2px;width:12px;height:12px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(247,247,245,.18);animation:jxSwipe 1.8s cubic-bezier(.5,0,.2,1) infinite}
+@keyframes jxWheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(9px);opacity:0}100%{transform:translateY(0);opacity:0}}
+@keyframes jxSwipe{0%{transform:translateY(0);opacity:0}15%{opacity:1}75%{transform:translateY(-16px);opacity:0}100%{opacity:0}}
+.jx-drag{position:absolute;left:50%;top:calc(120px + 4vh);transform:translate(-50%,-8px);display:flex;gap:8px;align-items:center;padding:7px 12px;border:1px solid rgba(11,11,11,.25);border-radius:999px;background:rgba(247,247,245,.85);backdrop-filter:blur(6px);font:500 12px/1 var(--HV);color:#0B0B0B;opacity:0;transition:opacity .45s,transform .55s}
+.jx-drag.show{opacity:1;transform:translate(-50%,0)}.jx-hand{display:inline-flex;animation:jxDrag 2.2s ease-in-out infinite}
+@keyframes jxDrag{0%,100%{transform:translateX(-7px) rotate(-8deg)}50%{transform:translateX(7px) rotate(8deg)}}
+@media (pointer:coarse){.jx-mouse{display:none}.jx-finger{display:block}}
+@media (max-width:760px){.jx-rail{top:auto;bottom:calc(118px + env(safe-area-inset-bottom,0px));right:50%;transform:translateX(50%);flex-direction:row;gap:14px;font-size:9.5px}.jx-rail span{flex-direction:row-reverse}.jx-rail span em{display:none}.jx-track{display:none}
+  .jx-cue{bottom:calc(60px + env(safe-area-inset-bottom,0px));gap:9px;padding:6px 6px 6px 11px;max-width:calc(100vw - 24px)}.jx-cue b{font-size:11.5px;white-space:normal;line-height:1.25}.jx-go{padding:8px 11px;font-size:11px;white-space:nowrap}}
+.jx-s2 .j-down{opacity:0!important;pointer-events:none}.jx-s2.jx-on .j-cap{opacity:0;transition:opacity .3s}
+@media (max-width:760px){.jx-s2 .jx-rail{display:none}.jx-cue b{white-space:nowrap}}
+@media (prefers-reduced-motion:reduce){.jx-mouse>i,.jx-finger>i,.jx-hand{animation:none}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -958,6 +986,11 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
       <button class="jrb" id="jRot" type="button" aria-label="Mode putar 3D" title="Mode putar (atau seret area kosong, klik kanan, dua jari)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4"/></svg></button><button class="jrb" id="jReset" type="button" aria-label="Reset putaran" title="Reset putaran"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="1.5"/></svg></button><button class="jrb" id="jZoomIn" type="button" aria-label="Perbesar buku"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12M12 6v12"/></svg></button>
     </div>
     <p class="j-cap" id="jCap" aria-live="polite"></p>
+    <div class="jx" id="jx">
+      <div class="jx-rail" aria-hidden="true"><i class="jx-track"><i class="jx-fill" id="jxFill"></i></i><span data-s="0"><em>01</em>Kipas</span><span data-s="1"><em>02</em>Lembaran</span><span data-s="2"><em>03</em>Buku</span><span data-s="3"><em>04</em>3D</span></div>
+      <div class="jx-drag" id="jxDrag" aria-hidden="true"><span class="jx-hand"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5V4.5a1.5 1.5 0 0 1 3 0V11m0-1V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.6 14a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span><b>Seret kipas untuk memutar</b></div>
+      <div class="jx-cue" id="jxCue" role="status"><span class="jx-ico" aria-hidden="true"><i class="jx-mouse"><i></i></i><i class="jx-finger"><i></i></i></span><b id="jxTxt">Gulir untuk membuka jurnal</b><button class="jx-go" id="jxGo" type="button">Mulai ▸</button></div>
+    </div>
     <a class="j-down" href="#hero"><span>Gulir ke model 3D</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
    </div>
   </section>
@@ -3575,7 +3608,25 @@ const SHEETS = V2 ? [
   (function counter() { const el = $('#jhCount'); if (!el) return; if (!window.__ldrDone && document.getElementById('ldr')) { addEventListener('ldr:done', counter, {once: true}); return; } const T = [23, 60, 10.33]; const t0 = performance.now();
     const f = () => { const k = Math.min(1, (performance.now() - t0) / 2400), e = 1 - Math.pow(1 - k, 3); el.innerHTML = T.map(v => (v * e).toFixed(2).padStart(5, '0')).join('<i>:</i>') + `<small>${String(Math.floor(performance.now() / 10) % 100).padStart(2, '0')}</small>`; if (k < 1) requestAnimationFrame(f); else el.innerHTML = '23.00<i>:</i>60.00<i>:</i>10.33<small>m</small>'; }; f(); })();
   function phase() { const r = sec.getBoundingClientRect(); spT = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))); kick(); }
-  addEventListener('scroll', phase, {passive: true}); addEventListener('resize', phase); setTimeout(phase, 0); window.__bk = () => ({pos, target, sp, spT, rotX, rotY}); window.__od = k => openDwg(k); window.__gs = i => goSpread(i);
+  addEventListener('scroll', phase, {passive: true}); addEventListener('resize', phase); setTimeout(phase, 0);
+  /* ---------- scroll guidance: stage rail + gesture cue + drag hint + auto 'Mulai' ---------- */
+  (() => { const cue = $('#jxCue'), txt = $('#jxTxt'), go = $('#jxGo'), fill = $('#jxFill'), drag = $('#jxDrag'), rail = document.querySelectorAll('.jx-rail span'); if (!cue) return;
+    let ready = false, idle = 0, auto = 0, dragSeen = false; const touch = matchMedia('(pointer: coarse)').matches;
+    const stage = () => spT < .08 ? 0 : spT < .74 ? 1 : spT < .985 ? 2 : 3;
+    const T = [[touch ? 'Usap ke atas untuk membuka' : 'Gulir ke bawah untuk membuka jurnal', 'Mulai ▸'], [touch ? 'Terus usap ke atas' : 'Terus gulir — lembaran menyusun buku', 'Buka buku ▸'], [touch ? 'Usap = balik · ketuk = buka' : 'Seret = balik halaman · klik = buka · gulir = lanjut', 'Ke 3D ▸'], ['', '']];
+    function show(on) { cue.classList.toggle('show', on && ready && stage() < 3 && inSec()); sec.classList.toggle('jx-on', cue.classList.contains('show')); drag.classList.toggle('show', on && ready && stage() === 0 && !dragSeen && inSec()); }
+    const inSec = () => { const r = sec.getBoundingClientRect(); return r.top < innerHeight * .5 && r.bottom > innerHeight * .5; };
+    function upd() { const s = stage(); fill.style.setProperty('--p', spT.toFixed(3)); rail.forEach((e, i) => { e.classList.toggle('on', i === s); e.classList.toggle('done', i < s); }); sec.classList.toggle('jx-s2', s === 2); if (s === 2) { const ctl = sec.querySelector('.j-ctl'), box = cue.parentElement.getBoundingClientRect(), r = ctl.getBoundingClientRect(); cue.style.top = (r.bottom - box.top + 10) + 'px'; cue.style.bottom = 'auto'; } else { cue.style.top = ''; cue.style.bottom = ''; }
+      if (txt.dataset.s !== String(s)) { txt.dataset.s = s; txt.textContent = T[s][0]; go.textContent = T[s][1]; } }
+    function arm() { clearTimeout(idle); idle = setTimeout(() => { upd(); show(true); }, 4000); }
+    addEventListener('scroll', () => { upd(); if (!auto) { show(false); arm(); } }, {passive: true});
+    const start = () => { ready = true; upd(); show(true); }; if (window.__ldrDone) setTimeout(start, 2600); else addEventListener('ldr:done', () => setTimeout(start, 2600), {once: true});
+    bc.addEventListener('pointerdown', () => { if (stage() === 0) { dragSeen = true; drag.classList.remove('show'); } });
+    const stopAuto = () => { if (auto) { cancelAnimationFrame(auto); auto = 0; arm(); } }; for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, stopAuto, {passive: true});
+    function scrollTo(y, ms) { const y0 = scrollY, t0 = performance.now(); show(false); const step = t => { const k = Math.min(1, (t - t0) / ms), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; window.scrollTo(0, y0 + (y - y0) * e); if (k < 1) auto = requestAnimationFrame(step); else { auto = 0; upd(); arm(); } }; auto = requestAnimationFrame(step); }
+    go.onclick = () => { const s = stage(); if (s === 2) { const c = $('#cine') || $('#hero'); scrollTo(scrollY + c.getBoundingClientRect().top, 1400); return; }
+      const top = scrollY + sec.getBoundingClientRect().top, span = sec.offsetHeight - innerHeight; const goal = s === 0 ? .2 : .8; scrollTo(top + span * goal, s === 0 ? 1600 : 3200); };
+    upd(); })(); window.__bk = () => ({pos, target, sp, spT, rotX, rotY}); window.__od = k => openDwg(k); window.__gs = i => goSpread(i);
   const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
   const snap = p => Math.max(-1, Math.min(NL + 1, Math.round(p)));
   function goSpread(i) { target = snap(i); kick(); }
