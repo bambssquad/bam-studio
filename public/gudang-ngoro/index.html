@@ -769,6 +769,37 @@ body.explore.third .emo{display:flex}
 .vpill{display:inline-flex;align-items:center;gap:6px}.vpill b{font-size:11px;letter-spacing:.08em}
 @media (max-width:760px){.vp-g{grid-template-columns:1fr}.vp-c{min-height:0}.vp-s{max-height:22vh}.vpill span{display:none}}
 @media (prefers-reduced-motion:reduce){.vp-c,.vp-k,.vp-h i{transition:none}}
+/* Revisi 22 — sinematik section, build timelapse timeline, recording, mobile drawing viewer */
+.cine{position:relative;z-index:2;background:#F7F7F5;color:#0B0B0B;padding:clamp(56px,10vh,110px) clamp(16px,4vw,48px);font-family:var(--HV)}
+.cine-head{max-width:1120px;margin:0 auto clamp(24px,4vh,40px)}.cine-head>p:first-child{margin:0 0 10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6b6b6b}
+.cine-head h2{margin:0;font-size:clamp(40px,7vw,96px);line-height:.9;letter-spacing:-.055em;font-weight:700}
+.cine-ver{margin:14px 0 0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border:1px solid #0B0B0B;display:inline-block}
+.cine-grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(12px,2vw,24px)}
+.cine-c{border:1px solid #0B0B0B;background:#fff;padding:clamp(18px,2.4vw,30px);display:flex;flex-direction:column;gap:12px}
+.cine-k{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.cine-c h3{margin:0;font-size:clamp(26px,3vw,40px);letter-spacing:-.035em;line-height:1}
+.cine-c p{margin:0;font-size:14px;line-height:1.5;color:#3a3a3a;max-width:52ch}
+.cine-steps{list-style:none;margin:4px 0 0;padding:0;border-top:1px solid #0B0B0B;counter-reset:s}
+.cine-steps li{border-bottom:1px solid rgba(11,11,11,.18)}
+.cine-steps button{all:unset;box-sizing:border-box;display:flex;gap:14px;align-items:baseline;width:100%;padding:11px 2px;cursor:pointer;font-size:15px;touch-action:manipulation}
+.cine-steps button i{font-style:normal;font-size:11px;letter-spacing:.1em;color:#6b6b6b}
+.cine-steps button:hover{background:#0B0B0B;color:#F7F7F5;padding-left:10px}.cine-steps button:hover i{color:#bbb}
+.cine-steps button{transition:padding .25s,background .25s,color .25s}
+.cine-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.cine-note{max-width:1120px;margin:16px auto 0;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b}
+body:not(.v2) .v2o,body.v2 .v1o{display:none}
+.tour-ver{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;background:#F7F7F5;color:#0B0B0B}
+.tour-steps{display:flex;gap:4px;align-items:center}
+.tour-steps .ts{all:unset;cursor:pointer;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);touch-action:manipulation}
+.tour-steps .ts.on{background:#fff}.tour-steps .ts.done{background:rgba(255,255,255,.7)}
+.tour-steps .ts.lab{width:auto;height:auto;border-radius:0;padding:5px 8px;font:500 11px/1 var(--HV);letter-spacing:.04em;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25)}
+.tour-steps .ts.lab i{font-style:normal;opacity:.6;margin-right:5px}
+.tour-steps .ts.lab.done{color:#fff;border-color:rgba(255,255,255,.55)}.tour-steps .ts.lab.on{background:#F7F7F5;color:#0B0B0B;border-color:#F7F7F5}
+.tour-ctl{flex-wrap:wrap;justify-content:flex-end}
+.rec-dot{display:none;color:#ff3b30;font-size:11px;letter-spacing:.12em;font-weight:700}body.rec .rec-dot{display:inline}
+.gt,.gt-card,.dv-bar button,.btn,.chip{touch-action:manipulation}
+.brand{min-width:0}.brand b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+@media (max-width:760px){.cine-grid{grid-template-columns:1fr}.tour-steps .ts.lab{padding:4px 6px;font-size:10px}.tour-steps .ts.lab i{display:none}.tour-ctl{left:var(--gut-l)}.bar .brand span{display:none}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -902,6 +933,32 @@ body.explore.third .emo{display:flex}
     <p class="j-cap" id="jCap" aria-live="polite"></p>
     <a class="j-down" href="#hero"><span>Gulir ke model 3D</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
    </div>
+  </section>
+  <section class="cine" id="cine" aria-labelledby="cineT">
+    <div class="cine-head"><p class="mono">03 — Sinematik</p><h2 id="cineT">Tur &amp; timelapse<br>pembangunan</h2><p class="cine-ver mono" id="cineVer"></p></div>
+    <div class="cine-grid">
+      <article class="cine-c">
+        <div class="cine-k mono"><span>A</span><span>Timelapse · ± 45 dtk</span></div>
+        <h3>Timelapse pembangunan</h3>
+        <p>Model dibangun dari lahan kosong sampai selesai, kamera berpindah di setiap tahap. Klik tahap untuk lompat.</p>
+        <ol class="cine-steps">
+          <li><button type="button" data-cstep="1"><i class="mono">01</i>Pondasi plat, pedestal &amp; sloof</button></li>
+          <li><button type="button" data-cstep="2"><i class="mono">02</i>Kolom WF di garis unit</button></li>
+          <li><button type="button" data-cstep="3"><i class="mono">03</i>Kuda-kuda, gording &amp; ikatan angin</button></li>
+          <li><button type="button" data-cstep="4"><i class="mono">04</i>Atap seng &amp; selubung</button></li>
+          <li><button type="button" data-cstep="5"><i class="mono">05</i><span class="v1o">Tapak, kantor, pagar &amp; lansekap</span><span class="v2o">Tapak, pos jaga, pagar &amp; lansekap</span></button></li>
+        </ol>
+        <div class="cine-a"><button class="btn primary" type="button" data-cine="build">▶ Putar timelapse</button><button class="btn" type="button" data-cine="build:rec">● Rekam video</button></div>
+      </article>
+      <article class="cine-c">
+        <div class="cine-k mono"><span>B</span><span>Tur · <span class="v1o">20 titik ± 104 dtk</span><span class="v2o">15 titik ± 78 dtk</span></span></span></div>
+        <h3>Tur sinematik</h3>
+        <p class="v1o">Ikhtisar tapak, ketiga gudang luar &amp; dalam, crane, sosoran, lalu masuk ke kantor dua lantai.</p>
+        <p class="v2o">Ikhtisar tapak, ketiga gudang luar &amp; dalam, crane, sisi barat tanpa sosoran, pos jaga dan parkir.</p>
+        <div class="cine-a"><button class="btn primary" type="button" data-cine="tour">▶ Putar tur</button><button class="btn" type="button" data-cine="tour:rec">● Rekam video</button></div>
+      </article>
+    </div>
+    <p class="cine-note mono">Rekam video: tur diputar sambil direkam dari kanvas 3D, file .mp4/.webm terunduh otomatis saat selesai.</p>
   </section>
   <section class="hero" id="hero">
     <div class="hero-inner">
@@ -1088,8 +1145,8 @@ body.explore.third .emo{display:flex}
 
 <div class="tour" id="tour" hidden>
   <i class="lb top"></i><i class="lb bot"></i>
-  <div class="tour-cap"><span class="mono" id="tourNo"></span><b id="tourCap"></b></div>
-  <div class="tour-ctl"><span class="tour-bar"><i id="tourBar"></i></span><button class="chip" id="tourStop" type="button">Hentikan tur</button></div>
+  <div class="tour-cap"><span class="mono tour-ver" id="tourVer"></span><span class="mono" id="tourNo"></span><b id="tourCap"></b></div>
+  <div class="tour-ctl"><div class="tour-steps" id="tourSteps"></div><span class="tour-bar"><i id="tourBar"></i></span><span class="rec-dot mono">● REC</span><button class="chip" id="tourStop" type="button">Hentikan tur</button></div>
 </div>
 <div class="gt" id="gamtek" hidden role="dialog" aria-modal="true" aria-labelledby="gtT">
   <header class="gt-head"><div><p class="gt-k">Portofolio gambar kerja · DWG diplot ulang, vektor</p><h2 id="gtT">Gambar Kerja</h2></div>
@@ -1457,11 +1514,11 @@ if (!V2) { // lean-to roof
 // envelope
 function bataWall(len, x, z, rotY, info_) { const w = box(len, 4, .15, mat.plaster, 0, 0, 0); const g = new THREE.Group(); g.add(w); w.position.x = len / 2; g.position.set(x, 0, z); g.rotation.y = rotY; info(g, info_); return g; }
 // long walls: east (x=42) and west of G3 (x=-27, faces lean-to); partitions at -4 and 19
-const longs = [[42.22, 'g1'], [-27.18, 'g3'], [-4, 'g2'], [19, 'g1']];
+const longs = [[42.22, 'g1'], [V2 ? -27.26 : -27.18, 'g3'], [-4, 'g2'], [19, 'g1']];
 longs.forEach(([x, k], i) => {
   const w = bataWall(60, x, 30, Math.PI / 2, k); G.wall.add(w); reg(w, 4, .25 + i * .05, 'grow');
   const top = P.eave - 4 - .05;
-  const pc = panel([[0, 0], [60, 0], [60, top + (x === -27.18 ? 0 : 0)], [0, top]], mat.clad);
+  const pc = panel([[0, 0], [60, 0], [60, top], [0, top]], mat.clad);
   pc.position.set(x + (x > 40 ? .1 : x < -20 ? -.1 : 0), 4, 30); pc.rotation.y = Math.PI / 2; info(pc, k);
   G.wall.add(pc); reg(pc, 4, .45 + i * .05, 'grow');
 });
@@ -2079,7 +2136,7 @@ function makeComposer() {
   bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0, .55, 1.05); composer.addPass(bloom);
   composer.addPass(new OutputPass()); composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight);
 }
-function draw() { if (mode === 'story') { const r = bookEl.getBoundingClientRect(); if (r.top <= 1 && r.bottom >= innerHeight - 1) return; } if (HQ && mode === 'explore') { if (!composer) makeComposer(); gtao.enabled = cut.axis === 'none'; composer.render(); } else renderer.render(scene, camera); }
+function draw() { if (mode === 'story') { const r = bookEl.getBoundingClientRect(); if (r.top <= 1 && r.bottom >= innerHeight - 1) return; } if (HQ && mode === 'explore') { if (!composer) makeComposer(); gtao.enabled = cut.axis === 'none'; composer.render(); } else renderer.render(scene, camera); if (REC.on) REC.grab(); }
 
 /* ================= build animation ================= */
 let B = 0, Bshown = -1;
@@ -2386,7 +2443,7 @@ $('#dExpand').onclick = () => setMin(!$('#xp').classList.contains('min'));
 { const order = V2 ? ['iso', 'front', 'inside', 'dock', 'top'] : ['iso', 'front', 'inside', 'dock', 'office', 'officeIn', 'top']; let vi = 0; $('#dView').onclick = () => { vi = (vi + 1) % order.length; document.querySelector(`[data-view=${order[vi]}]`).click(); $('#dView').title = 'Sudut pandang: ' + document.querySelector(`[data-view=${order[vi]}]`).textContent; }; }
 { const ns = ['orbit', 'walk', 'third'], nm = {orbit: 'orbit', walk: 'orang pertama', third: 'orang ketiga'}; $('#dNav').onclick = () => { const n = ns[(ns.indexOf(nav) + 1) % 3]; n === 'orbit' ? enterOrbit() : enterNav(n); $('#dNav').title = 'Navigasi: ' + nm[n]; $('#dNav').setAttribute('aria-pressed', String(n !== 'orbit')); }; }
 { const ls = ['day', 'dusk', 'night'], nm = {day: 'siang', dusk: 'senja', night: 'malam'}; $('#dLight').onclick = () => { const k = ls[(ls.indexOf(light) + 1) % 3]; setLight(k); $('#dLight').title = 'Cahaya: ' + nm[k]; $('#dLight').setAttribute('aria-pressed', String(k !== 'day')); }; }
-$('#dTour').onclick = () => startTour(); $('#prompt').onclick = () => interact();
+$('#dTour').onclick = () => startTour('tour'); $('#prompt').onclick = () => interact();
 for (const [id, k] of [['#forkUp', 'up'], ['#forkDown', 'down']]) { const b = $(id); b.addEventListener('pointerdown', e => { keys[k] = 1; b.setPointerCapture(e.pointerId); }); for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => keys[k] = 0); }
 const setSound = v => { const r = SFX.toggle(v); $('#dSound').setAttribute('aria-pressed', String(r)); $('#swSound').checked = r; $('#dSound').setAttribute('aria-label', r ? 'Matikan suara' : 'Nyalakan suara'); };
 $('#dSound').onclick = () => setSound(!SFX.on); $('#swSound').addEventListener('change', e => setSound(e.target.checked));
@@ -2771,7 +2828,7 @@ function frame(now) {
     const bT = b <= .001 ? 5 : b; B += (bT - B) * (RM ? 1 : 1 - Math.pow(.002, dt)); if (Math.abs(B - bT) < .0005) B = bT;
     if (Math.abs(B - Bshown) > 1e-4) { applyBuild(B); Bshown = B; }
     const br = bookEl.getBoundingClientRect(); 
-    { const sh = $('#site').getBoundingClientRect(); const on = br.bottom < innerHeight * .55 && sh.top > innerHeight * .45; HUD.frame(b, dt, on); storyOffset(dt, b, on); FX.update(dt, now / 1000); }
+    { const sh = $('#site').getBoundingClientRect(); const on = br.bottom < innerHeight * .55 && sh.top > innerHeight * .45 && $('#cine').getBoundingClientRect().bottom < innerHeight * .55; HUD.frame(b, dt, on); storyOffset(dt, b, on); FX.update(dt, now / 1000); }
     const pg = $('#progress'); pg.classList.toggle('on', b > .02 && b < 4.98); progBars.forEach((x, i) => x.style.transform = `scaleX(${clamp(b - i)})`);
   } else {
     HUD.frame(0, dt, false); storyOffset(dt, 0, false); FX.update(dt, now / 1000);
@@ -2845,29 +2902,69 @@ const TOUR = V2 ? [
   [[33.2, 2.2, -39.8], [30, 3, -30], 'Keluar kantor'],
   [[118, 62, 36], [2, 2, 0], 'Bubungan +10.33 · tritisan +7.00'],
 ];
-const tour = {on: false, t0: 0, dur: TOUR.length * 5200, pc: null, tc: null, last: -1, prevDoors: [0, 0, 0]};
-function startTour() {
+const BUILD = [
+  [[-128, 78, -138], [4, 0, -4], 'Tapak siap · pematangan lahan', 0, .15, 'Lahan'],
+  [[-62, 20, -72], [-12, 0, -12], '01 — Pondasi plat, pedestal & sloof', .15, 1, 'Pondasi'],
+  [[-50, 15, -60], [-4, 3, -8], '02 — Kolom WF berdiri di garis unit', 1, 2, 'Kolom'],
+  [[46, 24, -66], [8, 6, -6], '03 — Kuda-kuda, gording & ikatan angin', 2, 3, 'Rangka atap'],
+  [[98, 40, -52], [4, 4, 0], '04 — Atap seng & selubung dinding', 3, 4, 'Atap'],
+  [[-104, 58, -118], [4, 0, -6], V2 ? '05 — Tapak, pagar, pos jaga & lansekap' : '05 — Tapak, kantor, pagar & lansekap', 4, 5, 'Tapak'],
+  [[118, 62, 36], [2, 2, 0], V2 ? 'Selesai · Versi 02 — Revisi 01' : 'Selesai · Versi 01 — desain awal', 5, 5, 'Selesai'],
+];
+const VER_TAG = V2 ? 'Versi 02 · Revisi 01 — tanpa kantor & sosoran' : 'Versi 01 · Desain awal';
+const tour = {on: false, kind: 'tour', list: TOUR, t0: 0, dur: TOUR.length * 5200, pc: null, tc: null, last: -1, prevDoors: [0, 0, 0]};
+window.__tour = tour;
+/* video capture of the cinematic (canvas + burnt-in caption), saved as webm/mp4 */
+const REC = (() => { let mr = null, chunks = [], cv = null, cx = null; const r = {on: false};
+  r.ok = () => !!(window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
+  r.start = () => { if (!r.ok()) return false; cv = document.createElement('canvas'); const w = Math.min(1920, canvas.width), h = Math.round(w * canvas.height / canvas.width); cv.width = w & ~1; cv.height = h & ~1; cx = cv.getContext('2d');
+    const types = ['video/mp4;codecs=avc1', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4']; const mt = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    try { mr = new MediaRecorder(cv.captureStream(30), mt ? {mimeType: mt, videoBitsPerSecond: 8e6} : {}); } catch (e) { return false; }
+    chunks = []; mr.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    mr.onstop = () => { const type = mr.mimeType || 'video/webm'; const blob = new Blob(chunks, {type}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `gudang-ngoro-${V2 ? 'v2' : 'v1'}-${tour.kind === 'build' ? 'timelapse' : 'tur'}.${type.includes('mp4') ? 'mp4' : 'webm'}`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); };
+    mr.start(500); r.on = true; document.body.classList.add('rec'); return true; };
+  r.grab = () => { if (!cx) return; const w = cv.width, h = cv.height; cx.drawImage(canvas, 0, 0, w, h); const s = h / 1080;
+    cx.fillStyle = 'rgba(0,0,0,.55)'; cx.fillRect(0, h - 150 * s, w, 150 * s); cx.fillStyle = '#F7F7F5'; cx.font = `500 ${22 * s}px "Helvetica Neue", Helvetica, Arial, sans-serif`; cx.fillText((VER_TAG + '  ·  ' + ($('#tourNo').textContent || '')).toUpperCase(), 56 * s, h - 98 * s);
+    cx.font = `700 ${46 * s}px "Helvetica Neue", Helvetica, Arial, sans-serif`; cx.fillText($('#tourCap').textContent || '', 56 * s, h - 46 * s);
+    const u = clamp(tour.el / tour.dur); cx.fillStyle = 'rgba(247,247,245,.3)'; cx.fillRect(0, h - 4 * s, w, 4 * s); cx.fillStyle = '#F7F7F5'; cx.fillRect(0, h - 4 * s, w * u, 4 * s); };
+  r.stop = () => { if (!r.on) return; r.on = false; document.body.classList.remove('rec'); try { mr.stop(); } catch (e) {} cx = null; };
+  return r; })();
+function startTour(kind = 'tour', rec = false) {
+  if (tour.on) stopTour(true);
   if (mode !== 'explore') enterExplore(); if (nav !== 'orbit') enterOrbit(); tween = null;
-  tour.pc = new THREE.CatmullRomCurve3([camera.position.clone(), ...TOUR.map(k => V(...k[0]))], false, 'centripetal');
-  tour.tc = new THREE.CatmullRomCurve3([controls.target.clone(), ...TOUR.map(k => V(...k[1]))], false, 'centripetal');
-  tour.on = true; tour.t0 = performance.now(); tour.last = -1; tour.prevDoors = doorT.slice(); setAllDoors(1); DOFF.t = 1; controls.enabled = false;
-  setStage(5); cut.axis = 'none'; setPressed('#cut', 'none'); applyCut();
-  for (const k of ['roof', 'wall', 'racks', 'props', 'door', 'office', 'officeUp', 'officeRoof']) { const el = $('#ly-' + k); if (el) el.checked = G[k].visible = true; }
-  document.body.classList.add('touring'); $('#tour').hidden = false; setMin(true);
+  const L = kind === 'build' ? BUILD : TOUR; tour.kind = kind; tour.list = L; tour.dur = L.length * (kind === 'build' ? 6200 : 5200);
+  tour.pc = new THREE.CatmullRomCurve3([camera.position.clone(), ...L.map(k => V(...k[0]))], false, 'centripetal');
+  tour.tc = new THREE.CatmullRomCurve3([controls.target.clone(), ...L.map(k => V(...k[1]))], false, 'centripetal');
+  tour.on = true; tour.t0 = performance.now(); tour.el = 0; tour.lt = 0; tour.last = -1; tour.prevDoors = doorT.slice(); controls.enabled = false;
+  if (kind === 'build') { setAllDoors(0); setStage(0); } else { setAllDoors(1); DOFF.t = 1; setStage(5); }
+  cut.axis = 'none'; setPressed('#cut', 'none'); applyCut();
+  for (const k of ['roof', 'wall', 'racks', 'props', 'door', 'office', 'officeUp', 'officeRoof', 'found', 'steel', 'purlin', 'site', 'trees']) { const el = $('#ly-' + k); if (el && !el.closest('label').hidden) el.checked = G[k].visible = true; }
+  $('#tourVer').textContent = VER_TAG; const stp = $('#tourSteps'); stp.innerHTML = '';
+  L.forEach((k, i) => { const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'ts' + (kind === 'build' ? ' lab' : ''); bt.innerHTML = kind === 'build' ? `<i>${String(i).padStart(2, '0')}</i>${k[5]}` : '<i></i>'; bt.title = k[2]; bt.setAttribute('aria-label', k[2]);
+    bt.onclick = () => { tour.el = (i + .02) / L.length * tour.dur; tour.last = -1; }; stp.appendChild(bt); });
+  document.body.classList.add('touring'); document.body.classList.toggle('tour-build', kind === 'build'); $('#tour').hidden = false; setMin(true);
+  if (rec) REC.start();
 }
-function stopTour() {
-  if (!tour.on) return; tour.on = false; document.body.classList.remove('touring'); $('#tour').hidden = true;
-  tour.prevDoors.forEach((v, i) => setDoor(i, v)); controls.target.copy(tour.tc.getPoint(Math.min(1, (performance.now() - tour.t0) / tour.dur))); controls.enabled = nav === 'orbit'; setMin(false);
+function stopTour(quiet) {
+  if (!tour.on) return; tour.on = false; REC.stop(); document.body.classList.remove('touring', 'tour-build'); $('#tour').hidden = true;
+  if (tour.kind === 'build') setStage(5);
+  tour.prevDoors.forEach((v, i) => setDoor(i, v)); controls.target.copy(tour.tc.getPoint(Math.min(1, tour.el / tour.dur))); controls.enabled = nav === 'orbit'; setMin(false);
 }
 function tourFrame(now) {
-  const u = clamp((now - tour.t0) / tour.dur); const n = TOUR.length; const x = u * n; const i = Math.min(n - 1, Math.floor(x)); const f = x - i;
+  const dtm = tour.lt ? Math.min(80, Math.max(0, now - tour.lt)) : 16; tour.lt = now; tour.el += dtm;
+  const L = tour.list; const u = clamp(tour.el / tour.dur); const n = L.length; const x = u * n; const i = Math.min(n - 1, Math.floor(x)); const f = x - i;
   const g = (i + (f * .55 + sstep(0, 1, f) * .45)) / n; // linger a little on every station
   camera.position.copy(tour.pc.getPoint(g)); controls.target.copy(tour.tc.getPoint(g)); camera.lookAt(controls.target);
-  if (i !== tour.last) { tour.last = i; $('#tourNo').textContent = `${String(i + 1).padStart(2, '0')} / ${n}`; const c = $('#tourCap'); c.classList.remove('in'); void c.offsetWidth; c.textContent = TOUR[i][2]; c.classList.add('in'); }
+  if (tour.kind === 'build') { const k = L[i]; const v = k[3] + (k[4] - k[3]) * sstep(.05, .85, f); if (Math.abs(v - B) > 1e-3) setStage(v); }
+  if (i !== tour.last) { tour.last = i; $('#tourNo').textContent = `${tour.kind === 'build' ? 'Timelapse pembangunan' : 'Tur sinematik'} · ${String(i + 1).padStart(2, '0')} / ${n}`; const c = $('#tourCap'); c.classList.remove('in'); void c.offsetWidth; c.textContent = L[i][2]; c.classList.add('in');
+    $('#tourSteps').querySelectorAll('.ts').forEach((b, j) => { b.classList.toggle('on', j === i); b.classList.toggle('done', j < i); }); }
   $('#tourBar').style.transform = `scaleX(${u})`;
   if (u >= 1) stopTour();
 }
-$('#btnTour').onclick = startTour; $('#btnTour2').onclick = startTour; $('#tourStop').onclick = stopTour;
+$('#btnTour').onclick = () => startTour('tour'); $('#btnTour2').onclick = () => startTour('tour');
+document.querySelectorAll('[data-cine]').forEach(b => b.onclick = () => { const [k, r] = b.dataset.cine.split(':'); startTour(k, r === 'rec'); });
+document.querySelectorAll('[data-cstep]').forEach(b => b.onclick = () => { startTour('build'); const i = +b.dataset.cstep; tour.el = (i + .02) / BUILD.length * tour.dur; });
+{ const cv = $('#cineVer'); if (cv) cv.textContent = VER_TAG; if (!REC.ok()) document.querySelectorAll('[data-cine$=":rec"]').forEach(b => b.hidden = true); } $('#tourStop').onclick = stopTour;
 
 { const bv = document.getElementById('btnVer'); if (bv) { bv.querySelector('b').textContent = V2 ? 'V2' : 'V1'; bv.querySelector('span').textContent = V2 ? 'Revisi 01' : 'Desain awal'; bv.title = V2 ? 'Versi 2 · Revisi tanpa kantor & sosoran — klik untuk ganti' : 'Versi 1 · Desain awal — klik untuk ganti'; bv.onclick = () => window.__vpOpen && window.__vpOpen(false); } }
 { const b3 = document.getElementById('btn3d'); if (b3) b3.onclick = () => document.getElementById('hero').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block: 'start'}); }
@@ -3296,8 +3393,9 @@ const SHEETS = V2 ? [
   const dv = $('#dwgv'), dport = $('#dvPort'), dimg = $('#dvImg'); let dKey = null, dz = 1, dx = 0, dy = 0, dfit = 1; const dptr = new Map(); let dpinch = 0, dlast = null;
   const DKEYS = SHEETS.map(x => x.k);
   function dLayout() { const W = dport.clientWidth, H = dport.clientHeight; dfit = Math.min(W / 1.4142, H) * 1.4142 * .96; dimg.style.width = (dfit * dz) + 'px'; dimg.style.transform = `translate(${dx}px,${dy}px)`; $('#dvZ').textContent = Math.round(dz * 100) + '%'; }
+  function dClamp() { const W = dport.clientWidth, H = dport.clientHeight, iw = dfit * dz, ih = iw / 1.4142, m = 40; dx = iw <= W ? (W - iw) / 2 : Math.min(m, Math.max(W - iw - m, dx)); dy = ih <= H ? (H - ih) / 2 : Math.min(m, Math.max(H - ih - m, dy)); }
   function dCenter() { const W = dport.clientWidth, H = dport.clientHeight; dx = (W - dfit * dz) / 2; dy = (H - dfit * dz / 1.4142) / 2; }
-  function dZoomAt(nz, px, py) { nz = Math.max(1, Math.min(10, nz)); const k = nz / dz; dx = px - (px - dx) * k; dy = py - (py - dy) * k; dz = nz; if (dz === 1) { dLayout(); dCenter(); } dLayout(); }
+  function dZoomAt(nz, px, py) { nz = Math.max(1, Math.min(10, nz)); const k = nz / dz; dx = px - (px - dx) * k; dy = py - (py - dy) * k; dz = nz; if (dz === 1) { dLayout(); dCenter(); } dClamp(); dLayout(); }
   window.openDwg = k => openDwg(k);
   function openDwg(k) { dKey = k; const sh = SHEETS.find(x => x.k === k); dimg.src = `assets/dwg/${k}.svg`; $('#dvT').textContent = `${sh.c} · ${sh.t}`; dv.hidden = false; dz = 1; dLayout(); dCenter(); dLayout(); $('#dvClose').focus(); }
   function dStep(d) { const i = (DKEYS.indexOf(dKey) + d + DKEYS.length) % DKEYS.length; openDwg(DKEYS[i]); }
@@ -3309,7 +3407,7 @@ const SHEETS = V2 ? [
   dport.addEventListener('pointerdown', e => { dport.setPointerCapture(e.pointerId); dptr.set(e.pointerId, {x: e.clientX, y: e.clientY}); dlast = null; dpinch = 0; });
   dport.addEventListener('pointermove', e => { if (!dptr.has(e.pointerId)) return; dptr.set(e.pointerId, {x: e.clientX, y: e.clientY}); const P = [...dptr.values()]; const r = dport.getBoundingClientRect();
     const cx = P.reduce((a, q) => a + q.x, 0) / P.length - r.left, cy = P.reduce((a, q) => a + q.y, 0) / P.length - r.top; const dist = P.length > 1 ? Math.hypot(P[0].x - P[1].x, P[0].y - P[1].y) : 0;
-    if (dlast) { dx += cx - dlast.x; dy += cy - dlast.y; if (P.length > 1 && dpinch) { dZoomAt(dz * dist / dpinch, cx, cy); } dLayout(); } dlast = {x: cx, y: cy}; dpinch = dist; });
+    if (dlast) { const lock = e.pointerType !== 'mouse' && P.length < 2 && dz <= 1.05; if (!lock) { dx += cx - dlast.x; dy += cy - dlast.y; } if (P.length > 1 && dpinch) { dZoomAt(dz * dist / dpinch, cx, cy); } dClamp(); dLayout(); } dlast = {x: cx, y: cy}; dpinch = dist; });
   const dup = e => { dptr.delete(e.pointerId); dlast = null; dpinch = 0; }; dport.addEventListener('pointerup', dup); dport.addEventListener('pointercancel', dup);
   addEventListener('keydown', e => { if (dv.hidden) return; if (e.key === 'Escape') $('#dvClose').click(); if (e.key === 'ArrowRight') dStep(1); if (e.key === 'ArrowLeft') dStep(-1); if (e.key === '+' || e.key === '=') $('#dvIn').click(); if (e.key === '-') $('#dvOut').click(); });
   addEventListener('resize', () => { if (!dv.hidden) { dLayout(); } });
