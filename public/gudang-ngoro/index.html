@@ -362,7 +362,7 @@ body.explore{overflow:hidden}
 
 /* ===== Liquid Glass controls ===== */
 .forkctl{position:fixed;z-index:48;right:calc(var(--gut-r) + 8px);bottom:calc(150px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:26px;font:500 12px var(--lg-sys)}
-body.explore.driving .forkctl{display:flex}
+body.explore.driving.drive-forklift .forkctl{display:flex}
 .prompt{position:fixed;z-index:48;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:10px;border:0;border-radius:22px;padding:9px 16px 9px 9px;font-size:15px;font-weight:500;cursor:pointer;animation:pin .35s cubic-bezier(.2,1.3,.3,1)}
 .prompt kbd{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--lg-active);font:600 14px var(--lg-sys);box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.15)}
 @keyframes pin{from{opacity:0;transform:translateX(-50%) translateY(10px) scale(.92)}to{opacity:1;transform:translateX(-50%)}}
@@ -849,6 +849,14 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 .jx-s2 .j-down{opacity:0!important;pointer-events:none}.jx-s2.jx-on .j-cap{opacity:0;transition:opacity .3s}
 @media (max-width:760px){.jx-s2 .jx-rail{display:none}.jx-cue b{white-space:nowrap}}
 @media (prefers-reduced-motion:reduce){.jx-mouse>i,.jx-finger>i,.jx-hand{animation:none}}
+/* Revisi 27 — drive bar */
+.drivebar{position:fixed;z-index:48;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:none;align-items:center;gap:6px;padding:5px 6px 5px 16px;border-radius:999px;background:rgba(11,11,11,.84);color:#F7F7F5;backdrop-filter:blur(8px);font:500 13px var(--HV)}
+body.explore.driving .drivebar{display:flex}body.driving .emo{display:none!important}
+.drivebar>b{font-weight:700;letter-spacing:.02em;margin-right:6px}.drivebar .spd{min-width:74px;font-size:12px;letter-spacing:.06em;color:rgba(247,247,245,.75)}.drivebar .spd i{font-style:normal;font-size:18px;color:#fff;font-weight:700;margin-right:3px}
+.drivebar button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;background:rgba(247,247,245,.1);font-size:12px;touch-action:manipulation}
+.drivebar button[aria-pressed=true]{background:#ffd21a;color:#0B0B0B}.drivebar button:hover{background:rgba(247,247,245,.2)}.drivebar #dvOut{background:#F7F7F5;color:#0B0B0B;font-weight:700}
+.drivebar kbd{font:600 10px var(--HV);opacity:.6;border:1px solid currentColor;border-radius:4px;padding:1px 4px}
+@media (max-width:760px){.drivebar{top:calc(62px + env(safe-area-inset-top,0px));padding-left:12px;gap:4px}.drivebar kbd,.drivebar .lbl{display:none}.drivebar button{padding:0 10px}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -1202,6 +1210,10 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
   <button class="dk" id="dSound" type="button" aria-pressed="false" aria-label="Nyalakan suara" title="Suara"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="wv" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
 </nav>
 <div class="forkctl lg" id="forkctl"><button class="dk" id="forkUp" type="button" aria-label="Naikkan garpu (R)">▲</button><span>Garpu</span><button class="dk" id="forkDown" type="button" aria-label="Turunkan garpu (F)">▼</button></div>
+<div class="drivebar" id="drivebar"><b id="dvName">Mobil</b><span class="spd mono"><i id="dvSpd">0</i>km/j</span>
+  <button id="dvLight" type="button" aria-pressed="false" title="Lampu (L)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 7a5 5 0 0 0 0 10h2V7z"/><path d="M15 8h5M15 12h5M15 16h5"/></svg><span class="lbl">Lampu</span><kbd>L</kbd></button>
+  <button id="dvHorn" type="button" title="Klakson (H)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6l-5 4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><span class="lbl">Klakson</span><kbd>H</kbd></button>
+  <button id="dvOut" type="button" title="Turun (E)">Turun</button></div>
 <button class="prompt lg" id="prompt" type="button" hidden><kbd>E</kbd><span id="promptT">Buka pintu</span></button>
 <div class="emo lg" id="emo" aria-label="Emote"><b data-e="wave" title="Lambai (1)">👋<i>Lambai</i></b><b data-e="clap" title="Tepuk (2)">👏<i>Tepuk</i></b><b data-e="dance" title="Joget (3)">💃<i>Joget</i></b><b data-e="jump" title="Lompat (4)">⤒<i>Lompat</i></b><b data-e="salute" title="Hormat (5)">🫡<i>Hormat</i></b></div>
 <div class="joy" id="joy" aria-label="Joystick: seret untuk berjalan"><i id="knob"></i></div>
@@ -1912,7 +1924,7 @@ mat.glassDark = M({color: 0x1d262d, metalness: .6, roughness: .08});
 mat.chrome = M({color: 0xc9cfd2, metalness: 1, roughness: .2});
 mat.beacon = M({color: 0xff8a1a, emissive: 0xff7a00, emissiveIntensity: .6, roughness: .3});
 const LIGHTMATS = [mat.head, mat.tail];
-function wheel(r, w, rim = mat.chrome) { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.CylinderGeometry(r, r, w, 24).rotateZ(Math.PI / 2), mat.tyre);
+function wheel(r, w, rim = mat.chrome) { const g = new THREE.Group(); g.userData.wheel = r; const t = new THREE.Mesh(new THREE.CylinderGeometry(r, r, w, 24).rotateZ(Math.PI / 2), mat.tyre);
   const rm = new THREE.Mesh(new THREE.CylinderGeometry(r * .62, r * .62, w + .01, 18).rotateZ(Math.PI / 2), rim); const hub = new THREE.Mesh(new THREE.CylinderGeometry(r * .18, r * .18, w + .03, 10).rotateZ(Math.PI / 2), mat.dark);
   g.add(t, rm, hub); return g; }
 function profileMesh(pts, depth, m, bevel = .05) { const s = new THREE.Shape(pts.map(([a, b]) => new THREE.Vector2(a, b))); const g = new THREE.ExtrudeGeometry(s, {depth, bevelEnabled: true, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 3, curveSegments: 6});
@@ -1948,17 +1960,17 @@ function truck() {
 }
 function motorbike(c) {
   const g = new THREE.Group(); const tor = new THREE.TorusGeometry(.27, .075, 10, 24).rotateY(Math.PI / 2);
-  for (const z of [-.62, .6]) { const w = new THREE.Mesh(tor, mat.tyre); w.position.set(0, .34, z); g.add(w); const hb = new THREE.Mesh(new THREE.CylinderGeometry(.16, .16, .08, 12).rotateZ(Math.PI / 2), mat.chrome); hb.position.set(0, .34, z); g.add(hb); }
+  for (const z of [-.62, .6]) { const w = new THREE.Mesh(tor, mat.tyre); w.position.set(0, .34, z); w.userData.wheel = .34; g.add(w); const hb = new THREE.Mesh(new THREE.CylinderGeometry(.16, .16, .08, 12).rotateZ(Math.PI / 2), mat.chrome); hb.position.set(0, .34, z); g.add(hb); }
   const bd = profileMesh([[-.55, .45], [-.35, .78], [.2, .8], [.62, .72], [.7, .52], [.1, .38]], .26, c, .04); g.add(bd);
   g.add(box(.3, .1, .62, mat.black, 0, .82, .22), box(.62, .04, .04, mat.dark, 0, 1.04, -.48), box(.04, .5, .06, mat.dark, 0, .55, -.55));
   g.add(box(.16, .12, .06, mat.head, 0, .9, -.62));
   g.rotation.y = .12; return shadow(g);
 }
-{ const c1 = car(mat.carW); c1.position.set(V2 ? 28.5 : 15.5, 0, P.site.z0 + 2.8); G.props.add(c1); reg(c1, 5, .6, 'pop');
-  const c2 = car(mat.carG); c2.position.set(V2 ? 34.5 : 21.5, 0, P.site.z0 + 2.6); c2.rotation.y = Math.PI; G.props.add(c2); reg(c2, 5, .65, 'pop');
-  const tr = truck(); tr.position.set(V2 ? -10.5 : 30.5, 0, V2 ? -36.5 : -38.8); G.props.add(tr); reg(tr, 5, .7, 'pop');
-  OBST.push(V2 ? [-11.8, -42.1, -9.2, -32.5] : [29.2, -44.4, 31.8, -34.8]);
-  for (let i = 0; i < 6; i++) { const mb = motorbike(i % 2 ? mat.carG : mat.cab); mb.position.set((V2 ? -35.5 : -23.5) + i * 2, 0, P.site.z0 + 2.6); G.props.add(mb); reg(mb, 5, .6 + i * .03, 'pop'); }
+{ const c1 = car(mat.carW); c1.position.set(V2 ? 28.5 : 15.5, 0, P.site.z0 + 2.8); c1.userData.ride = 'car'; G.props.add(c1); reg(c1, 5, .6, 'pop');
+  const c2 = car(mat.carG); c2.position.set(V2 ? 34.5 : 21.5, 0, P.site.z0 + 2.6); c2.rotation.y = Math.PI; c2.userData.ride = 'car'; G.props.add(c2); reg(c2, 5, .65, 'pop');
+  const tr = truck(); tr.position.set(V2 ? -10.5 : 30.5, 0, V2 ? -36.5 : -38.8); tr.userData.ride = 'truck'; G.props.add(tr); reg(tr, 5, .7, 'pop');
+  tr.userData.obst = V2 ? [-11.8, -42.1, -9.2, -32.5] : [29.2, -44.4, 31.8, -34.8]; OBST.push(tr.userData.obst);
+  for (let i = 0; i < 6; i++) { const mb = motorbike(i % 2 ? mat.carG : mat.cab); mb.position.set((V2 ? -35.5 : -23.5) + i * 2, 0, P.site.z0 + 2.6); mb.userData.ride = 'motor'; G.props.add(mb); reg(mb, 5, .6 + i * .03, 'pop'); }
 }
 
 // forklifts (detailed): counterbalance LPG truck with mast, overhead guard and beacon
@@ -2364,42 +2376,26 @@ function collide(pos, r = .3) {
 // avatar: site visitor in hard hat and hi-vis vest, jointed hips/knees/shoulders/elbows
 const avatar = new THREE.Group(); avatar.visible = false; root.add(avatar);
 const AV = {};
-{ const skin = M({color: 0xc99f7c, roughness: .72}, false), shirt = M({color: 0x2c3238, roughness: .88}, false), pants = M({color: 0x3a4148, roughness: .9}, false),
-    vest = M({color: 0xf4f4f1, roughness: .55}, false), refl = M({color: 0xdfe3e6, metalness: .7, roughness: .22, emissive: 0x777777, emissiveIntensity: .2}, false),
-    boot0 = M({color: 0x1f1d1b, roughness: .65}, false), hatM = M({color: 0xf7f7f4, roughness: .35}, false), eye = M({color: 0x161a1d}, false), belt = M({color: 0x1b1d20, roughness: .5}, false);
-  const lathe = (pts, m, sz = .68) => { const g2 = new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), 28); const me = new THREE.Mesh(g2, m); me.scale.z = sz; return me; };
-  const limb = (r0, r1, L, m) => new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, L, 14).translate(0, -L / 2, 0), m);
-  const ball = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), m);
-  const body = new THREE.Group(); avatar.add(body); AV.body = body;
-  const pelvis = ball(.16, pants); pelvis.scale.set(1.08, .62, .74); pelvis.position.y = .95; body.add(pelvis);
-  const spine = new THREE.Group(); spine.position.y = .98; body.add(spine); AV.spine = spine;
-  const TP = [[.001, -.02], [.15, -.02], [.158, .06], [.162, .18], [.178, .3], [.195, .41], [.19, .47], [.15, .53], [.07, .565], [.001, .57]];
-  spine.add(lathe(TP, shirt));
-  const vestM = lathe([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]], vest); vestM.material = vest; vestM.geometry = new THREE.LatheGeometry([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]].map(([r, y]) => new THREE.Vector2(r, y)), 28); vestM.material.side = THREE.DoubleSide; spine.add(vestM);
-  for (const [y, r] of [[.14, .174], [.3, .19]]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(r + .004, r + .004, .028, 28, 1, true), refl); b.scale.z = .68; b.position.y = y; spine.add(b); }
-  const bl = new THREE.Mesh(new THREE.CylinderGeometry(.162, .162, .045, 24), belt); bl.scale.z = .7; bl.position.y = .0; spine.add(bl);
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(.048, .055, .1, 12), skin); neck.position.y = .6; spine.add(neck);
-  const headJ = new THREE.Group(); headJ.position.y = .64; spine.add(headJ); AV.head = headJ;
-  const head = ball(.103, skin); head.scale.set(.9, 1.1, 1); head.position.y = .1; headJ.add(head);
-  const jaw = ball(.07, skin); jaw.scale.set(1, .7, .9); jaw.position.set(0, .045, -.025); headJ.add(jaw);
-  const nose = ball(.016, skin); nose.position.set(0, .09, -.098); headJ.add(nose);
-  for (const x of [-.034, .034]) { const e = ball(.011, eye); e.position.set(x, .118, -.088); headJ.add(e); }
-  for (const x of [-.096, .096]) { const ear = ball(.021, skin); ear.scale.set(.5, 1, .8); ear.position.set(x, .1, 0); headJ.add(ear); }
-  const hat = new THREE.Mesh(new THREE.SphereGeometry(.118, 22, 10, 0, Math.PI * 2, 0, Math.PI / 2), hatM); hat.position.y = .16; hat.scale.set(1, .86, 1.08); headJ.add(hat);
-  const brim = new THREE.Mesh(new THREE.CylinderGeometry(.126, .134, .012, 24), hatM); brim.scale.z = 1.12; brim.position.set(0, .16, -.03); headJ.add(brim);
-  headJ.add(box(.16, .012, .065, hatM, 0, .154, -.145), box(.024, .026, .22, hatM, 0, .255, -.01));
+{ /* blocky avatar, 1.65 m: legs 0.70 + torso 0.62 + head 0.33 */
+  const skin = M({color: 0xd9a97e, roughness: .7}, false), shirt = M({color: 0x2b5fa8, roughness: .75}, false), pants = M({color: 0x30363c, roughness: .85}, false), vest = M({color: 0xff7a1a, roughness: .55}, false),
+    refl = M({color: 0xe8ecef, metalness: .6, roughness: .25, emissive: 0x888888, emissiveIntensity: .25}, false), shoe = M({color: 0x17191b, roughness: .6}, false), hatM = M({color: 0xffd21a, roughness: .35}, false), ink = M({color: 0x111315, roughness: .5}, false);
+  const B = (w, h, d, m, x = 0, y = 0, z = 0) => { const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); me.position.set(x, y, z); return me; };
   const joint = (parent, x, y, z = 0) => { const p = new THREE.Group(); p.position.set(x, y, z); parent.add(p); return p; };
-  for (const [s, k] of [[-1, 'l'], [1, 'r']]) {
-    // legs: hip ball, tapered thigh, knee ball, tapered shin, ankle, boot
-    const hip = joint(body, s * .088, .93); hip.add(ball(.082, pants), limb(.082, .062, .43, pants));
-    const knee = joint(hip, 0, -.43); knee.add(ball(.062, pants), limb(.062, .047, .41, pants));
-    const ank = joint(knee, 0, -.41); const boot = new THREE.Mesh(new THREE.CapsuleGeometry(.05, .13, 4, 12), boot0); boot.rotation.x = Math.PI / 2; boot.scale.set(1.2, 1, .85); boot.position.set(0, -.03, -.045); ank.add(boot, ball(.05, boot0));
-    AV['h' + k] = hip; AV['k' + k] = knee; AV['f' + k] = ank;
-    // arms: shoulder ball inside the torso, sleeve, elbow, forearm, mitten hand
-    const shJ = joint(spine, s * .178, .46); shJ.add(ball(.064, shirt), limb(.058, .05, .27, shirt));
-    const el = joint(shJ, 0, -.27); el.add(ball(.046, skin), limb(.045, .036, .25, skin));
-    const hand = ball(.045, skin); hand.scale.set(.75, 1.2, .55); hand.position.y = -.29; const thumb = ball(.018, skin); thumb.position.set(-s * .03, -.27, -.02); el.add(hand, thumb);
-    AV['s' + k] = shJ; AV['e' + k] = el;
+  const body = new THREE.Group(); avatar.add(body); AV.body = body;
+  const spine = joint(body, 0, .70); AV.spine = spine;
+  spine.add(B(.40, .62, .21, shirt, 0, .31, 0), B(.412, .44, .222, vest, 0, .36, 0), B(.414, .035, .224, refl, 0, .26, 0), B(.414, .035, .224, refl, 0, .44, 0), B(.41, .06, .215, pants, 0, .03, 0));
+  const headJ = joint(spine, 0, .62); AV.head = headJ;
+  headJ.add(B(.30, .30, .28, skin, 0, .165, 0), B(.12, .05, .12, skin, 0, .015, 0));
+  for (const x of [-.065, .065]) headJ.add(B(.045, .06, .01, ink, x, .2, -.142));
+  headJ.add(B(.11, .02, .01, ink, 0, .11, -.142), B(.02, .03, .01, ink, -.055, .12, -.142), B(.02, .03, .01, ink, .055, .12, -.142));
+  headJ.add(B(.33, .09, .31, hatM, 0, .345, 0), B(.33, .025, .1, hatM, 0, .305, -.19), B(.05, .03, .3, hatM, 0, .4, 0));
+  for (const [s2, k] of [[-1, 'l'], [1, 'r']]) {
+    const hip = joint(body, s2 * .1, .70); hip.add(B(.19, .36, .2, pants, 0, -.18, 0));
+    const knee = joint(hip, 0, -.36); knee.add(B(.185, .28, .195, pants, 0, -.14, 0), B(.2, .07, .26, shoe, 0, -.305, -.025));
+    const ank = joint(knee, 0, -.34); AV['h' + k] = hip; AV['k' + k] = knee; AV['f' + k] = ank;
+    const sh = joint(spine, s2 * .29, .58); sh.add(B(.17, .32, .19, shirt, 0, -.14, 0), B(.175, .06, .195, vest, 0, -.02, 0));
+    const el = joint(sh, 0, -.30); el.add(B(.16, .24, .18, skin, 0, -.12, 0), B(.15, .07, .15, skin, 0, -.27, 0));
+    AV['s' + k] = sh; AV['e' + k] = el;
   }
   AV.ll = AV.hl; AV.lr = AV.hr; AV.al = AV.sl; AV.ar = AV.sr;
   avatar.traverse(m => { if (m.isMesh) m.castShadow = true; });
@@ -2451,26 +2447,53 @@ const INTER = [...P.bays.map((b, i) => ({p: V((b.x0 + b.x1) / 2, 0, -30.8), r: 6
   {p: V(P.pos.x0 + 1.82, 0, P.pos.z1 + .8), r: 2.2, label: () => `${window.__DPOS.t ? 'Tutup' : 'Buka'} pintu pos jaga`, act: () => { const d = window.__DPOS; d.t = d.t ? 0 : 1; SFX.door(d.t); }},
   ...P.bays.map((b, i) => ({p: V((b.x0 + b.x1) / 2 - 4.2, 0, -28.8), r: 2.2, label: () => `${bayOn[i] ? 'Matikan' : 'Nyalakan'} lampu ${['Gudang 3', 'Gudang 2', 'Gudang 1'][i]}`, act: () => { bayOn[i] = bayOn[i] ? 0 : 1; applyBayLights(); SFX.click(); }})),
   {p: V(-24.5, 0, -27.5), r: 2.6, label: () => 'Panggil crane ke sini', act: () => { craneCall = {x: me.p.x, z: me.p.z, until: performance.now() + 25000}; SFX.door(1); }}];
-const RIDES = [...FORKS, ...G.props.children.filter(o => o.userData.forks && !FORKS.some(f => f.g === o)).map(g => ({g}))];
+/* ---------- drivable vehicles: forklift, car, truck, motorbike ---------- */
+const RIDE_CFG = {
+  forklift: {n: 'forklift', vmax: 5.5, acc: 1.6, steer: .38, rad: 1.05, r: 2.8, seat: [0, 1.12, .3], eye: [0, 2.05, .15], hh: 1.9, dist: 6.5},
+  car: {n: 'mobil', vmax: 13, acc: 1.1, steer: .3, rad: 1.25, r: 3.2, seat: [.4, .5, .2], eye: [.4, 1.22, .1], hh: 1.4, dist: 8.5},
+  truck: {n: 'truk', vmax: 9, acc: .7, steer: .24, rad: 1.8, r: 4.6, seat: [.55, 1.42, -4.3], eye: [.55, 2.45, -4.45], hh: 2.8, dist: 13},
+  motor: {n: 'motor', vmax: 15, acc: 1.5, steer: .5, rad: .65, r: 1.9, seat: [0, .86, .18], eye: [0, 1.66, .1], hh: 1.5, dist: 5.4}};
+const RIDES = [...FORKS.map(f => Object.assign(f, {kind: 'forklift'})), ...G.props.children.filter(o => o.userData.forks && !FORKS.some(f => f.g === o)).map(g => ({g, kind: 'forklift'})), ...G.props.children.filter(o => o.userData.ride).map(g => ({g, kind: g.userData.ride}))];
 let drive = null;
-for (const f of RIDES) INTER.push({get p() { return f.g.position; }, r: 2.8, label: () => 'Naik forklift', act: () => startDrive(f)});
-function startDrive(f) { drive = {f, v: 0, h: f.g.rotation.y}; f.driven = true; avatar.visible = false; me.p.set(f.g.position.x, 0, f.g.position.z); camYaw = drive.h; document.body.classList.add('driving'); SFX.door(1); }
-function stopDrive() { if (!drive) return; const f = drive.f; const side = V(Math.cos(drive.h), 0, -Math.sin(drive.h)).multiplyScalar(1.7); me.p.copy(f.g.position).add(side); me.p.y = 0; collide(me.p); avatar.visible = nav === 'third'; drive = null; document.body.classList.remove('driving'); }
+for (const f of RIDES) INTER.push({get p() { return f.g.position; }, r: RIDE_CFG[f.kind].r, label: () => `Naik ${RIDE_CFG[f.kind].n}`, act: () => startDrive(f)});
+const HL = new THREE.SpotLight(0xfff1d6, 0, 46, .48, .55, 1.1); HL.visible = false; root.add(HL, HL.target);
+function startDrive(f) { const k = RIDE_CFG[f.kind]; const wh = []; f.g.traverse(o => { if (o.userData.wheel) wh.push(o); });
+  drive = {f, k, v: 0, h: f.g.rotation.y, wh, lights: false, base: f.g.rotation.clone()}; f.driven = true; me.p.set(f.g.position.x, 0, f.g.position.z); camYaw = drive.h;
+  if (f.g.userData.obst) f.g.userData.obst.splice(0, 4, 1e5, 1e5, 1e5, 1e5);
+  document.body.classList.add('driving', 'drive-' + f.kind); $('#dvName').textContent = k.n[0].toUpperCase() + k.n.slice(1); SFX.door(1); }
+function stopDrive() { if (!drive) return; const f = drive.f, k = drive.k; f.g.rotation.set(0, drive.h, 0); const side = V(Math.cos(drive.h), 0, -Math.sin(drive.h)).multiplyScalar(k.rad + .9); me.p.copy(f.g.position).add(side); me.p.y = 0; collide(me.p);
+  if (f.g.userData.obst) { const bb = new THREE.Box3().setFromObject(f.g); f.g.userData.obst.splice(0, 4, bb.min.x, bb.min.z, bb.max.x, bb.max.z); }
+  HL.visible = false; HL.intensity = 0; avatar.visible = nav === 'third'; avatar.rotation.set(0, 0, 0); document.body.classList.remove('driving', 'drive-' + f.kind); drive = null; }
+window.__drv = {RIDES, startDrive: f => startDrive(f), stopDrive: () => stopDrive(), keys, toggle: w => driveToggle(w)};
+function driveToggle(what) { if (!drive) return; if (what === 'lights') { drive.lights = !drive.lights; $('#dvLight').setAttribute('aria-pressed', String(drive.lights)); SFX.click(); } if (what === 'horn') { SFX.beep(); setTimeout(() => SFX.beep(), 160); } }
 let near = null;
-function proximity() { if (drive) { near = {label: () => 'Turun dari forklift', act: stopDrive}; $('#prompt').hidden = false; $('#promptT').textContent = 'Turun dari forklift'; return; }
+function proximity() { if (drive) { const t = `Turun dari ${drive.k.n}`; near = {label: () => t, act: stopDrive}; $('#prompt').hidden = false; $('#promptT').textContent = t; return; }
   let best = null, bd = 1e9; for (const it of INTER) { const d = Math.hypot(me.p.x - it.p.x, me.p.z - it.p.z); if (d < it.r && d < bd) { bd = d; best = it; } }
   near = best; const el = $('#prompt'); el.hidden = !best; if (best) $('#promptT').textContent = best.label(); }
 function interact() { if (near) { near.act(); $('#promptT').textContent = near.label(); } }
 function driveFrame(dt, fwd, str) {
-  const d = drive, f = d.f.g; d.v += (fwd * 5.5 - d.v) * Math.min(1, dt * (fwd ? 1.6 : 2.6)); if (Math.abs(d.v) > .05) d.h -= str * d.v * dt * .38;
-  const p = f.position.clone().add(V(-Math.sin(d.h), 0, -Math.cos(d.h)).multiplyScalar(d.v * dt)); collide(p, 1.05); f.position.set(p.x, P.floor, p.z); f.rotation.y = d.h;
-  const forks = f.userData.forks; forks.position.y = clamp(forks.position.y + ((keys.up || 0) - (keys.down || 0)) * dt * 1.1, .1, 2.6);
-  me.p.set(p.x, 0, p.z); me.foot = P.floor;
-  if (nav === 'walk') { yaw = d.h; camera.position.set(p.x + Math.sin(d.h) * .15, P.floor + 2.05, p.z + Math.cos(d.h) * .15); camera.rotation.set(pitch, yaw, 0, 'YXZ'); }
-  else { let dh = d.h - camYaw; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); camYaw += dh * Math.min(1, dt * 2.5); const head = V(p.x, P.floor + 1.9, p.z); let dist = 6.5;
+  const d = drive, f = d.f.g, k = d.k; const want = fwd * k.vmax * (fwd < 0 ? .45 : 1); const braking = fwd && Math.sign(fwd) !== Math.sign(d.v) && Math.abs(d.v) > .3;
+  d.v += (want - d.v) * Math.min(1, dt * (braking ? 3.2 : fwd ? k.acc : 1.4)); if (Math.abs(d.v) < .02 && !fwd) d.v = 0;
+  if (Math.abs(d.v) > .05) d.h -= str * d.v * dt * k.steer / (1 + Math.abs(d.v) * .04);
+  const p = f.position.clone().add(V(-Math.sin(d.h), 0, -Math.cos(d.h)).multiplyScalar(d.v * dt)); const before = p.clone(); collide(p, k.rad); if (p.distanceTo(before) > .01) d.v *= .6;
+  const fy = d.f.kind === 'forklift' ? P.floor : floorAt(p.x, p.z, 0); f.position.set(p.x, f.position.y + (fy - f.position.y) * Math.min(1, dt * 10), p.z);
+  const lean = d.f.kind === 'motor' ? clamp(-str * Math.abs(d.v) / 9, -.32, .32) : 0; f.rotation.set(0, d.h, (f.rotation.z || 0) + (lean - (f.rotation.z || 0)) * Math.min(1, dt * 5));
+  for (const w of d.wh) w.rotation.x -= d.v * dt / w.userData.wheel;
+  if (f.userData.forks) { const forks = f.userData.forks; forks.position.y = clamp(forks.position.y + ((keys.up || 0) - (keys.down || 0)) * dt * 1.1, .1, 2.6); }
+  me.p.set(p.x, 0, p.z); me.foot = fy;
+  const L2W = v => V(...v).applyEuler(f.rotation).add(f.position);
+  /* rider: seated pose, shown in third person */
+  avatar.visible = nav === 'third'; if (avatar.visible) { const st = L2W(k.seat); avatar.position.set(st.x, st.y - .72, st.z); avatar.rotation.copy(f.rotation);
+    for (const s2 of ['l', 'r']) { AV['h' + s2].rotation.set(1.45, 0, 0); AV['k' + s2].rotation.set(-1.4, 0, 0); AV['s' + s2].rotation.set(1.05, 0, s2 === 'l' ? .12 : -.12); AV['e' + s2].rotation.set(.35, 0, 0); }
+    AV.body.position.y = 0; AV.spine.rotation.set(d.f.kind === 'motor' ? .25 : 0, 0, 0); AV.head.rotation.set(-.05, -str * .25, 0); }
+  /* headlight */
+  HL.visible = d.lights; if (d.lights) { HL.intensity = 260; HL.position.copy(L2W([0, k.hh * .45, -2.2 - (d.f.kind === 'truck' ? 3.2 : 0)])); HL.target.position.copy(L2W([0, 0, -18])); }
+  { const kmh = Math.abs(d.v) * 3.6; const el = $('#dvSpd'); if (el) el.textContent = Math.round(kmh); }
+  if (nav === 'walk') { yaw = d.h; const e = L2W(k.eye); camera.position.copy(e); camera.rotation.set(pitch, yaw, 0, 'YXZ'); }
+  else { let dh = d.h - camYaw; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); camYaw += dh * Math.min(1, dt * 2.5); const head = V(p.x, fy + k.hh, p.z); let dist = k.dist;
     { const cx = Math.sin(camYaw) * Math.cos(camPitch), cz = Math.cos(camYaw) * Math.cos(camPitch);
-      for (let k = 1; k <= 12; k++) { const t = dist * k / 12, px = head.x + cx * t, pz = head.z + cz * t;
-        if (OBST.some(([a, b, c, d2]) => px > a - .25 && px < c + .25 && pz > b - .25 && pz < d2 + .25) || WALLS.some(w => !(w[4] && w[4]()) && segX(head.x, head.z, px, pz, w))) { dist = Math.max(1.6, dist * (k - 1) / 12 - .2); break; } } }
+      for (let i = 1; i <= 12; i++) { const t = dist * i / 12, px = head.x + cx * t, pz = head.z + cz * t;
+        if (OBST.some(([a, b, c, d2]) => px > a - .25 && px < c + .25 && pz > b - .25 && pz < d2 + .25) || WALLS.some(w => !(w[4] && w[4]()) && segX(head.x, head.z, px, pz, w))) { dist = Math.max(1.6, dist * (i - 1) / 12 - .2); break; } } }
     camera.position.set(head.x + Math.sin(camYaw) * Math.cos(camPitch) * dist, head.y + Math.sin(camPitch) * dist, head.z + Math.cos(camYaw) * Math.cos(camPitch) * dist); camera.lookAt(head); }
   proximity();
 }
@@ -2509,7 +2532,7 @@ canvas.addEventListener('pointermove', e => {
 canvas.addEventListener('pointerup', e => { if (drag && drag.moved < 6) pick(e); drag = null; });
 canvas.addEventListener('wheel', e => { if (nav === 'third' && mode === 'explore') { e.preventDefault(); camDist = clamp(camDist * Math.exp(e.deltaY * .001), 2, 14); } }, {passive: false});
 const KEYMAP = {KeyW: 'f', ArrowUp: 'f', KeyS: 'b', ArrowDown: 'b', KeyA: 'l', ArrowLeft: 'l', KeyD: 'r', ArrowRight: 'r'};
-addEventListener('keydown', e => { if (mode !== 'explore') return; if (e.code === 'KeyE' && nav !== 'orbit' && !e.repeat) { interact(); return; } if (e.code === 'KeyR') keys.up = 1; if (e.code === 'KeyF') keys.down = 1; const k = KEYMAP[e.code]; if (k && nav !== 'orbit') { keys[k] = 1; e.preventDefault(); } keys.run = e.shiftKey ? 1 : 0; if (e.code === 'Escape') { if (tour.on) stopTour(); else if (!$('#plan').hidden) closePlan(); else exitExplore(); } });
+addEventListener('keydown', e => { if (mode !== 'explore') return; if (e.code === 'KeyE' && nav !== 'orbit' && !e.repeat) { interact(); return; } if (drive && !e.repeat && e.code === 'KeyL') { driveToggle('lights'); return; } if (drive && e.code === 'KeyH' && !e.repeat) { driveToggle('horn'); return; } if (e.code === 'KeyR') keys.up = 1; if (e.code === 'KeyF') keys.down = 1; const k = KEYMAP[e.code]; if (k && nav !== 'orbit') { keys[k] = 1; e.preventDefault(); } keys.run = e.shiftKey ? 1 : 0; if (e.code === 'Escape') { if (tour.on) stopTour(); else if (!$('#plan').hidden) closePlan(); else exitExplore(); } });
 addEventListener('keyup', e => { if (e.code === 'KeyR') keys.up = 0; if (e.code === 'KeyF') keys.down = 0; const k = KEYMAP[e.code]; if (k) keys[k] = 0; keys.run = e.shiftKey ? 1 : 0; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = 0; joy.x = joy.y = 0; });
 // virtual joystick
@@ -2526,7 +2549,7 @@ $('#dExpand').onclick = () => setMin(!$('#xp').classList.contains('min'));
 { const order = V2 ? ['iso', 'front', 'inside', 'dock', 'top'] : ['iso', 'front', 'inside', 'dock', 'office', 'officeIn', 'top']; let vi = 0; $('#dView').onclick = () => { vi = (vi + 1) % order.length; document.querySelector(`[data-view=${order[vi]}]`).click(); $('#dView').title = 'Sudut pandang: ' + document.querySelector(`[data-view=${order[vi]}]`).textContent; }; }
 { const ns = ['orbit', 'walk', 'third'], nm = {orbit: 'orbit', walk: 'orang pertama', third: 'orang ketiga'}; $('#dNav').onclick = () => { const n = ns[(ns.indexOf(nav) + 1) % 3]; n === 'orbit' ? enterOrbit() : enterNav(n); $('#dNav').title = 'Navigasi: ' + nm[n]; $('#dNav').setAttribute('aria-pressed', String(n !== 'orbit')); }; }
 { const ls = ['day', 'dusk', 'night'], nm = {day: 'siang', dusk: 'senja', night: 'malam'}; $('#dLight').onclick = () => { const k = ls[(ls.indexOf(light) + 1) % 3]; setLight(k); $('#dLight').title = 'Cahaya: ' + nm[k]; $('#dLight').setAttribute('aria-pressed', String(k !== 'day')); }; }
-$('#dTour').onclick = () => startTour('tour'); $('#prompt').onclick = () => interact();
+$('#dTour').onclick = () => startTour('tour'); { const a = $('#dvLight'), b = $('#dvHorn'), c = $('#dvOut'); if (a) a.onclick = () => driveToggle('lights'); if (b) b.onclick = () => driveToggle('horn'); if (c) c.onclick = () => stopDrive(); } $('#prompt').onclick = () => interact();
 for (const [id, k] of [['#forkUp', 'up'], ['#forkDown', 'down']]) { const b = $(id); b.addEventListener('pointerdown', e => { keys[k] = 1; b.setPointerCapture(e.pointerId); }); for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => keys[k] = 0); }
 const setSound = v => { const r = SFX.toggle(v); $('#dSound').setAttribute('aria-pressed', String(r)); $('#swSound').checked = r; $('#dSound').setAttribute('aria-label', r ? 'Matikan suara' : 'Nyalakan suara'); };
 $('#dSound').onclick = () => setSound(!SFX.on); $('#swSound').addEventListener('change', e => setSound(e.target.checked));
