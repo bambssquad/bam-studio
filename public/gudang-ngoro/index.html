@@ -2376,26 +2376,42 @@ function collide(pos, r = .3) {
 // avatar: site visitor in hard hat and hi-vis vest, jointed hips/knees/shoulders/elbows
 const avatar = new THREE.Group(); avatar.visible = false; root.add(avatar);
 const AV = {};
-{ /* blocky avatar, 1.65 m: legs 0.70 + torso 0.62 + head 0.33 */
-  const skin = M({color: 0xd9a97e, roughness: .7}, false), shirt = M({color: 0x2b5fa8, roughness: .75}, false), pants = M({color: 0x30363c, roughness: .85}, false), vest = M({color: 0xff7a1a, roughness: .55}, false),
-    refl = M({color: 0xe8ecef, metalness: .6, roughness: .25, emissive: 0x888888, emissiveIntensity: .25}, false), shoe = M({color: 0x17191b, roughness: .6}, false), hatM = M({color: 0xffd21a, roughness: .35}, false), ink = M({color: 0x111315, roughness: .5}, false);
-  const B = (w, h, d, m, x = 0, y = 0, z = 0) => { const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); me.position.set(x, y, z); return me; };
+{ const skin = M({color: 0xc99f7c, roughness: .72}, false), shirt = M({color: 0x2c3238, roughness: .88}, false), pants = M({color: 0x3a4148, roughness: .9}, false),
+    vest = M({color: 0xf4f4f1, roughness: .55}, false), refl = M({color: 0xdfe3e6, metalness: .7, roughness: .22, emissive: 0x777777, emissiveIntensity: .2}, false),
+    boot0 = M({color: 0x1f1d1b, roughness: .65}, false), hatM = M({color: 0xf7f7f4, roughness: .35}, false), eye = M({color: 0x161a1d}, false), belt = M({color: 0x1b1d20, roughness: .5}, false);
+  const lathe = (pts, m, sz = .68) => { const g2 = new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), 28); const me = new THREE.Mesh(g2, m); me.scale.z = sz; return me; };
+  const limb = (r0, r1, L, m) => new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, L, 14).translate(0, -L / 2, 0), m);
+  const ball = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), m);
+  const body = new THREE.Group(); body.rotation.y = Math.PI; avatar.add(body); AV.body = body;
+  const pelvis = ball(.16, pants); pelvis.scale.set(1.08, .62, .74); pelvis.position.y = .95; body.add(pelvis);
+  const spine = new THREE.Group(); spine.position.y = .98; body.add(spine); AV.spine = spine;
+  const TP = [[.001, -.02], [.15, -.02], [.158, .06], [.162, .18], [.178, .3], [.195, .41], [.19, .47], [.15, .53], [.07, .565], [.001, .57]];
+  spine.add(lathe(TP, shirt));
+  const vestM = lathe([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]], vest); vestM.material = vest; vestM.geometry = new THREE.LatheGeometry([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]].map(([r, y]) => new THREE.Vector2(r, y)), 28); vestM.material.side = THREE.DoubleSide; spine.add(vestM);
+  for (const [y, r] of [[.14, .174], [.3, .19]]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(r + .004, r + .004, .028, 28, 1, true), refl); b.scale.z = .68; b.position.y = y; spine.add(b); }
+  const bl = new THREE.Mesh(new THREE.CylinderGeometry(.162, .162, .045, 24), belt); bl.scale.z = .7; bl.position.y = .0; spine.add(bl);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(.048, .055, .1, 12), skin); neck.position.y = .6; spine.add(neck);
+  const headJ = new THREE.Group(); headJ.position.y = .64; spine.add(headJ); AV.head = headJ;
+  const head = ball(.103, skin); head.scale.set(.9, 1.1, 1); head.position.y = .1; headJ.add(head);
+  const jaw = ball(.07, skin); jaw.scale.set(1, .7, .9); jaw.position.set(0, .045, .025); headJ.add(jaw);
+  const nose = ball(.016, skin); nose.position.set(0, .09, .098); headJ.add(nose);
+  for (const x of [-.034, .034]) { const e = ball(.011, eye); e.position.set(x, .118, .088); headJ.add(e); }
+  for (const x of [-.096, .096]) { const ear = ball(.021, skin); ear.scale.set(.5, 1, .8); ear.position.set(x, .1, 0); headJ.add(ear); }
+  const hat = new THREE.Mesh(new THREE.SphereGeometry(.118, 22, 10, 0, Math.PI * 2, 0, Math.PI / 2), hatM); hat.position.y = .16; hat.scale.set(1, .86, 1.08); headJ.add(hat);
+  const brim = new THREE.Mesh(new THREE.CylinderGeometry(.126, .134, .012, 24), hatM); brim.scale.z = 1.12; brim.position.set(0, .16, .03); headJ.add(brim);
+  headJ.add(box(.16, .012, .065, hatM, 0, .154, .145), box(.024, .026, .22, hatM, 0, .255, .01));
   const joint = (parent, x, y, z = 0) => { const p = new THREE.Group(); p.position.set(x, y, z); parent.add(p); return p; };
-  const body = new THREE.Group(); avatar.add(body); AV.body = body;
-  const spine = joint(body, 0, .70); AV.spine = spine;
-  spine.add(B(.40, .62, .21, shirt, 0, .31, 0), B(.412, .44, .222, vest, 0, .36, 0), B(.414, .035, .224, refl, 0, .26, 0), B(.414, .035, .224, refl, 0, .44, 0), B(.41, .06, .215, pants, 0, .03, 0));
-  const headJ = joint(spine, 0, .62); AV.head = headJ;
-  headJ.add(B(.30, .30, .28, skin, 0, .165, 0), B(.12, .05, .12, skin, 0, .015, 0));
-  for (const x of [-.065, .065]) headJ.add(B(.045, .06, .01, ink, x, .2, -.142));
-  headJ.add(B(.11, .02, .01, ink, 0, .11, -.142), B(.02, .03, .01, ink, -.055, .12, -.142), B(.02, .03, .01, ink, .055, .12, -.142));
-  headJ.add(B(.33, .09, .31, hatM, 0, .345, 0), B(.33, .025, .1, hatM, 0, .305, -.19), B(.05, .03, .3, hatM, 0, .4, 0));
-  for (const [s2, k] of [[-1, 'l'], [1, 'r']]) {
-    const hip = joint(body, s2 * .1, .70); hip.add(B(.19, .36, .2, pants, 0, -.18, 0));
-    const knee = joint(hip, 0, -.36); knee.add(B(.185, .28, .195, pants, 0, -.14, 0), B(.2, .07, .26, shoe, 0, -.305, -.025));
-    const ank = joint(knee, 0, -.34); AV['h' + k] = hip; AV['k' + k] = knee; AV['f' + k] = ank;
-    const sh = joint(spine, s2 * .29, .58); sh.add(B(.17, .32, .19, shirt, 0, -.14, 0), B(.175, .06, .195, vest, 0, -.02, 0));
-    const el = joint(sh, 0, -.30); el.add(B(.16, .24, .18, skin, 0, -.12, 0), B(.15, .07, .15, skin, 0, -.27, 0));
-    AV['s' + k] = sh; AV['e' + k] = el;
+  for (const [s, k] of [[-1, 'l'], [1, 'r']]) {
+    // legs: hip ball, tapered thigh, knee ball, tapered shin, ankle, boot
+    const hip = joint(body, s * .088, .93); hip.add(ball(.082, pants), limb(.082, .062, .43, pants));
+    const knee = joint(hip, 0, -.43); knee.add(ball(.062, pants), limb(.062, .047, .41, pants));
+    const ank = joint(knee, 0, -.41); const boot = new THREE.Mesh(new THREE.CapsuleGeometry(.05, .13, 4, 12), boot0); boot.rotation.x = Math.PI / 2; boot.scale.set(1.2, 1, .85); boot.position.set(0, -.03, .045); ank.add(boot, ball(.05, boot0));
+    AV['h' + k] = hip; AV['k' + k] = knee; AV['f' + k] = ank;
+    // arms: shoulder ball inside the torso, sleeve, elbow, forearm, mitten hand
+    const shJ = joint(spine, s * .178, .46); shJ.add(ball(.064, shirt), limb(.058, .05, .27, shirt));
+    const el = joint(shJ, 0, -.27); el.add(ball(.046, skin), limb(.045, .036, .25, skin));
+    const hand = joint(el, 0, -.26); const palm = new THREE.Mesh(new THREE.CapsuleGeometry(.03, .045, 4, 10), skin); palm.scale.set(1.15, 1, .62); palm.position.y = -.045; hand.add(palm); for (let i = 0; i < 4; i++) { const fg = new THREE.Mesh(new THREE.CapsuleGeometry(.0085, .045 - Math.abs(i - 1.5) * .006, 3, 6), skin); fg.position.set(-.024 + i * .016, -.105, .006); fg.rotation.x = .25; hand.add(fg); } const th = new THREE.Mesh(new THREE.CapsuleGeometry(.01, .03, 3, 6), skin); th.position.set(-s * .034, -.05, .016); th.rotation.set(.5, 0, s * .6); hand.add(th);
+    AV['s' + k] = shJ; AV['e' + k] = el;
   }
   AV.ll = AV.hl; AV.lr = AV.hr; AV.al = AV.sl; AV.ar = AV.sr;
   avatar.traverse(m => { if (m.isMesh) m.castShadow = true; });
@@ -2423,6 +2439,7 @@ function poseAvatar(phase, spd, dt = .016) {
   for (const k of ['el', 'er']) AV[k].rotation.x = P[k][0];
   AV.body.position.y = by; AV.spine.rotation.set(sx, sy, 0); AV.head.rotation.set(hx - sx * .5, hy - sy * .6, 0);
 }
+window.__pose = (ph, sp) => poseAvatar(ph, sp);
 function enterNav(kind, x, z) {
   const prev = nav; nav = kind; document.body.classList.add('walk'); document.body.classList.toggle('third', kind === 'third'); controls.enabled = false; tween = null;
   const d = new THREE.Vector3(); camera.getWorldDirection(d);
@@ -2483,8 +2500,8 @@ function driveFrame(dt, fwd, str) {
   me.p.set(p.x, 0, p.z); me.foot = fy;
   const L2W = v => V(...v).applyEuler(f.rotation).add(f.position);
   /* rider: seated pose, shown in third person */
-  avatar.visible = nav === 'third'; if (avatar.visible) { const st = L2W(k.seat); avatar.position.set(st.x, st.y - .72, st.z); avatar.rotation.copy(f.rotation);
-    for (const s2 of ['l', 'r']) { AV['h' + s2].rotation.set(1.45, 0, 0); AV['k' + s2].rotation.set(-1.4, 0, 0); AV['s' + s2].rotation.set(1.05, 0, s2 === 'l' ? .12 : -.12); AV['e' + s2].rotation.set(.35, 0, 0); }
+  avatar.visible = nav === 'third'; if (avatar.visible) { const st = L2W(k.seat); avatar.position.set(st.x, st.y - .9, st.z); avatar.rotation.copy(f.rotation);
+    for (const s2 of ['l', 'r']) { AV['h' + s2].rotation.set(-1.45, 0, 0); AV['k' + s2].rotation.set(1.4, 0, 0); AV['f' + s2].rotation.set(0, 0, 0); AV['s' + s2].rotation.set(-1.0, 0, s2 === 'l' ? -.12 : .12); AV['e' + s2].rotation.set(-.4, 0, 0); }
     AV.body.position.y = 0; AV.spine.rotation.set(d.f.kind === 'motor' ? .25 : 0, 0, 0); AV.head.rotation.set(-.05, -str * .25, 0); }
   /* headlight */
   HL.visible = d.lights; if (d.lights) { HL.intensity = 260; HL.position.copy(L2W([0, k.hh * .45, -2.2 - (d.f.kind === 'truck' ? 3.2 : 0)])); HL.target.position.copy(L2W([0, 0, -18])); }
