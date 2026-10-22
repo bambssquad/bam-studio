@@ -1049,10 +1049,10 @@ body.night .mega-w{color:#F7F7F5;mix-blend-mode:screen}
         <div class="cine-a"><button class="btn primary" type="button" data-cine="build">▶ Putar timelapse</button><button class="btn" type="button" data-cine="build:rec">● Rekam video</button></div>
       </article>
       <article class="cine-c cine-film v2o">
-        <div class="cine-k mono"><span>C</span><span>Film AI · 2 × 5 dtk</span></div>
+        <div class="cine-k mono"><span>C</span><span>Film · 2 klip</span></div>
         <h3>Film realistis</h3>
         <video class="cine-vid" id="cineVid" muted loop playsinline preload="none" poster="assets/ai/v_orbit_t.jpg" src="assets/ai/v_orbit.mp4"></video>
-        <p>Render AI dari model 3D (Seedance 2.0). Foto realistis per sudut ada di tombol kamera pada mode jelajah.</p>
+        <p>Film realistis dari model 3D. Foto realistis per sudut ada di tombol kamera pada mode jelajah.</p>
         <div class="cine-a"><button class="btn primary" type="button" onclick="window.__rv && (document.getElementById('btnExplore').click(), setTimeout(()=>window.__rv.show('close'),500))">Buka mode render</button></div>
       </article>
       <article class="cine-c">
@@ -3348,9 +3348,9 @@ const RVID = [['v_orbit', 'Film · orbit udara'], ['v_dusk', 'Film · senja']];
     RVID.forEach(([k, n]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'rv-t vid'; b.dataset.k = k; b.innerHTML = `<img alt="" loading="lazy" src="assets/ai/${k}_t.jpg"><span>▶ ${n}</span>`; b.onclick = () => film(k, n); strip.appendChild(b); });
     function mark(k) { strip.querySelectorAll('.rv-t').forEach(b => b.classList.toggle('on', b.dataset.k === k)); }
     function show(r) { cur = r; clearTimeout(tmo); box.hidden = false; box.classList.add('open'); vid.pause(); vid.classList.remove('in'); img.classList.remove('in'); mark(r[0]);
-      if (mode !== 'explore') enterExplore(); if (nav !== 'orbit') enterOrbit(); if (light !== r[4]) setLight(r[4]); flyTo(r[2], r[3], 1.3); cap.innerHTML = `<b>${r[1]}</b><span>Render AI · Nano Banana Pro 2K · sudut kamera sama dengan model 3D</span>`;
+      if (mode !== 'explore') enterExplore(); if (nav !== 'orbit') enterOrbit(); if (light !== r[4]) setLight(r[4]); flyTo(r[2], r[3], 1.3); cap.innerHTML = `<b>${r[1]}</b><span>Render realistis · sudut kamera sama dengan model 3D</span>`;
       const pre = new Image(); pre.onload = () => { tmo = setTimeout(() => { img.src = pre.src; img.classList.add('in'); }, 1350); }; pre.src = `assets/ai/${r[0]}.jpg`; }
-    function film(k, n) { clearTimeout(tmo); box.hidden = false; box.classList.add('open'); img.classList.remove('in'); mark(k); vid.src = `assets/ai/${k}.mp4`; vid.currentTime = 0; vid.play().catch(() => {}); vid.classList.add('in'); cap.innerHTML = `<b>${n}</b><span>Video AI · Seedance 2.0 · 5 dtk</span>`; }
+    function film(k, n) { clearTimeout(tmo); box.hidden = false; box.classList.add('open'); img.classList.remove('in'); mark(k); vid.src = `assets/ai/${k}.mp4`; vid.currentTime = 0; vid.play().catch(() => {}); vid.classList.add('in'); cap.innerHTML = `<b>${n}</b><span>Film realistis</span>`; }
     function close() { clearTimeout(tmo); img.classList.remove('in'); vid.classList.remove('in'); vid.pause(); box.classList.remove('open'); setTimeout(() => { if (!box.classList.contains('open')) box.hidden = true; }, 500); }
     const near = () => { let best = RV[0], bd = 1e9; for (const r of RV) { const d = camera.position.distanceTo(V(...r[2])); if (d < bd) { bd = d; best = r; } } return best; };
     if (btn) btn.onclick = () => box.classList.contains('open') ? close() : show(near());
