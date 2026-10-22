@@ -857,6 +857,9 @@ body.explore.driving .drivebar{display:flex}body.driving .emo{display:none!impor
 .drivebar button[aria-pressed=true]{background:#ffd21a;color:#0B0B0B}.drivebar button:hover{background:rgba(247,247,245,.2)}.drivebar #dvOut{background:#F7F7F5;color:#0B0B0B;font-weight:700}
 .drivebar kbd{font:600 10px var(--HV);opacity:.6;border:1px solid currentColor;border-radius:4px;padding:1px 4px}
 @media (max-width:760px){.drivebar{top:calc(62px + env(safe-area-inset-top,0px));padding-left:12px;gap:4px}.drivebar kbd,.drivebar .lbl{display:none}.drivebar button{padding:0 10px}}
+/* Revisi 29 — emote bar vertical at the right edge */
+.emo{left:auto;right:calc(var(--gut-r,16px) + 2px);top:50%;bottom:auto;transform:translateY(-50%);flex-direction:column;border-radius:26px}
+@media (max-width:760px){.emo{right:10px;top:46%;bottom:auto;padding:4px;gap:4px}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
