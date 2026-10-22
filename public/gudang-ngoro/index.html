@@ -800,6 +800,16 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 .gt,.gt-card,.dv-bar button,.btn,.chip{touch-action:manipulation}
 .brand{min-width:0}.brand b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 @media (max-width:760px){.cine-grid{grid-template-columns:1fr}.tour-steps .ts.lab{padding:4px 6px;font-size:10px}.tour-steps .ts.lab i{display:none}.tour-ctl{left:var(--gut-l)}.bar .brand span{display:none}}
+/* Revisi 23 — construction timelapse: spec card + 3D callouts */
+.con-spec{position:absolute;right:var(--gut-r);top:calc(76px + env(safe-area-inset-top,0px));width:min(320px,calc(100vw - 32px));background:rgba(11,11,11,.82);color:#F7F7F5;backdrop-filter:blur(8px);border-top:3px solid var(--c,#fff);padding:12px 14px 10px;font-family:var(--HV);pointer-events:none}
+.con-spec p{margin:0 0 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--c,#fff);font-weight:700}
+.con-spec div{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-top:1px solid rgba(255,255,255,.12);font-size:12px;line-height:1.3}
+.con-spec span{color:rgba(247,247,245,.62)}.con-spec b{font-weight:600;text-align:right}
+.con-call{position:absolute;left:0;top:0;pointer-events:none;will-change:transform}
+.con-call b{position:absolute;left:0;bottom:46px;transform:translateX(-50%);white-space:nowrap;font:600 12px/1 var(--HV);letter-spacing:.02em;padding:7px 10px;background:#0B0B0B;color:#F7F7F5;border-left:3px solid var(--c,#fff)}
+.con-call::before{content:"";position:absolute;left:0;bottom:0;width:1px;height:46px;background:var(--c,#fff)}
+.con-call::after{content:"";position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--c,#fff);box-shadow:0 0 12px var(--c,#fff)}
+@media (max-width:760px){.con-spec{top:calc(64px + env(safe-area-inset-top,0px));padding:9px 11px 7px}.con-spec div{font-size:11px;padding:3px 0}.con-call b{font-size:10.5px;padding:5px 7px}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -938,15 +948,19 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
     <div class="cine-head"><p class="mono">03 — Sinematik</p><h2 id="cineT">Tur &amp; timelapse<br>pembangunan</h2><p class="cine-ver mono" id="cineVer"></p></div>
     <div class="cine-grid">
       <article class="cine-c">
-        <div class="cine-k mono"><span>A</span><span>Timelapse · ± 45 dtk</span></div>
+        <div class="cine-k mono"><span>A</span><span>Timelapse · ± 2,5 menit</span></div>
         <h3>Timelapse pembangunan</h3>
-        <p>Model dibangun dari lahan kosong sampai selesai, kamera berpindah di setiap tahap. Klik tahap untuk lompat.</p>
+        <p>Simulasi pembangunan: cut &amp; fill berdasarkan kontur, alat berat, pekerja, lalu elemen dipasang satu per satu dengan highlight dan spek tiap tahap. Klik tahap untuk lompat.</p>
         <ol class="cine-steps">
-          <li><button type="button" data-cstep="1"><i class="mono">01</i>Pondasi plat, pedestal &amp; sloof</button></li>
-          <li><button type="button" data-cstep="2"><i class="mono">02</i>Kolom WF di garis unit</button></li>
-          <li><button type="button" data-cstep="3"><i class="mono">03</i>Kuda-kuda, gording &amp; ikatan angin</button></li>
-          <li><button type="button" data-cstep="4"><i class="mono">04</i>Atap seng &amp; selubung</button></li>
-          <li><button type="button" data-cstep="5"><i class="mono">05</i><span class="v1o">Tapak, kantor, pagar &amp; lansekap</span><span class="v2o">Tapak, pos jaga, pagar &amp; lansekap</span></button></li>
+          <li><button type="button" data-cstep="0"><i class="mono">00</i>Cut &amp; fill dari kontur · alat berat</button></li>
+          <li><button type="button" data-cstep="1"><i class="mono">01</i>Galian &amp; pondasi plat + sloof</button></li>
+          <li><button type="button" data-cstep="2"><i class="mono">02</i>Pagar keliling</button></li>
+          <li><button type="button" data-cstep="3"><i class="mono">03</i>Umpak / pedestal + angkur</button></li>
+          <li><button type="button" data-cstep="4"><i class="mono">04</i>Kolom WF satu per satu (crane)</button></li>
+          <li><button type="button" data-cstep="5"><i class="mono">05</i>Kuda-kuda, gording &amp; ikatan angin</button></li>
+          <li><button type="button" data-cstep="6"><i class="mono">06</i>Atap seng galvalume</button></li>
+          <li><button type="button" data-cstep="7"><i class="mono">07</i>Tembok, cladding, pintu &amp; cor lantai</button></li>
+          <li><button type="button" data-cstep="8"><i class="mono">08</i>Tapak, gerbang, <span class="v1o">kantor, </span>pos &amp; lansekap</button></li>
         </ol>
         <div class="cine-a"><button class="btn primary" type="button" data-cine="build">▶ Putar timelapse</button><button class="btn" type="button" data-cine="build:rec">● Rekam video</button></div>
       </article>
@@ -1145,6 +1159,7 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 
 <div class="tour" id="tour" hidden>
   <i class="lb top"></i><i class="lb bot"></i>
+  <div class="con-spec" id="conSpec" hidden></div><div class="con-call" id="conCall" hidden><b></b></div><div class="con-call" id="conCall2" hidden><b></b></div>
   <div class="tour-cap"><span class="mono tour-ver" id="tourVer"></span><span class="mono" id="tourNo"></span><b id="tourCap"></b></div>
   <div class="tour-ctl"><div class="tour-steps" id="tourSteps"></div><span class="tour-bar"><i id="tourBar"></i></span><span class="rec-dot mono">● REC</span><button class="chip" id="tourStop" type="button">Hentikan tur</button></div>
 </div>
@@ -1397,7 +1412,7 @@ for (const x of COLX) for (const z of FR) {
   { const pd = box(.6, 1.0 + P.pedestal, .4, mat.concrete, x, -1.0, z); info(pd, 'steel'); reg(G.found.add(pd), 1, d * .7 + .15, 'grow'); }
 }
 for (const x of COLX) { const sl = box(.2, .4, 60, mat.concrete, x, -.4, 0); reg(G.found.add(sl), 1, .55 + COLX.indexOf(x) * .05, 'grow'); }
-for (const z of [P.z0, P.z1]) { const sl = box(84, .4, .2, mat.concrete, 0, -.4, z); reg(G.found.add(sl), 1, .7, 'grow'); }
+for (const z of [P.z0, P.z1]) { const sl = box(42 - BX0, .4, .2, mat.concrete, (42 + BX0) / 2, -.4, z); reg(G.found.add(sl), 1, .7, 'grow'); }
 for (const b of P.bays) { const xm = (b.x0 + b.x1) / 2; const sl = box(b.x1 - b.x0, P.floor, 60, mat.slab, xm, 0, 0); info(sl, b.n); reg(G.found.add(sl), 1, .9, 'grow'); }
 if (!V2) { const sl = box(15, .15, 60, mat.slab, -34.5, 0, 0); info(sl, 'lean'); reg(G.found.add(sl), 1, .9, 'grow'); }
 /* ================= 2 · COLUMNS ================= */
@@ -2932,38 +2947,196 @@ const REC = (() => { let mr = null, chunks = [], cv = null, cx = null; const r =
 function startTour(kind = 'tour', rec = false) {
   if (tour.on) stopTour(true);
   if (mode !== 'explore') enterExplore(); if (nav !== 'orbit') enterOrbit(); tween = null;
-  const L = kind === 'build' ? BUILD : TOUR; tour.kind = kind; tour.list = L; tour.dur = L.length * (kind === 'build' ? 6200 : 5200);
-  tour.pc = new THREE.CatmullRomCurve3([camera.position.clone(), ...L.map(k => V(...k[0]))], false, 'centripetal');
-  tour.tc = new THREE.CatmullRomCurve3([controls.target.clone(), ...L.map(k => V(...k[1]))], false, 'centripetal');
+  const L = kind === 'build' ? CON.PH.map(p => [null, null, p.cap, 0, 0, p.lab]) : TOUR; tour.kind = kind; tour.list = L; tour.dur = kind === 'build' ? CON.total * 1000 : L.length * 5200;
+  if (kind !== 'build') { tour.pc = new THREE.CatmullRomCurve3([camera.position.clone(), ...L.map(k => V(...k[0]))], false, 'centripetal');
+  tour.tc = new THREE.CatmullRomCurve3([controls.target.clone(), ...L.map(k => V(...k[1]))], false, 'centripetal'); }
   tour.on = true; tour.t0 = performance.now(); tour.el = 0; tour.lt = 0; tour.last = -1; tour.prevDoors = doorT.slice(); controls.enabled = false;
-  if (kind === 'build') { setAllDoors(0); setStage(0); } else { setAllDoors(1); DOFF.t = 1; setStage(5); }
+  if (kind === 'build') { setAllDoors(0); } else { setAllDoors(1); DOFF.t = 1; setStage(5); }
   cut.axis = 'none'; setPressed('#cut', 'none'); applyCut();
   for (const k of ['roof', 'wall', 'racks', 'props', 'door', 'office', 'officeUp', 'officeRoof', 'found', 'steel', 'purlin', 'site', 'trees']) { const el = $('#ly-' + k); if (el && !el.closest('label').hidden) el.checked = G[k].visible = true; }
   $('#tourVer').textContent = VER_TAG; const stp = $('#tourSteps'); stp.innerHTML = '';
   L.forEach((k, i) => { const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'ts' + (kind === 'build' ? ' lab' : ''); bt.innerHTML = kind === 'build' ? `<i>${String(i).padStart(2, '0')}</i>${k[5]}` : '<i></i>'; bt.title = k[2]; bt.setAttribute('aria-label', k[2]);
-    bt.onclick = () => { tour.el = (i + .02) / L.length * tour.dur; tour.last = -1; }; stp.appendChild(bt); });
+    bt.onclick = () => { tour.el = kind === 'build' ? CON.startOf(i) * 1000 + 30 : (i + .02) / L.length * tour.dur; tour.last = -1; }; stp.appendChild(bt); });
   document.body.classList.add('touring'); document.body.classList.toggle('tour-build', kind === 'build'); $('#tour').hidden = false; setMin(true);
+  if (kind === 'build') CON.begin();
   if (rec) REC.start();
 }
 function stopTour(quiet) {
   if (!tour.on) return; tour.on = false; REC.stop(); document.body.classList.remove('touring', 'tour-build'); $('#tour').hidden = true;
-  if (tour.kind === 'build') setStage(5);
-  tour.prevDoors.forEach((v, i) => setDoor(i, v)); controls.target.copy(tour.tc.getPoint(Math.min(1, tour.el / tour.dur))); controls.enabled = nav === 'orbit'; setMin(false);
+  if (tour.kind === 'build') CON.end(); else controls.target.copy(tour.tc.getPoint(Math.min(1, tour.el / tour.dur)));
+  tour.prevDoors.forEach((v, i) => setDoor(i, v)); controls.enabled = nav === 'orbit'; setMin(false);
 }
 function tourFrame(now) {
   const dtm = tour.lt ? Math.min(80, Math.max(0, now - tour.lt)) : 16; tour.lt = now; tour.el += dtm;
-  const L = tour.list; const u = clamp(tour.el / tour.dur); const n = L.length; const x = u * n; const i = Math.min(n - 1, Math.floor(x)); const f = x - i;
-  const g = (i + (f * .55 + sstep(0, 1, f) * .45)) / n; // linger a little on every station
-  camera.position.copy(tour.pc.getPoint(g)); controls.target.copy(tour.tc.getPoint(g)); camera.lookAt(controls.target);
-  if (tour.kind === 'build') { const k = L[i]; const v = k[3] + (k[4] - k[3]) * sstep(.05, .85, f); if (Math.abs(v - B) > 1e-3) setStage(v); }
+  const L = tour.list; const u = clamp(tour.el / tour.dur); const n = L.length; const x = u * n; let i = Math.min(n - 1, Math.floor(x)); const f = x - i;
+  if (tour.kind === 'build') { i = CON.frame(dtm / 1000, tour.el / 1000); } else { const g = (i + (f * .55 + sstep(0, 1, f) * .45)) / n; // linger a little on every station
+  camera.position.copy(tour.pc.getPoint(g)); controls.target.copy(tour.tc.getPoint(g)); camera.lookAt(controls.target); }
   if (i !== tour.last) { tour.last = i; $('#tourNo').textContent = `${tour.kind === 'build' ? 'Timelapse pembangunan' : 'Tur sinematik'} · ${String(i + 1).padStart(2, '0')} / ${n}`; const c = $('#tourCap'); c.classList.remove('in'); void c.offsetWidth; c.textContent = L[i][2]; c.classList.add('in');
     $('#tourSteps').querySelectorAll('.ts').forEach((b, j) => { b.classList.toggle('on', j === i); b.classList.toggle('done', j < i); }); }
   $('#tourBar').style.transform = `scaleX(${u})`;
   if (u >= 1) stopTour();
 }
+/* ================= CON: realistic construction timelapse (cut & fill → pondasi → pagar → umpak → kolom → kuda-kuda → seng → tembok → tapak) ================= */
+const CON = (() => {
+  const YEL = 0xf2b705, CM = {y: M({color: YEL, roughness: .55, metalness: .1}, false), d: M({color: 0x2a2e33, roughness: .8}, false), g: M({color: 0x9fb4c2, roughness: .1, metalness: .3, transparent: true, opacity: .7}, false), w: M({color: 0xf1f1ee, roughness: .6}, false),
+    o: M({color: 0xff7a1a, roughness: .6, emissive: 0xff5a00, emissiveIntensity: .15}, false), s: M({color: 0xc99f7c, roughness: .8}, false), dirt: M({color: 0x8a7458, roughness: 1}, false), pit: M({color: 0x4a3c2c, roughness: 1}, false), conc: M({color: 0xb9b6ae, roughness: .9}, false)};
+  const g = new THREE.Group(); g.name = 'con'; g.visible = false; root.add(g);
+  const bx = (w, h, d, m, x = 0, y = 0, z = 0, p = g) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d).translate(0, h / 2, 0), m); o.position.set(x, y, z); o.castShadow = true; p.add(o); return o; };
+  const cyl = (r, l, m, p) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, l, 14), m); o.castShadow = true; p.add(o); return o; };
+  const tracks = (p, L = 4.2, W = 2.8) => { for (const s of [-1, 1]) bx(.7, .8, L, CM.d, s * (W / 2 - .35), 0, 0, p); };
+  /* ---- machines ---- */
+  function excavator() { const r = new THREE.Group(); tracks(r); const up = new THREE.Group(); up.position.y = .8; r.add(up); bx(2.7, 1.1, 3.3, CM.y, 0, 0, -.2, up); bx(1.0, 1.4, 1.2, CM.g, -.75, 1.1, 1.0, up); bx(2.7, .7, 1.0, CM.d, 0, .4, -1.9, up);
+    const boom = new THREE.Group(); boom.position.set(.45, 1.0, 1.2); up.add(boom); bx(.42, .5, 4.2, CM.y, 0, -.25, 2.1, boom); const arm = new THREE.Group(); arm.position.set(0, 0, 4.2); boom.add(arm); bx(.32, .4, 2.8, CM.y, 0, -.2, 1.4, arm);
+    const bk = new THREE.Group(); bk.position.set(0, 0, 2.8); arm.add(bk); bx(.9, .7, .7, CM.d, 0, -.7, .1, bk); r.userData = {up, boom, arm, bk}; return r; }
+  function dozer() { const r = new THREE.Group(); tracks(r, 3.6, 2.6); bx(2.2, 1.2, 3.0, CM.y, 0, .8, -.2, r); bx(1.4, 1.2, 1.3, CM.g, 0, 2.0, -.6, r); bx(3.2, 1.1, .25, CM.d, 0, .1, 2.2, r); return r; }
+  function roller() { const r = new THREE.Group(); const d = cyl(.75, 2.1, CM.d, r); d.rotation.z = Math.PI / 2; d.position.set(0, .75, 1.4); bx(1.9, 1.1, 2.4, CM.y, 0, .5, -.9, r); bx(1.2, 1.2, 1.1, CM.g, 0, 1.6, -1.1, r); for (const s of [-1, 1]) { const w = cyl(.6, .5, CM.d, r); w.rotation.z = Math.PI / 2; w.position.set(s * .85, .6, -1.6); } r.userData.drum = d; return r; }
+  function lorry(kind) { const r = new THREE.Group(); bx(2.3, .5, 7.2, CM.d, 0, .55, 0, r); bx(2.4, 2.0, 1.9, kind === 'mix' ? CM.w : CM.y, 0, 1.0, 2.7, r); bx(2.2, .8, .1, CM.g, 0, 2.0, 3.66, r);
+    for (const z of [2.6, -1.4, -2.6]) for (const s of [-1, 1]) { const w = cyl(.5, .35, CM.d, r); w.rotation.z = Math.PI / 2; w.position.set(s * 1.05, .5, z); }
+    if (kind === 'dump') { const bed = new THREE.Group(); bed.position.set(0, 1.05, -3.3); r.add(bed); bx(2.4, 1.4, 5.0, CM.y, 0, 0, 2.5, bed); bx(2.2, .6, 4.4, CM.dirt, 0, 1.0, 2.6, bed); r.userData.bed = bed; }
+    if (kind === 'mix') { const d = new THREE.Mesh(new THREE.CylinderGeometry(.8, 1.15, 4.6, 16).rotateX(Math.PI / 2 - .2), CM.w); d.position.set(0, 2.2, -1.1); d.castShadow = true; r.add(d); r.userData.drum = d; }
+    if (kind === 'flat') { bx(2.4, .15, 5.2, CM.d, 0, 1.05, -1.0, r); for (let k = 0; k < 6; k++) bx(.25, .25, 5.0, mat.steel, -.8 + (k % 3) * .8, 1.2 + Math.floor(k / 3) * .26, -1.0, r); }
+    return r; }
+  function crane() { const r = new THREE.Group(); bx(2.6, 1.0, 9.0, CM.y, 0, .6, 0, r); bx(2.4, 1.6, 1.6, CM.g, 0, 1.4, 4.0, r); for (const z of [3, 1.4, -1.6, -3.2]) for (const s of [-1, 1]) { const w = cyl(.6, .45, CM.d, r); w.rotation.z = Math.PI / 2; w.position.set(s * 1.15, .6, z); }
+    for (const s of [-1, 1]) for (const z of [3.6, -3.6]) bx(.25, .2, .25, CM.d, s * 2.6, 0, z, r).scale.set(1, 1, 1);
+    const turn = new THREE.Group(); turn.position.set(0, 1.6, -1.6); r.add(turn); bx(2.4, 1.3, 3.2, CM.y, 0, 0, -.6, turn); bx(2.2, 1.0, 1.4, CM.d, 0, .1, -2.6, turn);
+    const boom = new THREE.Group(); boom.position.set(0, 1.0, .8); turn.add(boom); const bm = bx(.7, .7, 24, CM.y, 0, -.35, 12, boom); bm.userData.len = 24;
+    const cable = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V(), V()]), new THREE.LineBasicMaterial({color: 0x15191c})); g.add(cable); const hook = bx(.35, .5, .35, CM.d, 0, 0, 0); r.userData = {turn, boom, cable, hook}; return r; }
+  function worker(i) { const w = new THREE.Group(); const legs = [-1, 1].map(s => { const l = new THREE.Group(); l.position.set(s * .1, .9, 0); bx(.13, .88, .15, CM.d, 0, -.88, 0, l); w.add(l); return l; });
+    bx(.44, .62, .26, i % 3 ? CM.o : CM.y, 0, .9, 0, w); const h = new THREE.Mesh(new THREE.SphereGeometry(.13, 10, 8), CM.s); h.position.y = 1.68; w.add(h); const hm = new THREE.Mesh(new THREE.SphereGeometry(.16, 10, 6, 0, 6.3, 0, 1.6), i % 2 ? CM.w : CM.y); hm.position.y = 1.72; w.add(hm);
+    const arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * .29, 1.48, 0); bx(.1, .6, .12, i % 3 ? CM.o : CM.y, 0, -.6, 0, a); w.add(a); return a; }); w.userData = {legs, arms, ph: i * 1.7}; return w; }
+  const EX = excavator(), DZ1 = dozer(), RL = roller(), DT = [lorry('dump'), lorry('dump')], MX = lorry('mix'), FL = lorry('flat'), CR = crane(), WK = Array.from({length: 7}, (_, i) => worker(i));
+  g.add(EX, DZ1, RL, MX, FL, CR, ...DT, ...WK);
+  /* ---- ground: dirt + cut/fill heat map from the DEM ---- */
+  const S = P.site, SW = S.x1 - S.x0, SD = S.z1 - S.z0, cx = (S.x0 + S.x1) / 2, cz = (S.z0 + S.z1) / 2;
+  const dirt = new THREE.Mesh(new THREE.PlaneGeometry(SW - .4, SD - .4).rotateX(-Math.PI / 2), CM.dirt); dirt.position.set(cx, .02, cz); dirt.receiveShadow = true; g.add(dirt);
+  const hc = document.createElement('canvas'); hc.width = SW * 4; hc.height = SD * 4; const heatT = new THREE.CanvasTexture(hc); heatT.colorSpace = THREE.SRGBColorSpace;
+  const heat = new THREE.Mesh(new THREE.PlaneGeometry(SW - .4, SD - .4).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({map: heatT, transparent: true, depthWrite: false, toneMapped: false})); heat.position.set(cx, .06, cz); heat.renderOrder = 6; g.add(heat);
+  let heatInfo = null;
+  function paintHeat() { const dB = SITE.balance(), off = dB - SITE.delta, r = SITE.calc(dB); const W = hc.width, H = hc.height, x = hc.getContext('2d'), im = x.createImageData(W, H); const E = new Float32Array(W * H); let mx = .01, cMax = [0, 0, 0], fMax = [0, 0, 0];
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const X = S.x0 + (i + .5) / 4, Z = S.z1 - (j + .5) / 4; const ex = SITE.eRel(X, Z) - off; const pad = X > BX0 && X < 42 && Z > -30 && Z < 30 ? .85 : 0; const d = pad - ex; E[j * W + i] = ex; mx = Math.max(mx, Math.abs(d));
+      if (d < cMax[0]) cMax = [d, X, Z]; if (d > fMax[0]) fMax = [d, X, Z]; }
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const X = S.x0 + (i + .5) / 4, Z = S.z1 - (j + .5) / 4; const pad = X > BX0 && X < 42 && Z > -30 && Z < 30 ? .85 : 0; const d = pad - E[j * W + i]; const k = Math.min(1, Math.abs(d) / mx); const o = (j * W + i) * 4;
+      const c = d > 0 ? [42, 120, 255] : [255, 59, 48]; im.data[o] = c[0]; im.data[o + 1] = c[1]; im.data[o + 2] = c[2]; im.data[o + 3] = 60 + 170 * k;
+      const a = E[j * W + i], b = i + 1 < W ? E[j * W + i + 1] : a, cc = j + 1 < H ? E[(j + 1) * W + i] : a; if (Math.floor(a / .25) !== Math.floor(b / .25) || Math.floor(a / .25) !== Math.floor(cc / .25)) { const major = Math.floor(a / 1) !== Math.floor(b / 1) || Math.floor(a / 1) !== Math.floor(cc / 1); im.data[o] = im.data[o + 1] = im.data[o + 2] = major ? 10 : 40; im.data[o + 3] = major ? 255 : 200; } }
+    x.putImageData(im, 0, 0); heatT.needsUpdate = true; heatInfo = {r, mx, cMax, fMax, dB}; }
+  const pits = FR.flatMap(z => COLX.map(x => { const m = bx(2.3, .04, 2.3, CM.pit, x, .03, z); m.visible = false; return m; }));
+  /* ---- highlight: translucent glow box + edges around the active element ---- */
+  const hlBox = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: .18, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false}));
+  const hlEdge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1)), new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, depthTest: false, toneMapped: false})); hlBox.renderOrder = hlEdge.renderOrder = 9; g.add(hlBox, hlEdge);
+  /* ---- items: every built element, phase + order, base transform ---- */
+  const PH = [
+    {k: 'lahan', d: 18, lab: 'Cut & fill', cap: '00 — Pematangan lahan · cut & fill dari kontur', col: 0xff3b30},
+    {k: 'pondasi', d: 24, lab: 'Pondasi', cap: '01 — Galian & pondasi plat + sloof', col: 0xff9500},
+    {k: 'pagar', d: 11, lab: 'Pagar', cap: '02 — Pagar keliling', col: 0x34c759},
+    {k: 'umpak', d: 13, lab: 'Umpak', cap: '03 — Umpak / pedestal + angkur', col: 0xffcc00},
+    {k: 'kolom', d: 24, lab: 'Kolom WF', cap: `04 — Kolom ${V2 ? 'WF 250' : 'WF 350 / WF 250'} dipasang satu per satu`, col: 0x2be0ff},
+    {k: 'kuda', d: 26, lab: 'Kuda-kuda', cap: '05 — Kuda-kuda WF 250, gording & ikatan angin', col: 0x5ac8fa},
+    {k: 'seng', d: 15, lab: 'Atap seng', cap: '06 — Atap seng galvalume', col: 0xc77dff},
+    {k: 'tembok', d: 15, lab: 'Tembok', cap: '07 — Tembok bata, cladding, pintu & cor lantai', col: 0x7dff6a},
+    {k: 'tapak', d: 13, lab: 'Tapak', cap: V2 ? '08 — Tapak: paving, gerbang, pos jaga, lampu & lansekap' : '08 — Tapak: kantor, paving, gerbang, pos, lampu & lansekap', col: 0x30d158},
+    {k: 'selesai', d: 7, lab: 'Selesai', cap: V2 ? 'Selesai · Versi 02 — Revisi 01' : 'Selesai · Versi 01 — desain awal', col: 0xffffff},
+  ];
+  let acc = 0; for (const p of PH) { p.t0 = acc; acc += p.d; p.t1 = acc; } const TOTAL = acc;
+  const pi = k => PH.findIndex(p => p.k === k);
+  const SPEC = {
+    lahan: () => { const h = heatInfo; return [['Sumber kontur', 'DEM SRTM 30 m (indikatif)'], ['Galian (cut)', h ? Math.round(h.r.cut).toLocaleString('id-ID') + ' m³' : '–'], ['Urugan (fill)', h ? Math.round(h.r.fill).toLocaleString('id-ID') + ' m³' : '–'], ['Rencana', h ? `halaman ${h.dB >= 0 ? '+' : ''}${h.dB.toFixed(2)} m dari jalan · cut ≈ fill` : '–'], ['Pad gudang', '+0.85 dari halaman'], ['Alat', 'excavator · bulldozer · dump truck · roller'], ['Warna', 'merah = galian · biru = urugan · garis = kontur 0.25 / 1 m']]; },
+    pondasi: () => [['Pondasi plat', '1.50 × 1.50 × 0.40 m'], ['Dasar pondasi', '−1.40'], ['Sloof', '20 × 40 cm'], ['Titik', `${COLX.length * FR.length} titik`], ['Alat', 'excavator · truk mixer · pekerja']],
+    pagar: () => [['Samping & belakang', 'dinding bata, kolom praktis @ 3 m'], ['Depan', 'dinding rendah + besi'], ['Gerbang', `${(P.gate.x1 - P.gate.x0).toFixed(2)} m, geser`]],
+    umpak: () => [['Pedestal', '40 × 60 cm, puncak +1.00'], ['Angkur', '4 baut per kolom + base plate'], ['Jumlah', `${COLX.length * FR.length} umpak`]],
+    kolom: () => [['Kolom', V2 ? 'WF 250' : 'garis unit WF 350 · sosoran WF 250'], ['Tinggi', 'pedestal +1.00 → tritisan +7.00'], ['Jarak portal', '@ 6.00 m · 11 portal'], ['Alat', 'crane mobil · truk material']],
+    kuda: () => [['Kuda-kuda', 'WF 250 + konsol'], ['Bentang', '23.00 m bebas'], ['Gording', 'CNP 125 × 2 mm @ 1.20 m'], ['Trekstang', 'Ø12'], ['Tali angin', 'Ø16']],
+    seng: () => [['Penutup', 'seng galvalume 0.40 mm'], ['Kemiringan', '± 16°'], ['Bubungan', '+10.33'], ['Talang', 'lembah & tepi']],
+    tembok: () => [['Dinding', 'bata + cladding galvalume'], ['Pintu', 'plat baja geser 6.00 × 5.00 m'], ['Lantai', 'cor beton t = 15 cm'], ['Kanopi', 'rangka kremona']],
+    tapak: () => [['Tapak', '90 × 80 m'], ['Pos jaga', V2 ? '3.00 × 3.00 m' : '3.50 × 3.50 m'], ...(V2 ? [['Parkir', 'motor 12 × 4 · mobil 15 × 4 m']] : [['Kantor', '6 × 12 m, 2 lantai']]), ['Lansekap', 'palem & rumput keliling']],
+    selesai: () => [['Versi', V2 ? '02 · Revisi 01' : '01 · Desain awal'], ['Blok', V2 ? '69 × 60 m' : '84 × 60 m'], ['Bubungan', '+10.33'], ['Tritisan', '+7.00']],
+  };
+  const items = []; const wp = new THREE.Vector3(), bb = new THREE.Box3();
+  function collect() { items.length = 0; root.updateMatrixWorld(true);
+    const add = (o, ph, kind, key, spec) => { o.updateMatrixWorld(true); bb.setFromObject(o); const c = bb.isEmpty() ? o.getWorldPosition(new THREE.Vector3()) : bb.getCenter(new THREE.Vector3()); items.push({o, ph, kind, key: key ?? (c.z * 1000 + c.x), spec, c, sz: bb.isEmpty() ? V(1, 1, 1) : bb.getSize(new THREE.Vector3()), pos: o.position.clone(), sc: o.scale.clone(), vis: o.visible}); };
+    const gp = o => o.geometry && o.geometry.parameters || {};
+    for (const o of G.found.children) { const p = gp(o); if (o.material === mat.slab) add(o, 'tembok', 'grow', 5e5 + o.position.x, 'Cor lantai t = 15 cm');
+      else if (p.height > 1.5) add(o, 'umpak', 'grow', null, 'Umpak 40 × 60 cm · +1.00'); else if (p.width >= 1 && p.depth >= 1 && p.width < 2) add(o, 'pondasi', 'grow', null, 'Pondasi plat 1.50 × 1.50 × 0.40');
+      else add(o, 'pondasi', 'grow', 1e6 + (p.depth > 10 ? o.position.x : 100 + o.position.z), 'Sloof 20 × 40 cm'); }
+    for (const o of G.steel.children) { const a = o.userData.anim, p = gp(o);
+      if (o.isInstancedMesh) { if (o.geometry.type === 'CylinderGeometry') add(o, 'umpak', 'pop', 9e6, 'Baut angkur'); else add(o, 'kolom', 'pop', 9e6, 'Pelat kepala kolom'); continue; }
+      if (a && a.stage === 2) add(o, 'kolom', 'drop', null, `Kolom ${V2 ? 'WF 250' : (o.position.x === -42 ? 'WF 250' : 'WF 350')}`);
+      else if (p.height === .03) add(o, 'kolom', 'pop', o.position.z * 1000 + o.position.x - .5, 'Base plate');
+      else if (a && a.stage === 3) add(o, 'kuda', 'drop', null, 'Kuda-kuda WF 250');
+      else add(o, 'tembok', 'pop', 3e6, 'Rangka pendukung'); }
+    for (const o of G.purlin.children) add(o, 'kuda', o.isGroup ? 'z' : 'pop', 5e6 + (o.isGroup ? o.position.x + o.children[0].position.x : 0), o.isGroup ? 'Gording CNP 125 × 2 mm' : 'Trekstang Ø12 / tali angin Ø16');
+    for (const o of G.roof.children) add(o, 'seng', 'z', o.position.x + (o.children[0] ? o.children[0].position.x : 0), 'Seng galvalume 0.40 mm');
+    for (const o of G.wall.children) add(o, 'tembok', 'grow', null, 'Dinding bata + cladding');
+    for (const o of G.door.children) add(o, 'tembok', 'pop', 4e6 + o.position.x, 'Pintu geser plat baja 6 × 5 m · kanopi');
+    for (const o of G.site.children) { if (!o.userData.anim) continue; const isF = o.material === mat.wallSite || (o.isGroup && o.children[0] && o.children[0].material === mat.wallSite) || (o.isInstancedMesh && o.count > 100);
+      if (isF) { const c = o.getWorldPosition(wp); add(o, 'pagar', o.isInstancedMesh ? 'pop' : 'grow', Math.atan2(c.z - cz, c.x - cx), 'Pagar bata keliling'); } else add(o, 'tapak', o.userData.anim.kind === 'grow' ? 'grow' : 'pop', null, 'Tapak'); }
+    for (const k of ['office', 'officeUp', 'officeRoof', 'racks', 'props']) for (const o of G[k].children) add(o, 'tapak', 'pop', k === 'racks' || k === 'props' ? 8e6 : 7e6, k === 'racks' ? 'Rak palet & barang' : k === 'props' ? 'Kendaraan' : (o.userData.info === 'pos' ? 'Pos jaga' : 'Kantor 2 lantai'));
+    for (const p of PH) { const L = items.filter(it => it.ph === p.k).sort((a, b) => a.key - b.key); const n = L.length; const span = p.d * .86; const step = n ? span / n : 0; const dur = Math.max(.45, Math.min(2.4, step * 3));
+      L.forEach((it, i) => { it.t0 = p.t0 + p.d * .06 + i * step; it.t1 = it.t0 + dur; }); p.items = L; } }
+  /* ---- DOM: spec card + callouts ---- */
+  const card = $('#conSpec'), call = $('#conCall'), call2 = $('#conCall2');
+  let on = false, lastPh = -1, cur = null; const camP = V(), camT = V(), tmp = V();
+  function begin() { setStage(5); collect(); paintHeat(); for (const p of pits) p.userData.it = items.find(x => x.ph === 'pondasi' && x.spec.startsWith('Pondasi') && Math.abs(x.c.x - p.position.x) < .2 && Math.abs(x.c.z - p.position.z) < .2); on = true; g.visible = true; lastPh = -1; pave.visible = false; G.trees.visible = false; setTrees(4); document.body.classList.add('con'); camP.copy(camera.position); camT.copy(controls.target); }
+  function end() { if (!on) return; on = false; for (const it of items) { it.o.position.copy(it.pos); it.o.scale.copy(it.sc); it.o.visible = it.vis; } g.visible = false; pave.visible = true; G.trees.visible = true; setTrees(5); for (const p of pits) p.visible = false; document.body.classList.remove('con'); card.hidden = call.hidden = call2.hidden = true; }
+  const lerpV = (a, b, t) => a.clone().lerp(b, t);
+  function place(o, x, z, ry) { o.position.set(x, 0, z); if (ry !== undefined) o.rotation.y = ry; }
+  function face(o, x, z, k = 1) { const ry = Math.atan2(x - o.position.x, z - o.position.z); let d = ry - o.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); o.rotation.y += d * k; }
+  function drive(o, x, z, dt, sp = 6) { const dx = x - o.position.x, dz = z - o.position.z, L = Math.hypot(dx, dz); if (L > .2) { face(o, x, z, Math.min(1, dt * 3)); const s = Math.min(L, sp * dt); o.position.x += dx / L * s; o.position.z += dz / L * s; return false; } return true; }
+  function proj(el, p, txt) { tmp.copy(p).project(camera); const vis = tmp.z < 1 && Math.abs(tmp.x) < 1.1 && Math.abs(tmp.y) < 1.1; el.hidden = !vis; if (!vis) return; el.style.transform = `translate(${((tmp.x + 1) / 2 * innerWidth).toFixed(1)}px,${((1 - tmp.y) / 2 * innerHeight).toFixed(1)}px)`; if (el.dataset.t !== txt) { el.dataset.t = txt; el.querySelector('b').textContent = txt; } }
+  function frame(dt, T) { if (!on) return 0; const now = performance.now() / 1000; let i = PH.findIndex(p => T < p.t1); if (i < 0) i = PH.length - 1; const ph = PH[i], f = clamp((T - ph.t0) / ph.d);
+    /* elements */
+    cur = null; for (const it of items) { const t = clamp((T - it.t0) / (it.t1 - it.t0)), e = ease(t); it.o.visible = it.vis && t > .001;
+      if (it.kind === 'grow') it.o.scale.y = it.sc.y * Math.max(e, .001); else if (it.kind === 'pop') it.o.scale.copy(it.sc).multiplyScalar(Math.max(e, .001)); else if (it.kind === 'z') it.o.scale.z = it.sc.z * Math.max(e, .001);
+      else if (it.kind === 'drop') { it.o.position.y = it.pos.y + (1 - e) * 7; }
+      if (t > 0 && t < 1 && it.ph === ph.k) cur = it; }
+    if (!cur && ph.items && ph.items.length) { const L = ph.items; cur = L.reduce((a, b) => (T >= b.t0 ? b : a), L[0]); }
+    /* ground */
+    const tp = pi('tapak'); dirt.visible = i < tp || (i === tp && f < .35); heat.visible = i === 0; heat.material.opacity = 1 - sstep(.7, 1, f);
+    pave.visible = i > tp || (i === tp && f > .2); if (i >= tp) { G.trees.visible = true; setTrees(4 + (i > tp ? 1 : sstep(.3, 1, f))); } else { G.trees.visible = false; }
+    pits.forEach(p => { const it = p.userData.it; p.visible = !!it && T > it.t0 - .9 && i <= pi('umpak'); });
+    /* machines per phase */
+    const show = (o, v) => o.visible = v; [EX, DZ1, RL, MX, FL, CR, ...DT].forEach(o => o.visible = false); WK.forEach(w => w.visible = false);
+    const gate = V((P.gate.x0 + P.gate.x1) / 2, 0, S.z0 - 2);
+    if (i === 0) { show(EX, true); show(DZ1, true); show(RL, f > .45); DT.forEach(d => show(d, true));
+      const a = now * .35; place(DZ1, cx - 20 + Math.sin(a) * 18, cz + 8 + Math.cos(a * .5) * 4); face(DZ1, cx - 20 + Math.sin(a + .1) * 18, cz + 8 + Math.cos((a + .1) * .5) * 4);
+      const hc = heatInfo && heatInfo.cMax[1] ? heatInfo.cMax : [0, cx + 12, cz]; place(EX, hc[1], hc[2]); EX.userData.up.rotation.y = Math.sin(now * .9) * 1.2; EX.userData.boom.rotation.x = .25 + Math.sin(now * 1.8) * .25; EX.userData.arm.rotation.x = .6 + Math.cos(now * 1.8) * .35;
+      place(RL, cx + 15 + Math.sin(now * .4) * 14, cz - 14); RL.rotation.y = Math.cos(now * .4) > 0 ? Math.PI / 2 : -Math.PI / 2; RL.userData.drum.rotation.x = now * 3;
+      DT.forEach((d, k) => { const u = ((now * .06 + k * .5) % 1); const p0 = V(hc[1] + 5, 0, hc[2] + 2), p1 = V(gate.x, 0, S.z0 + 4); const q = u < .5 ? lerpV(p0, p1, sstep(0, .5, u)) : lerpV(p1, p0, sstep(.5, 1, u)); const ahead = u < .5 ? p1 : p0; place(d, q.x, q.z); face(d, ahead.x, ahead.z); d.userData.bed.rotation.x = u > .02 && u < .1 ? -.6 * Math.sin((u - .02) / .08 * Math.PI) : 0; }); }
+    if (i === pi('pondasi') && cur) { show(EX, true); show(MX, true); const c = cur.c; drive(EX, c.x - 3.2, c.z - 3.2, dt, 10); face(EX, c.x, c.z, .2); EX.userData.boom.rotation.x = .35 + Math.sin(now * 2.4) * .2; EX.userData.arm.rotation.x = .9 + Math.cos(now * 2.4) * .3; EX.userData.up.rotation.y = Math.sin(now * 1.2) * .5;
+      drive(MX, c.x + 4.5, c.z - 5, dt, 10); MX.userData.drum.rotation.z = now * 2; }
+    if ((i === pi('pagar') || i === pi('umpak')) && cur) { show(FL, i === pi('umpak')); place(FL, gate.x + 6, S.z0 + 6, 0); }
+    if ((i === pi('kolom') || i === pi('kuda')) && cur) { show(CR, true); show(FL, true); place(FL, gate.x + 7, S.z0 + 6, 0); const c = cur.c; const top = V(c.x, c.y + cur.sz.y / 2 + (cur.kind === 'drop' ? (1 - ease(clamp((T - cur.t0) / (cur.t1 - cur.t0)))) * 7 : 0), c.z);
+      const bxp = clamp(c.x + (c.x > 7 ? -7 : 7), BX0 + 4, 38), bzp = c.z - 9; drive(CR, bxp, bzp, dt, 14); CR.rotation.y = 0;
+      const tw = CR.userData.turn, bm = CR.userData.boom; tw.updateMatrixWorld(); const base = tw.getWorldPosition(V()); const yaw = Math.atan2(top.x - base.x, top.z - base.z) - CR.rotation.y; let d = yaw - tw.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); tw.rotation.y += d * Math.min(1, dt * 4);
+      const hd = Math.hypot(top.x - base.x, top.z - base.z), want = Math.acos(clamp(hd / 24, .05, .99)); bm.rotation.x += (-want - bm.rotation.x) * Math.min(1, dt * 3); bm.updateMatrixWorld(); const tip = V(0, -.35, 24).applyMatrix4(bm.children[0].parent.matrixWorld);
+      CR.userData.cable.geometry.setFromPoints([tip, top.clone().add(V(0, .6, 0))]); CR.userData.cable.visible = true; CR.userData.hook.position.copy(top).add(V(0, .3, 0)); CR.userData.hook.visible = true; }
+    else { CR.userData.cable.visible = false; CR.userData.hook.visible = false; }
+    if (i === pi('tembok') || i === pi('seng')) { show(FL, true); place(FL, gate.x + 7, S.z0 + 6, 0); }
+    if (i === pi('tapak')) { show(RL, true); place(RL, cx - 25 + f * 50, S.z0 + 6); RL.rotation.y = Math.PI / 2; RL.userData.drum.rotation.x = now * 3; }
+    /* workers gather round the active element */
+    if (i > 0 && i < PH.length - 1 && cur) WK.forEach((w, k) => { w.visible = true; const a = k / WK.length * 6.28 + now * .05, r = 2.2 + (k % 3) * .9; const tx = cur.c.x + Math.cos(a) * r, tz = cur.c.z + Math.sin(a) * r * .7 - (k > 4 ? 3 : 0); const moving = !drive(w, tx, tz, dt, 3.2);
+      const s = moving ? Math.sin(now * 9 + w.userData.ph) * .6 : 0; w.userData.legs[0].rotation.x = s; w.userData.legs[1].rotation.x = -s; w.userData.arms[0].rotation.x = moving ? -s : -.8 + Math.sin(now * 5 + k) * .5; w.userData.arms[1].rotation.x = moving ? s : -.6 + Math.cos(now * 5 + k) * .5; if (!moving) face(w, cur.c.x, cur.c.z, .1); });
+    /* highlight + callouts */
+    const col = new THREE.Color(ph.col); hlBox.material.color.copy(col); hlEdge.material.color.copy(col);
+    if (cur && i > 0 && i < PH.length - 1) { hlBox.visible = hlEdge.visible = true; const s = cur.sz.clone().addScalar(.4); const c = cur.c.clone(); if (cur.kind === 'drop') c.y += (1 - ease(clamp((T - cur.t0) / (cur.t1 - cur.t0)))) * 7; hlBox.position.copy(c); hlBox.scale.copy(s); hlEdge.position.copy(c); hlEdge.scale.copy(s); hlBox.material.opacity = .14 + .08 * Math.sin(now * 6);
+      call.style.setProperty('--c', '#' + col.getHexString()); proj(call, c.clone().add(V(0, s.y / 2 + .3, 0)), cur.spec); } else { hlBox.visible = hlEdge.visible = false; call.hidden = true; }
+    if (i === 0 && heatInfo) { const {cMax, fMax} = heatInfo; call.style.setProperty('--c', '#ff3b30'); call2.style.setProperty('--c', '#2a78ff'); if (cMax[0] < -.05) proj(call, V(cMax[1], 1, cMax[2]), `Galian maks ${Math.abs(cMax[0]).toFixed(2)} m`); else call.hidden = true; if (fMax[0] > .05) proj(call2, V(fMax[1], 1, fMax[2]), `Urugan maks ${fMax[0].toFixed(2)} m`); else call2.hidden = true; } else call2.hidden = true;
+    /* spec card */
+    if (i !== lastPh) { lastPh = i; card.hidden = false; card.style.setProperty('--c', '#' + col.getHexString()); card.innerHTML = `<p class="mono">${String(i).padStart(2, '0')} · ${ph.lab}</p>` + SPEC[ph.k]().map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join(''); }
+    if (i === 0) { const r = card.querySelectorAll('b'); if (heatInfo && r[1]) { r[1].textContent = Math.round(heatInfo.r.cut).toLocaleString('id-ID') + ' m³'; r[2].textContent = Math.round(heatInfo.r.fill).toLocaleString('id-ID') + ' m³'; } }
+    /* camera: phase dolly, following the active element */
+    const K = {lahan: [[-110, 68, -122], [cx, 0, cz], [-70, 44, -96]], pagar: [[-90, 52, -112], [cx, 0, cz], [80, 48, -104]], seng: [[78, 44, -84], [8, 6, 0], [-74, 44, -86]], tembok: [[-64, 12, -62], [-6, 4, -24], [60, 12, -62]], tapak: [[-104, 58, -118], [cx, 0, cz], [-66, 30, -92]], selesai: [[118, 62, 36], [2, 2, 0], [110, 58, 44]]}[ph.k];
+    let wantP, wantT; if (K) { wantP = lerpV(V(...K[0]), V(...K[2]), sstep(0, 1, f)); wantT = V(...K[1]); if (ph.k === 'tembok') wantT.x = -6 + f * 30; }
+    else if (cur) { const off = {pondasi: [-15, 10, -17], umpak: [-12, 8, -14], kolom: [-18, 11, -20], kuda: [-22, 15, -24]}[ph.k] || [-16, 10, -18]; const c = cur.c; wantT = V(c.x, ph.k === 'kuda' ? 7 : ph.k === 'kolom' ? 3 : 0, c.z); wantP = wantT.clone().add(V(...off)); }
+    else { wantP = camera.position.clone(); wantT = controls.target.clone(); }
+    const kk = 1 - Math.pow(.25, dt); camP.lerp(wantP, kk); camT.lerp(wantT, kk); camera.position.copy(camP); controls.target.copy(camT); camera.lookAt(camT);
+    return i; }
+  return {PH, get total() { return TOTAL; }, begin, end, frame, startOf: i => PH[i].t0, get on() { return on; }};
+})();
+
+window.__CON = CON;
 $('#btnTour').onclick = () => startTour('tour'); $('#btnTour2').onclick = () => startTour('tour');
 document.querySelectorAll('[data-cine]').forEach(b => b.onclick = () => { const [k, r] = b.dataset.cine.split(':'); startTour(k, r === 'rec'); });
-document.querySelectorAll('[data-cstep]').forEach(b => b.onclick = () => { startTour('build'); const i = +b.dataset.cstep; tour.el = (i + .02) / BUILD.length * tour.dur; });
+document.querySelectorAll('[data-cstep]').forEach(b => b.onclick = () => { startTour('build'); tour.el = CON.startOf(+b.dataset.cstep) * 1000 + 30; });
 { const cv = $('#cineVer'); if (cv) cv.textContent = VER_TAG; if (!REC.ok()) document.querySelectorAll('[data-cine$=":rec"]').forEach(b => b.hidden = true); } $('#tourStop').onclick = stopTour;
 
 { const bv = document.getElementById('btnVer'); if (bv) { bv.querySelector('b').textContent = V2 ? 'V2' : 'V1'; bv.querySelector('span').textContent = V2 ? 'Revisi 01' : 'Desain awal'; bv.title = V2 ? 'Versi 2 · Revisi tanpa kantor & sosoran — klik untuk ganti' : 'Versi 1 · Desain awal — klik untuk ganti'; bv.onclick = () => window.__vpOpen && window.__vpOpen(false); } }
