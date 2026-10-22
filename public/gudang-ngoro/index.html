@@ -810,6 +810,17 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 .con-call::before{content:"";position:absolute;left:0;bottom:0;width:1px;height:46px;background:var(--c,#fff)}
 .con-call::after{content:"";position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--c,#fff);box-shadow:0 0 12px var(--c,#fff)}
 @media (max-width:760px){.con-spec{top:calc(64px + env(safe-area-inset-top,0px));padding:9px 11px 7px}.con-spec div{font-size:11px;padding:3px 0}.con-call b{font-size:10.5px;padding:5px 7px}}
+/* Revisi 24 — graphics toggle */
+.gpill{display:inline-flex;align-items:center;gap:6px}.gpill b{font-size:11px;letter-spacing:.06em}
+.gfx-pop{position:fixed;z-index:95;top:calc(64px + env(safe-area-inset-top,0px));right:var(--gut-r,16px);width:min(330px,calc(100vw - 32px));background:#F7F7F5;color:#0B0B0B;border:1px solid #0B0B0B;padding:14px;font-family:var(--HV);box-shadow:0 18px 50px rgba(0,0,0,.12)}
+.gfx-pop>p.mono{margin:0 0 10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.gfx-seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #0B0B0B}
+.gfx-seg button{all:unset;text-align:center;padding:9px 0;font-size:13px;cursor:pointer;touch-action:manipulation}
+.gfx-seg button+button{border-left:1px solid #0B0B0B}.gfx-seg button[aria-pressed=true]{background:#0B0B0B;color:#F7F7F5}
+.gfx-info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:12px 0 0;font-size:11px}
+.gfx-info span{color:#6b6b6b;text-transform:uppercase;letter-spacing:.08em}.gfx-info b{font-weight:500;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gfx-note{margin:10px 0 0;font-size:11.5px;line-height:1.45;color:#555}
+@media (max-width:760px){.gpill b{display:none}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -909,10 +920,16 @@ body:not(.v2) .v2o,body.v2 .v1o{display:none}
 <canvas id="stage" tabindex="0" aria-label="Model 3D gudang. Di mode jelajah: seret untuk memutar, gulir untuk zoom."></canvas>
 <div id="dims" aria-hidden="true"></div>
 
+<div class="gfx-pop" id="gfxPop" hidden role="dialog" aria-label="Pengaturan grafis">
+  <p class="mono">Grafis</p>
+  <div class="gfx-seg"><button type="button" data-g="auto">Auto</button><button type="button" data-g="rendah">Rendah</button><button type="button" data-g="sedang">Sedang</button><button type="button" data-g="tinggi">Tinggi</button></div>
+  <div class="gfx-info mono" id="gfxInfo"></div>
+  <p class="gfx-note">Auto membaca GPU, CPU &amp; RAM perangkat lalu menyesuaikan resolusi, bayangan dan efek terus-menerus agar tetap mulus. 3D dijeda saat tidak terlihat.</p>
+</div>
 <header class="bar">
   <div class="brand"><b>Gudang Ngoro</b><span class="mono">PT Oasia Andalan Indosteel · 3 unit</span></div>
   <div class="bar-actions">
-    <button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
+    <button class="btn gpill" id="btnGfx" type="button" aria-label="Pengaturan grafis" title="Grafis"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><b class="mono">Auto</b></button><button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
     <button class="btn primary" id="btnExplore" type="button">Jelajahi model</button>
   </div>
 </header>
@@ -1224,6 +1241,24 @@ const DWG = JSON.parse(document.getElementById('dwg').textContent);
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SMALL = matchMedia('(max-width: 760px)').matches;
 const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+/* ---------- GFX: detect hardware → tier, level (auto / rendah / sedang / tinggi), dynamic resolution ---------- */
+const GFX = (() => {
+  let gpu = '';
+  try { const c = document.createElement('canvas'); const gl = c.getContext('webgl2') || c.getContext('webgl'); if (gl) { const e = gl.getExtension('WEBGL_debug_renderer_info'); gpu = String((e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || ''); const lc = gl.getExtension('WEBGL_lose_context'); if (lc) lc.loseContext(); } } catch (e) {}
+  const g = gpu.toLowerCase(), cores = navigator.hardwareConcurrency || 4, mem = navigator.deviceMemory || 8, dpr = devicePixelRatio || 1;
+  let tier = 1;
+  if (/rtx|gtx|quadro|radeon rx|rx ?[5-9]\d{2,3}|radeon pro|arc\(?tm\)? a\d|apple m\d (pro|max|ultra)/.test(g) || (/apple m\d/.test(g) && cores >= 10)) tier = 2;
+  if (SMALL || /swiftshader|llvmpipe|software|microsoft basic|mali|adreno|powervr|intel.*(hd|uhd) graphics/.test(g) || cores <= 4 || mem <= 4 || window.__LITE) tier = 0;
+  const LV = ['rendah', 'sedang', 'tinggi'];
+  const CFG = {rendah: {pr: 1, prMin: .7, sm: 1024, soft: false, post: false, shadowEvery: 4, palmEvery: 3, book: 1.25},
+    sedang: {pr: 1.35, prMin: .85, sm: 2048, soft: true, post: false, shadowEvery: 2, palmEvery: 2, book: 1.6},
+    tinggi: {pr: 1.75, prMin: 1, sm: 4096, soft: true, post: true, shadowEvery: 1, palmEvery: 1, book: 2}};
+  let pref = 'auto'; try { pref = localStorage.getItem('gn-gfx') || 'auto'; } catch (e) {} if (!['auto', ...LV].includes(pref)) pref = 'auto';
+  const o = {gpu, tier, cores, mem, dpr, pref, LV, CFG, lvl: pref === 'auto' ? LV[tier] : pref, scale: 1, fps: 60, sw: /swiftshader|llvmpipe/.test(g)};
+  Object.defineProperty(o, 'c', {get() { return CFG[o.lvl]; }});
+  o.pr = () => Math.max(o.c.prMin, Math.min(dpr, o.c.pr) * o.scale);
+  return o; })();
+window.__GFX = GFX;
 const ease = t => 1 - Math.pow(1 - t, 3);
 const ease2 = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -1249,11 +1284,11 @@ const SLOPE = Math.atan2(P.ridge - P.eave, 11.5);
 
 /* ---------- renderer / scene ---------- */
 const canvas = $('#stage');
-const renderer = new THREE.WebGLRenderer({canvas, antialias: true, powerPreference: 'high-performance'});
-let pr = Math.min(devicePixelRatio, SMALL ? 1.5 : 1.75);
+const renderer = new THREE.WebGLRenderer({canvas, antialias: !GFX.sw, powerPreference: 'high-performance'});
+let pr = GFX.pr();
 renderer.setPixelRatio(pr);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = GFX.c.soft ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap; renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true;
 renderer.toneMapping = THREE.AgXToneMapping ?? THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.localClippingEnabled = true;
@@ -1273,7 +1308,7 @@ function buildEnv() {} // studio IBL kept (sky IBL over-exposed the paper palett
 const hemi = new THREE.HemisphereLight(0xf4f6f8, 0xc9c6bc, 1.1); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff4e6, 3.0);
 sun.castShadow = true;
-const SM = window.__LITE ? 1024 : SMALL ? 2048 : 4096; sun.shadow.mapSize.set(SM, SM);
+const SM = GFX.c.sm; sun.shadow.mapSize.set(SM, SM);
 Object.assign(sun.shadow.camera, {left: -78, right: 78, top: 78, bottom: -78, near: 10, far: 420});
 sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04;
 scene.add(sun, sun.target);
@@ -2020,7 +2055,7 @@ function setTrees(B) { palmGrow = clamp((B - 4) / 1);
 
 /* ================= Poly Haven PBR textures + HDRI ================= */
 const TL = new THREE.TextureLoader();
-const HI = new Set(SMALL ? [] : ['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
+const HI = new Set(SMALL || GFX.tier < 2 ? [] : ['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
 function phTex(name, rx, ry, srgb) { const t = TL.load(`assets/${HI.has(name) ? 'tex4k' : 'tex'}/${name}.jpg`, () => { dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
 let dirtyTex = false;
 function pbr(m, base, rx, ry, {diff = true, color, rough, metal, ns = 1} = {}) {
@@ -2143,7 +2178,7 @@ for (const [x, z] of [[-44.2, -4], [44.2, -4]]) { reg(G.site.add(box(.14, 8, .14
   const l3 = addL(new THREE.PointLight(0xffdcb0, 0, 9, 2), 30); l3.position.set(4.9, 2.6, -43.2); }
 
 /* ================= post: GTAO + bloom (render-grade) ================= */
-let HQ = !SMALL, composer = null, gtao = null, bloom = null;
+let HQ = GFX.c.post, composer = null, gtao = null, bloom = null;
 function makeComposer() {
   const rt = new THREE.WebGLRenderTarget(innerWidth * pr, innerHeight * pr, {type: THREE.HalfFloatType, samples: 4});
   composer = new EffectComposer(renderer, rt); composer.addPass(new RenderPass(scene, camera));
@@ -2562,6 +2597,7 @@ document.querySelectorAll('#cut [data-cut]').forEach(b => b.onclick = () => { cu
 $('#cutpos').addEventListener('input', e => { cut.v = e.target.value / 1000; applyCut(); });
 $('#optShadow').addEventListener('change', e => { renderer.shadowMap.enabled = e.target.checked; CLIP.forEach(m => m.needsUpdate = true); mat.ground.needsUpdate = mat.pave.needsUpdate = mat.road.needsUpdate = true; });
 $('#optHQ').checked = HQ; $('#optHQ').addEventListener('change', e => { HQ = e.target.checked; });
+{ const l = $('#optHQ').closest('label'); if (l) l.hidden = true; }
 $('#swDoorAll').addEventListener('change', e => setAllDoors(e.target.checked ? 1 : 0));
 [0, 1, 2].forEach(i => $('#swDoor' + i).addEventListener('change', e => setDoor(i, e.target.checked ? 1 : 0)));
 $('#dDoors').onclick = () => setAllDoors(doorT.some(v => v) ? 0 : 1);
@@ -2822,8 +2858,26 @@ VIEWS.site = {p: [-210, 150, -330], t: [0, 0, -10]};
 const progBars = [...document.querySelectorAll('#progress b')];
 const tmpP = V(0, 0, 0), tmpT = V(0, 0, 0), proj = V(0, 0, 0);
 let last = performance.now();
+const PERF = {ema: 16.7, n: 0, skip: 3, t: 0, bad: 0, good: 0, frame: 0, vis: true};
+const inView = el => { if (!el) return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+function applyGfx(full) { pr = GFX.pr(); renderer.setPixelRatio(pr); resize();
+  if (full) { const c = GFX.c; HQ = c.post; $('#optHQ').checked = HQ; const st = c.soft ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    if (renderer.shadowMap.type !== st) { renderer.shadowMap.type = st; scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); }); }
+    if (sun.shadow.mapSize.x !== c.sm) { sun.shadow.mapSize.set(c.sm, c.sm); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+    renderer.shadowMap.needsUpdate = true; window.__bookGfx && window.__bookGfx(); }
+  window.__gfxUI && window.__gfxUI(); }
+function setGfx(p) { GFX.pref = p; try { localStorage.setItem('gn-gfx', p); } catch (e) {} GFX.lvl = p === 'auto' ? GFX.LV[GFX.tier] : p; GFX.scale = 1; PERF.bad = PERF.good = 0; applyGfx(true); }
+window.__setGfx = setGfx;
+function perfTick(rawMs) { if (PERF.skip > 0) { PERF.skip--; return; } PERF.ema += (Math.min(rawMs, 100) - PERF.ema) * .08; GFX.fps = 1000 / PERF.ema; const now = performance.now(); if (now - PERF.t < 1000) return; PERF.t = now;
+  const c = GFX.c, base = Math.min(GFX.dpr, c.pr);
+  if (PERF.ema > 24) { PERF.bad++; PERF.good = 0; if (GFX.pr() > c.prMin + .01) { GFX.scale = Math.max(c.prMin / base, GFX.scale * .86); applyGfx(false); } else if (GFX.pref === 'auto' && PERF.bad >= 3 && GFX.lvl !== 'rendah') { GFX.lvl = GFX.LV[GFX.LV.indexOf(GFX.lvl) - 1]; GFX.scale = 1; PERF.bad = 0; applyGfx(true); } }
+  else if (PERF.ema < 15.5) { PERF.good++; PERF.bad = 0; if (PERF.good >= 3 && GFX.scale < 1) { GFX.scale = Math.min(1, GFX.scale * 1.08); PERF.good = 0; applyGfx(false); }
+    else if (GFX.pref === 'auto' && PERF.good >= 12 && GFX.scale >= 1 && GFX.LV.indexOf(GFX.lvl) < Math.min(2, GFX.tier + 1)) { GFX.lvl = GFX.LV[GFX.LV.indexOf(GFX.lvl) + 1]; PERF.good = 0; applyGfx(true); } }
+  else { PERF.bad = PERF.good = 0; } window.__gfxUI && window.__gfxUI(true); }
 function frame(now) {
-  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const raw = now - last; const dt = Math.min(.05, raw / 1000); last = now;
+  { const vis = mode !== 'story' || tour.on || inView($('#hero')) || inView($('#steps')); if (vis !== PERF.vis) { PERF.vis = vis; canvas.style.visibility = vis ? '' : 'hidden'; PERF.skip = 3; renderer.shadowMap.needsUpdate = true; } if (!vis) { requestAnimationFrame(frame); return; } }
+  perfTick(raw); PERF.frame++; if (PERF.frame % GFX.c.shadowEvery === 0) renderer.shadowMap.needsUpdate = true;
   if (mode === 'story') {
     const b = storyB();
     // intro: plan view of the drawing swinging down into the hero pose
@@ -2869,7 +2923,7 @@ function frame(now) {
     if (d.o > .01) { proj.copy(d.mid).project(camera); const vis = proj.z < 1 && Math.abs(proj.x) < 1.1 && Math.abs(proj.y) < 1.1; d.el.style.opacity = vis ? d.o : 0; d.el.style.transform = `translate(${((proj.x + 1) / 2 * w).toFixed(1)}px,${((1 - proj.y) / 2 * h).toFixed(1)}px) translate(-50%,-50%)`; }
     else d.el.style.opacity = 0;
   }
-  if (G.trees.visible) updatePalms(camera.position);
+  if (G.trees.visible && PERF.frame % GFX.c.palmEvery === 0) updatePalms(camera.position);
   draw();
   requestAnimationFrame(frame);
 }
@@ -3139,6 +3193,14 @@ document.querySelectorAll('[data-cine]').forEach(b => b.onclick = () => { const 
 document.querySelectorAll('[data-cstep]').forEach(b => b.onclick = () => { startTour('build'); tour.el = CON.startOf(+b.dataset.cstep) * 1000 + 30; });
 { const cv = $('#cineVer'); if (cv) cv.textContent = VER_TAG; if (!REC.ok()) document.querySelectorAll('[data-cine$=":rec"]').forEach(b => b.hidden = true); } $('#tourStop').onclick = stopTour;
 
+{ const pop = $('#gfxPop'), btn = $('#btnGfx'); const short = GFX.gpu.replace(/ANGLE \(|\)|Direct3D.*|vs_.*|OpenGL.*|, ?D3D.*/gi, '').replace(/\s+/g, ' ').trim().slice(0, 48) || 'tidak terbaca';
+  window.__gfxUI = live => { if (!pop || (live && pop.hidden)) return; pop.querySelectorAll('[data-g]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.g === GFX.pref)));
+    $('#gfxInfo').innerHTML = `<span>GPU</span><b>${short}</b><span>Perangkat</span><b>tier ${GFX.LV[GFX.tier]} · ${GFX.cores} core${GFX.mem ? ' · ' + GFX.mem + ' GB' : ''}</b><span>Aktif</span><b>${GFX.lvl}${GFX.pref === 'auto' ? ' (auto)' : ''} · res ${pr.toFixed(2)}×</b><span>Kinerja</span><b>${PERF.vis ? Math.round(GFX.fps) + ' fps' : '3D dijeda'}</b>`;
+    if (btn) btn.querySelector('b').textContent = GFX.pref === 'auto' ? 'Auto' : GFX.lvl[0].toUpperCase() + GFX.lvl.slice(1); };
+  if (btn) btn.onclick = e => { e.stopPropagation(); pop.hidden = !pop.hidden; window.__gfxUI(); };
+  pop && pop.querySelectorAll('[data-g]').forEach(b => b.onclick = () => setGfx(b.dataset.g));
+  addEventListener('pointerdown', e => { if (pop && !pop.hidden && !pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) pop.hidden = true; });
+  window.__gfxUI(); if (btn) btn.querySelector('b').textContent = GFX.pref === 'auto' ? 'Auto' : GFX.lvl; }
 { const bv = document.getElementById('btnVer'); if (bv) { bv.querySelector('b').textContent = V2 ? 'V2' : 'V1'; bv.querySelector('span').textContent = V2 ? 'Revisi 01' : 'Desain awal'; bv.title = V2 ? 'Versi 2 · Revisi tanpa kantor & sosoran — klik untuk ganti' : 'Versi 1 · Desain awal — klik untuk ganti'; bv.onclick = () => window.__vpOpen && window.__vpOpen(false); } }
 { const b3 = document.getElementById('btn3d'); if (b3) b3.onclick = () => document.getElementById('hero').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block: 'start'}); }
 document.querySelectorAll('.emo b').forEach(b => b.onclick = () => emote(b.dataset.e));
@@ -3273,7 +3335,7 @@ const SHEETS = V2 ? [
   const stage = $('#jStage'); const pageOf = k => (k >= 0 && k < PAGES.length ? PAGES[k] : null);
   const bc = document.createElement('canvas'); bc.className = 'book-canvas'; stage.appendChild(bc);
   const br = new THREE.WebGLRenderer({canvas: bc, antialias: true, alpha: true});
-  br.setPixelRatio(Math.min(devicePixelRatio, SMALL ? 1.5 : 2)); br.shadowMap.enabled = true; br.shadowMap.type = THREE.PCFSoftShadowMap; br.outputColorSpace = THREE.SRGBColorSpace;
+  br.setPixelRatio(Math.min(devicePixelRatio, GFX.c.book)); br.shadowMap.enabled = true; br.shadowMap.type = GFX.lvl === 'rendah' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap; br.outputColorSpace = THREE.SRGBColorSpace;
   const bs = new THREE.Scene(); const bcam = new THREE.PerspectiveCamera(26, 2, .1, 50);
   bs.add(new THREE.HemisphereLight(0xffffff, 0xd9dad6, 1.25));
   const key = new THREE.DirectionalLight(0xfff6ea, 2.1); key.position.set(-1.2, 2.6, 3.4); key.castShadow = true; key.shadow.mapSize.set(SMALL ? 1024 : 2048, SMALL ? 1024 : 2048);
@@ -3549,6 +3611,7 @@ const SHEETS = V2 ? [
   $('#j3d').onclick = () => SP[cur()].go();
   $('#jOpen').onclick = () => openPaper(cur());
   const size = () => sizeBook(), place = () => { dirty = true; kick(); };
+  window.__bookGfx = () => { br.setPixelRatio(Math.min(devicePixelRatio, GFX.c.book)); sizeBook(); dirty = true; kick(); };
   // grid view
   const grid = $('#jGridBox');
   SP.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'jg'; b.innerHTML = `<span class="jg-sp">${['L', 'R'].map(side => `<span class="pg pg-flat" style="font-size:5px">${pageHTML({s, i, side})}</span>`).join('')}</span><span class="jg-t">${esc(s.n)}</span>`; b.onclick = () => { setGrid(false); goSpread(i); }; grid.appendChild(b); });
