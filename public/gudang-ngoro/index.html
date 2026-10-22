@@ -741,6 +741,34 @@ body.explore.third .emo{display:flex}
 .ft .btn.primary{background:#F7F7F5;color:#0B0B0B;border-color:#F7F7F5}
 @media (max-width:900px){.st-grid{grid-template-columns:1fr}.ft-in{grid-template-columns:1fr}}
 @media (max-width:760px){.emo{bottom:calc(150px + env(safe-area-inset-bottom,0px));gap:2px;padding:3px}.emo b{min-width:0;width:34px;height:34px;padding:0;justify-content:center;font-size:15px;border-radius:50%}.emo b i{display:none}}
+/* Revisi 21 — version picker V1 / V2 */
+.vp{position:fixed;inset:0;z-index:119;background:#F7F7F5;color:#0B0B0B;display:flex;flex-direction:column;font-family:var(--HV,"Helvetica Neue",Helvetica,Arial,sans-serif);overflow:auto;-webkit-overflow-scrolling:touch}
+.vp[hidden]{display:none}
+.vp:not(.first){background:rgba(247,247,245,.97);backdrop-filter:blur(10px)}
+.vp-top{display:flex;justify-content:space-between;gap:12px;padding:calc(18px + env(safe-area-inset-top,0px)) clamp(16px,4vw,48px) 0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6b6b6b}
+.vp-in{width:min(1120px,100%);margin:auto;padding:clamp(28px,6vh,72px) clamp(16px,4vw,48px) calc(32px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+.vp-k{margin:0 0 12px;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:opacity .5s .1s,transform .6s .1s cubic-bezier(.2,.75,.15,1)}
+.vp-h{margin:0 0 clamp(22px,4vh,44px);font-weight:700;font-size:clamp(46px,9vw,128px);line-height:.88;letter-spacing:-.06em;overflow:hidden}
+.vp-h span{display:block;overflow:hidden}.vp-h i{display:block;font-style:normal;transform:translateY(110%);transition:transform .8s .05s cubic-bezier(.2,.75,.15,1)}
+.vp-g{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,24px)}
+.vp-c{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,30px);border:1px solid #0B0B0B;background:#fff;cursor:pointer;min-height:clamp(250px,40vh,420px);opacity:0;transform:translateY(24px);transition:opacity .6s,transform .8s cubic-bezier(.2,.75,.15,1),background .35s,color .35s}
+.vp-c+.vp-c{transition-delay:.08s}
+.vp.in .vp-c,.vp.in .vp-k{opacity:1;transform:none}.vp.in .vp-h i{transform:none}
+.vp-c:hover{background:#0B0B0B;color:#F7F7F5}
+.vp-c:focus-visible{outline:2px solid #0B0B0B;outline-offset:4px}
+.vp-n{font-size:12px;font-weight:700;letter-spacing:.14em}.vp-n small{font-weight:500;margin-left:6px;opacity:.6;letter-spacing:.1em}
+.vp-s{width:100%;height:auto;max-height:36vh;margin:6px 0 4px;flex:1}
+.vp-s rect{fill:none;stroke:currentColor;stroke-width:.6;vector-effect:non-scaling-stroke}.vp-s .o{stroke-dasharray:3 2;opacity:.5}.vp-s .l{fill:currentColor;fill-opacity:.08;stroke-dasharray:2 1.5}.vp-s .f{fill:currentColor}.vp-s .d{stroke-dasharray:1.5 1;opacity:.6}
+.vp-c b{font-size:clamp(22px,2.6vw,34px);line-height:1.02;letter-spacing:-.03em;font-weight:700}
+.vp-c em{font-style:normal;font-size:14px;line-height:1.45;max-width:46ch;opacity:.78}
+.vp-c i{font-style:normal;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+.vp-go{margin-top:auto;padding-top:8px;border-top:1px solid currentColor;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.vp-c.cur .vp-n::after{content:"· aktif";margin-left:8px;font-weight:500;opacity:.6}
+.vp-f{margin:18px 0 0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6b6b}
+.vp.leave{transition:opacity .38s;opacity:0}
+.vpill{display:inline-flex;align-items:center;gap:6px}.vpill b{font-size:11px;letter-spacing:.08em}
+@media (max-width:760px){.vp-g{grid-template-columns:1fr}.vp-c{min-height:0}.vp-s{max-height:22vh}.vpill span{display:none}}
+@media (prefers-reduced-motion:reduce){.vp-c,.vp-k,.vp-h i{transition:none}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -752,9 +780,41 @@ body.explore.third .emo{display:flex}
   <div class="ldr-top"><span>Selaras Adhi Perkasa</span><span>Gudang Ngoro — Mojokerto</span></div>
   <div class="ldr-foot"><span id="ldrPct">000</span><span class="ldr-bar"><b id="ldrBar"></b></span><span>Memuat jurnal proyek</span></div>
 </div>
+<div class="vp" id="vp" hidden role="dialog" aria-modal="true" aria-labelledby="vpT">
+  <div class="vp-top mono"><span>Selaras Adhi Perkasa</span><span>Gudang Ngoro — Mojokerto</span></div>
+  <div class="vp-in">
+    <p class="vp-k mono">02 — Versi desain</p>
+    <h2 class="vp-h" id="vpT"><span><i>Pilih versi</i></span></h2>
+    <div class="vp-g">
+      <button class="vp-c" data-v="1" type="button"><span class="vp-n mono">V1</span>
+        <svg class="vp-s" viewBox="0 0 100 70" aria-hidden="true"><rect x="2" y="2" width="96" height="66" class="o"/><rect x="11" y="16" width="17" height="46" class="l"/><rect x="28" y="16" width="20" height="46"/><rect x="48" y="16" width="20" height="46"/><rect x="68" y="16" width="20" height="46"/><rect x="81" y="6" width="7" height="9" class="f"/><rect x="47" y="4" width="3" height="3" class="f"/></svg>
+        <b>Desain awal</b><em>Tiga gudang 23 × 60 m, sosoran samping 15 m, kantor dua lantai dan pos jaga.</em><i class="mono">Blok 84 × 60 m · 14 lembar</i><span class="vp-go mono">Buka V1 →</span></button>
+      <button class="vp-c" data-v="2" type="button"><span class="vp-n mono">V2 <small>Revisi 01</small></span>
+        <svg class="vp-s" viewBox="0 0 100 70" aria-hidden="true"><rect x="2" y="2" width="96" height="66" class="o"/><rect x="18" y="16" width="23" height="46"/><rect x="41" y="16" width="23" height="46"/><rect x="64" y="16" width="23" height="46"/><rect x="59" y="4" width="3" height="3" class="f"/><rect x="74" y="4" width="13" height="4" class="d"/><rect x="9" y="4" width="10" height="4" class="d"/></svg>
+        <b>Revisi tanpa kantor &amp; sosoran</b><em>Gambar rev1: tiga gudang 23 × 60 m dan pos jaga 3 × 3 m. Kantor dan sosoran dihilangkan dari gambar, buku dan model 3D.</em><i class="mono">Blok 69 × 60 m · 9 lembar</i><span class="vp-go mono">Buka V2 →</span></button>
+    </div>
+    <p class="vp-f mono">Bisa diganti kapan saja lewat tombol versi di kanan atas</p>
+  </div>
+</div>
+<script>
+(function(){
+  var VP=document.getElementById('vp'); var Q=new URLSearchParams(location.search), CUR=Q.get('v')==='2'?2:1;
+  [].forEach.call(VP.querySelectorAll('.vp-c'),function(b){ if(+b.dataset.v===CUR) b.classList.add('cur');
+    b.onclick=function(){ var v=+b.dataset.v; if(v===CUR){ window.__vpClose(); return; }
+      VP.classList.add('leave'); var u=new URL(location.href); u.searchParams.delete('v'); u.searchParams.delete('s'); if(v===2) u.searchParams.set('v','2'); u.searchParams.set('s','1');
+      setTimeout(function(){ location.href=u.toString(); }, 380); }; });
+  window.__vpOpen=function(first){ VP.hidden=false; VP.classList.remove('leave','out'); VP.classList.toggle('first',!!first); window.__vpFirst=!!first; requestAnimationFrame(function(){VP.classList.add('in')});  };
+  window.__vpClose=function(){ if(VP.hidden) return; VP.classList.add('out');
+    var a=VP.animate([{clipPath:'inset(0 0 0% 0)'},{clipPath:'inset(0 0 100% 0)'}],{duration:800,easing:'cubic-bezier(.76,0,.24,1)',fill:'forwards'});
+    if(window.__vpFirst){ window.__vpFirst=false; window.__ldrDone=performance.now(); dispatchEvent(new Event('ldr:done')); }
+    a.onfinish=function(){ VP.hidden=true; VP.classList.remove('in','out'); a.cancel(); }; };
+  addEventListener('keydown',function(e){ if(e.key==='Escape'&&!VP.hidden) window.__vpClose(); });
+})();
+</script>
 <script>
 (function(){
   var L=document.getElementById('ldr'); if(!L) return;
+  var VQ=new URLSearchParams(location.search), SKIP=VQ.has('s'), VV=VQ.get('v')==='2'?2:1;
   var RMq=matchMedia('(prefers-reduced-motion: reduce)').matches, $=function(i){return document.getElementById(i)};
   var M=$('ldrMark'), TR=$('ldrTrail'), FI=$('ldrFinal'), PC=$('ldrPct'), BAR=$('ldrBar'), ST=$('ldrStage'), ED=$('ldrEd'), HD=$('ldrHead'), KK=$('ldrKick');
   var WS=[].slice.call(document.querySelectorAll('.ldr-final .ldr-word i, #ldrSub .ldr-k i, #ldrSub .ldr-ng i, #ldrSub .ldr-pt:not(.ldr-k) i')), RU=document.querySelector('.ldr-rule'), SU=document.getElementById('ldrSub'), FM=document.querySelector('.ldr-fm');
@@ -779,8 +839,11 @@ body.explore.third .emo{display:flex}
     ED.style.display='none'; M.style.opacity=1; M.style.color=b.fg; M.style.transform=o.tf; M.style.filter=o.bl?'blur('+o.bl.toFixed(1)+'px)':'none';
     var on=!!b.trail; TR.style.display=on?'block':'none';
     if(on){trail.forEach(function(el,j){var k=(j+1)/trail.length*o.tr;el.style.color=j%2?'#5a5a5a':WH;el.style.transform='translate(calc(-50% + '+(k*36)+'vw),calc(-50% + '+(k*28)+'vh)) scale(1.1)';el.style.zIndex=-j;});}}
-  function exit(){window.__ldrDone=performance.now(); dispatchEvent(new Event('ldr:done')); L.classList.add('done');
+  function exit(){ if(SKIP){ window.__ldrDone=performance.now(); dispatchEvent(new Event('ldr:done')); } else window.__vpOpen(true); L.classList.add('done');
     var a=L.animate([{clipPath:'inset(0 0 0% 0)'},{clipPath:'inset(0 0 100% 0)'}],{duration:900,easing:'cubic-bezier(.76,0,.24,1)',fill:'forwards'}); a.onfinish=function(){L.remove()};}
+  if(SKIP){L.style.background=WH;ST.style.display='none';ED.style.display='block';KK.textContent=VV===2?'Revisi 01 — tanpa kantor & sosoran':'Desain awal';HD.innerHTML='<span>Versi '+VV+'</span>';HD.style.setProperty('--w','100%');KK.style.opacity=1;
+    var go=function(){ if(ready) setTimeout(exit,250); else setTimeout(go,120); }; HD.firstChild.animate([{transform:'translateY(110%)'},{transform:'none'}],{duration:600,easing:'cubic-bezier(.2,.75,.15,1)',fill:'forwards'}); setTimeout(go,650);
+    (function pt(){ pct+=((ready?100:90)-pct)*.12; PC.textContent=String(Math.round(pct)).padStart(3,'0'); BAR.style.transform='scaleX('+(pct/100).toFixed(3)+')'; if(L.isConnected) requestAnimationFrame(pt); })(); return;}
   if(RMq){L.style.background=WH;ST.style.display='none';FI.style.opacity=1;SU.style.opacity=1;RU.style.transform='none';WS.forEach(function(w){w.style.transform='none'});setTimeout(exit,600);return;}
   function tick(now){
     pct+=((ready?100:Math.min(90,(now-t0)/45))-pct)*.1; PC.textContent=String(Math.round(pct)).padStart(3,'0'); BAR.style.transform='scaleX('+(pct/100).toFixed(3)+')';
@@ -808,7 +871,7 @@ body.explore.third .emo{display:flex}
 <header class="bar">
   <div class="brand"><b>Gudang Ngoro</b><span class="mono">PT Oasia Andalan Indosteel · 3 unit</span></div>
   <div class="bar-actions">
-    <button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
+    <button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
     <button class="btn primary" id="btnExplore" type="button">Jelajahi model</button>
   </div>
 </header>
@@ -1104,6 +1167,10 @@ const P = {
   pos: {x0: 3.13, x1: 6.6, z0: -44.9, z1: -41.4, h: 3},
   site: {x0: -45, x1: 45, z0: -46, z1: 34}, gate: {x0: -9, x1: 3},
 };
+/* ---------- VERSION: v1 = desain awal, v2 = Revisi 01 (NGORO rev1: tanpa kantor & sosoran) ---------- */
+const V2 = (() => { try { return new URLSearchParams(location.search).get('v') === '2'; } catch (e) { return false; } })(); window.__VER = V2 ? 2 : 1;
+if (V2) Object.assign(P, {site: {x0: -42, x1: 48, z0: -42, z1: 38}, gate: {x0: -4, x1: 8}, pos: {x0: 10, x1: 13, z0: -41.1, z1: -38.1, h: 3}});
+const VSH = V2 ? [3, 4] : [0, 0], ROADZ = P.site.z0 - 8, BX0 = V2 ? -27 : -42, DZS = V2 ? 4 : 0;
 const FR = []; for (let z = P.z0; z <= P.z1 + .01; z += P.frame) FR.push(z);
 const roofY = (b, x) => P.eave + (P.ridge - P.eave) * (1 - Math.abs(x - (b.x0 + b.x1) / 2) / ((b.x1 - b.x0) / 2));
 const SLOPE = Math.atan2(P.ridge - P.eave, 11.5);
@@ -1208,6 +1275,15 @@ noiseTex.repeat.set(.25, .25);
 
 /* ---------- groups / layers ---------- */
 const root = new THREE.Group(); scene.add(root);
+/* ---------- v2 copy: static page text follows Revisi 01 ---------- */
+if (V2) { document.body.classList.add('v2'); document.title += ' · Revisi 01';
+  const TX = [['Blok <b>84 × 60</b>', 'Blok <b>69 × 60</b>'], ['<li><span>Titik kolom</span>55</li>', '<li><span>Titik kolom</span>44</li>'], ['<li><span>Kolom garis unit</span>WF 350</li><li><span>Kolom sosoran</span>WF 250</li>', '<li><span>Kolom garis unit</span>WF 250</li><li><span>Kolom tepi</span>WF 250</li>'],
+    ['Kantor dua lantai di sudut timur, pos jaga di samping gerbang, parkir mobil dan motor di halaman depan, pagar bata keliling.', 'Revisi 01: tanpa kantor dan sosoran. Pos jaga 3 × 3 m di samping gerbang 12 m, parkir motor di barat, parkir mobil di timur, pagar bata keliling.'],
+    ['<li><span>Kantor</span>6 × 12 m, 2 lantai</li><li><span>Pos jaga</span>3.5 × 3.5 m</li>', '<li><span>Gerbang</span>12.00 m</li><li><span>Pos jaga</span>3.0 × 3.0 m</li>'], ['pad gudang 84 × 60 m', 'pad gudang 69 × 60 m'], ['Cari halaman: kolom, atap, kantor', 'Cari halaman: kolom, atap, pos']];
+  const walk = el => { for (const [a, b] of TX) if (el.innerHTML.includes(a)) el.innerHTML = el.innerHTML.split(a).join(b); };
+  document.querySelectorAll('.hero .meta, .steps .specs, .steps p, .site .hud-note').forEach(walk); const jq = document.getElementById('jq'); if (jq) jq.placeholder = 'Cari halaman: kolom, atap, pos';
+  document.querySelectorAll('[data-view=office], [data-view=officeIn], [data-plan=office]').forEach(b => b.remove());
+  const eb = document.querySelector('.hero .eyebrow'); if (eb) eb.textContent = 'Gudang baja · Ngoro, Mojokerto · Revisi 01'; }
 const G = {};
 const LAYERS = [
   ['found', 'Pondasi'], ['steel', 'Struktur baja'], ['purlin', 'Gording & ikatan'], ['roof', 'Atap'],
@@ -1255,7 +1331,7 @@ function panel(pts, m) { const s = new THREE.Shape(pts.map(p => new THREE.Vector
 function wallGeo(len, h, t, holes) { const s = new THREE.Shape([V(0, 0), V(len, 0), V(len, h), V(0, h)].map(v => new THREE.Vector2(v.x, v.y))); for (const o of holes) s.holes.push(new THREE.Path([new THREE.Vector2(o[0], o[1]), new THREE.Vector2(o[0] + o[2], o[1]), new THREE.Vector2(o[0] + o[2], o[1] + o[3]), new THREE.Vector2(o[0], o[1] + o[3])])); return new THREE.ExtrudeGeometry(s, {depth: t, bevelEnabled: false}); }
 
 /* ================= 1 · FOUNDATIONS ================= */
-const COLX = [-42, -27, -4, 19, 42];
+const COLX = V2 ? [-27, -4, 19, 42] : [-42, -27, -4, 19, 42];
 let idx = 0;
 for (const x of COLX) for (const z of FR) {
   const d = (idx++ % 11) / 11 * .7 + (COLX.indexOf(x) / 5) * .3;
@@ -1266,13 +1342,13 @@ for (const x of COLX) for (const z of FR) {
 for (const x of COLX) { const sl = box(.2, .4, 60, mat.concrete, x, -.4, 0); reg(G.found.add(sl), 1, .55 + COLX.indexOf(x) * .05, 'grow'); }
 for (const z of [P.z0, P.z1]) { const sl = box(84, .4, .2, mat.concrete, 0, -.4, z); reg(G.found.add(sl), 1, .7, 'grow'); }
 for (const b of P.bays) { const xm = (b.x0 + b.x1) / 2; const sl = box(b.x1 - b.x0, P.floor, 60, mat.slab, xm, 0, 0); info(sl, b.n); reg(G.found.add(sl), 1, .9, 'grow'); }
-{ const sl = box(15, .15, 60, mat.slab, -34.5, 0, 0); info(sl, 'lean'); reg(G.found.add(sl), 1, .9, 'grow'); }
+if (!V2) { const sl = box(15, .15, 60, mat.slab, -34.5, 0, 0); info(sl, 'lean'); reg(G.found.add(sl), 1, .9, 'grow'); }
 /* ================= 2 · COLUMNS ================= */
 const colGeo = (h, b) => { const g = iGeo(h, b, 1).clone(); g.rotateZ(Math.PI / 2); g.rotateX(-Math.PI / 2); return g; };
 const colGeo350 = colGeo(.35, .175), colGeo250 = colGeo(.25, .125);
 for (const x of COLX) for (const z of FR) {
   const lean = x === -42; const H = (lean ? P.lean.lo - .35 : P.eave - .42) - P.pedestal;
-  const c = new THREE.Mesh(lean ? colGeo250 : colGeo350, mat.steel); c.position.set(x, P.pedestal, z); c.scale.y = H; shadow(c); info(c, 'steel');
+  const c = new THREE.Mesh((lean || V2) ? colGeo250 : colGeo350, mat.steel); c.position.set(x, P.pedestal, z); c.scale.y = H; shadow(c); info(c, 'steel');
   const d = FR.indexOf(z) / FR.length * .75 + COLX.indexOf(x) / COLX.length * .25;
   G.steel.add(c); reg(c, 2, d, 'grow');
   reg(G.steel.add(box(.45, .03, .45, mat.dark, x, P.pedestal, z)), 2, d, 'pop');
@@ -1339,12 +1415,12 @@ for (const b of P.bays) {
 for (const x of [-4, 19]) { const gtr = box(.5, .25, 60.6, mat.steelLight, x, P.eave - .12, 0); G.roof.add(gtr); reg(gtr, 4, .1, 'z'); gtr.geometry = boxGeo(.5, .25, 60.6); }
 for (const x of [-27.6, 42.65]) { const gtr = box(.22, .22, 60.6, mat.steelLight, x, P.eave - .2, 0); G.roof.add(gtr); reg(gtr, 4, .15, 'pop'); }
 // lean-to rafters + purlins
-FR.forEach((z, i) => {
+if (!V2) FR.forEach((z, i) => {
   const A = V(-27, P.lean.hi - .22, z), B2 = V(-42, P.lean.lo - .22, z);
   const r = member(iGeo(.2, .1, A.distanceTo(B2)), mat.steel, A, B2); info(r, 'steel');
   G.steel.add(r); reg(r, 3, i / FR.length * .5, 'drop');
 });
-for (let k = 0; k < 13; k++) {
+for (let k = 0; k < (V2 ? 0 : 13); k++) {
   const x = -27.3 - k * 1.2; const y = P.lean.hi - (P.lean.hi - P.lean.lo) * ((27.3 + k * 1.2 - 27) / 15) - .06;
   const pm = new THREE.Mesh(PURLIN, mat.steelLight);
   pm.position.set(x, y, 0); const wrap = new THREE.Group(); wrap.add(pm); wrap.position.z = -30.3; shadow(pm, true, false);
@@ -1369,7 +1445,7 @@ for (const b of P.bays) {
   const cap = new THREE.Mesh(new THREE.ExtrudeGeometry(rc, {depth: 60.6, bevelEnabled: false}), mat.roof); cap.position.set(xm, P.ridge + .02, 0);
   const cw = new THREE.Group(); cw.add(cap); cw.position.z = -30.3; G.roof.add(cw); reg(cw, 4, .55, 'z');
 }
-{ // lean-to roof
+if (!V2) { // lean-to roof
   const L = 15 + P.over + .1; const g = flatRib(L, 60.6); const sh = new THREE.Mesh(g, mat.roof); shadow(sh); info(sh, 'lean');
   const ang = Math.atan2(P.lean.hi - P.lean.lo, 15);
   sh.position.set(-27.1, P.lean.hi + .005, 0); sh.rotation.z = ang; sh.scale.x = -1;
@@ -1615,11 +1691,11 @@ for (const [g, lv] of [[officeLt1, 0], [officeLt2, OF.lv]]) {
   for (const z of [-40.6, -39.0]) { const br = member(new THREE.CylinderGeometry(.02, .02, 1.1, 6).rotateX(Math.PI / 2).translate(0, 0, .55), mat.dark, V(OF.x0 - .02, 2.0, z), V(OF.x0 - .98, 2.48, z)); ec.add(br); }
   officeLt1.add(ec);
   // AC condensers on the east wall, both floors
-  for (const [y, z] of [[.5, -36.5], [OF.lv + .5, -36.5], [OF.lv + .5, -41]]) { const u = new THREE.Group(); u.add(box(.32, .58, .82, mat.white, 0, 0, 0), box(.02, .42, .42, mat.dark, -.17, .08, -.12)); u.position.set(OF.x1 + .3, y, z); officeLt1.add(u); }
+  for (const [y, z] of (V2 ? [] : [[.5, -36.5], [OF.lv + .5, -36.5], [OF.lv + .5, -41]])) { const u = new THREE.Group(); u.add(box(.32, .58, .82, mat.white, 0, 0, 0), box(.02, .42, .42, mat.dark, -.17, .08, -.12)); u.position.set(OF.x1 + .3, y, z); officeLt1.add(u); }
   officeLt1.add(box(.06, .9, 1.8, mat.dark, OF.x0 - .1, 2 * OF.lv - .55, -36.4)); }
 const DOFF = smallDoor(officeLt1, OF.x0 + .07, -39.8, .9, 'z', 1.4, 'pintu kantor');
 for (const [g, d] of [[officeLt1, .1], [officeLt2, .2], [officeRoof, .3]]) { g.traverse(m => { if (m.isMesh && m.material !== mat.glass) { m.castShadow = true; m.receiveShadow = true; } }); info(g, 'office'); reg(g, 5, d, 'rise'); }
-G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof);
+if (!V2) { G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof); }
 
 // guard post
 { const p = P.pos, g = new THREE.Group(); const W = p.x1 - p.x0, D = p.z1 - p.z0;
@@ -1628,9 +1704,9 @@ G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof)
     for (const h of holes) if (h[1] > 0) { const gl = new THREE.Mesh(new THREE.PlaneGeometry(h[2], h[3]), mat.glass); gl.position.set(h[0] + h[2] / 2, h[1] + h[3] / 2, .08); const pg = new THREE.Group(); pg.add(gl); pg.position.copy(m.position); pg.rotation.y = ry; g.add(pg); GLASS.push(gl); } };
   mk(W, [[.8, 1, 1.6, 1.1]], p.x0, p.z0, 0);
   mk(D, [[2.12, 1, 1.42, 1.1]], p.x0, p.z1, Math.PI / 2);
-  mk(W, [[1.2, 0, .9, 2.1]], p.x1, p.z1, Math.PI); window.__DPOS = smallDoor(g, 5.4, p.z1 + .07, .9, 'x', 1.4, 'pintu pos jaga');
+  mk(W, [[1.2, 0, .9, 2.1]], p.x1, p.z1, Math.PI); window.__DPOS = smallDoor(g, p.x0 + 2.27, p.z1 + .07, .9, 'x', 1.4, 'pintu pos jaga');
   mk(D, [[.6, 1, 1.4, 1.1]], p.x1, p.z0, -Math.PI / 2);
-  desk(g, 4.9, -44.3, .15, Math.PI, 1.4); chair(g, 4.9, -43.6, .15, 0);
+  desk(g, p.x0 + 1.77, p.z0 + .6, .15, Math.PI, 1.4); chair(g, p.x0 + 1.77, p.z0 + 1.3, .15, 0);
   const r = new THREE.Mesh(ribGeo(W + 1, D + 1), mat.roofSmall); r.position.set(p.x0 - .5, p.h + .35, p.z0 - .5); r.rotation.z = -.06; shadow(r); g.add(r); g.add(shedFrame(W + 1, D + 1, r));
   info(g, 'pos'); G.office.add(g); reg(g, 5, .3, 'rise'); }
 
@@ -1738,11 +1814,11 @@ function motorbike(c) {
   g.add(box(.16, .12, .06, mat.head, 0, .9, -.62));
   g.rotation.y = .12; return shadow(g);
 }
-{ const c1 = car(mat.carW); c1.position.set(15.5, 0, -43.2); G.props.add(c1); reg(c1, 5, .6, 'pop');
-  const c2 = car(mat.carG); c2.position.set(21.5, 0, -43.4); c2.rotation.y = Math.PI; G.props.add(c2); reg(c2, 5, .65, 'pop');
-  const tr = truck(); tr.position.set(30.5, 0, -38.8); G.props.add(tr); reg(tr, 5, .7, 'pop');
-  OBST.push([29.2, -44.4, 31.8, -34.8]);
-  for (let i = 0; i < 6; i++) { const mb = motorbike(i % 2 ? mat.carG : mat.cab); mb.position.set(-23.5 + i * 2, 0, -43.4); G.props.add(mb); reg(mb, 5, .6 + i * .03, 'pop'); }
+{ const c1 = car(mat.carW); c1.position.set(V2 ? 28.5 : 15.5, 0, P.site.z0 + 2.8); G.props.add(c1); reg(c1, 5, .6, 'pop');
+  const c2 = car(mat.carG); c2.position.set(V2 ? 34.5 : 21.5, 0, P.site.z0 + 2.6); c2.rotation.y = Math.PI; G.props.add(c2); reg(c2, 5, .65, 'pop');
+  const tr = truck(); tr.position.set(V2 ? -10.5 : 30.5, 0, V2 ? -36.5 : -38.8); G.props.add(tr); reg(tr, 5, .7, 'pop');
+  OBST.push(V2 ? [-11.8, -42.1, -9.2, -32.5] : [29.2, -44.4, 31.8, -34.8]);
+  for (let i = 0; i < 6; i++) { const mb = motorbike(i % 2 ? mat.carG : mat.cab); mb.position.set((V2 ? -35.5 : -23.5) + i * 2, 0, P.site.z0 + 2.6); G.props.add(mb); reg(mb, 5, .6 + i * .03, 'pop'); }
 }
 
 // forklifts (detailed): counterbalance LPG truck with mast, overhead guard and beacon
@@ -1786,16 +1862,16 @@ function animateFit(now, dt) {
 
 // paving, ground, road
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), mat.ground); ground.rotation.x = -Math.PI / 2; ground.position.y = -.12; ground.receiveShadow = true; root.add(ground);
-const pave = new THREE.Mesh(new THREE.PlaneGeometry(90, 80), mat.pave); pave.rotation.x = -Math.PI / 2; pave.position.set(0, 0, -6); pave.receiveShadow = true; root.add(pave);
+const pave = new THREE.Mesh(new THREE.PlaneGeometry(90, 80), mat.pave); pave.rotation.x = -Math.PI / 2; pave.position.set((P.site.x0 + P.site.x1) / 2, 0, (P.site.z0 + P.site.z1) / 2); pave.receiveShadow = true; root.add(pave);
 // road as a solid slab with kerbs: no coplanar layers left to fight
 const roadGeo = new THREE.BoxGeometry(260, .12, 12).translate(0, .06, 0); { const p = roadGeo.attributes.position, uv = roadGeo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) + 130) / 260, (p.getZ(i) + 6) / 12); }
-const road = new THREE.Mesh(roadGeo, mat.road); road.position.set(0, 0, -54); road.receiveShadow = true; G.site.add(road);
-mat.kerb = M({color: 0xd6d7d3, roughness: .9}); for (const z of [-47.9, -60.1]) { const k = new THREE.Mesh(new THREE.BoxGeometry(260, .2, .25).translate(0, .1, 0), mat.kerb); k.position.set(0, 0, z); k.receiveShadow = true; G.site.add(k); }
-{ const sw = new THREE.Mesh(new THREE.BoxGeometry(260, .16, 1.6).translate(0, .08, 0), mat.kerb); sw.position.set(0, 0, -46.9); sw.receiveShadow = true; G.site.add(sw); }
-for (let x = -126; x < 130; x += 8) { const d = new THREE.Mesh(new THREE.BoxGeometry(4, .02, .15).translate(0, .01, 0), mat.paint); d.position.set(x, .12, -54); G.site.add(d); }
+const road = new THREE.Mesh(roadGeo, mat.road); road.position.set(0, 0, ROADZ); road.receiveShadow = true; G.site.add(road);
+mat.kerb = M({color: 0xd6d7d3, roughness: .9}); for (const z of [ROADZ + 6.1, ROADZ - 6.1]) { const k = new THREE.Mesh(new THREE.BoxGeometry(260, .2, .25).translate(0, .1, 0), mat.kerb); k.position.set(0, 0, z); k.receiveShadow = true; G.site.add(k); }
+{ const sw = new THREE.Mesh(new THREE.BoxGeometry(260, .16, 1.6).translate(0, .08, 0), mat.kerb); sw.position.set(0, 0, ROADZ + 7.1); sw.receiveShadow = true; G.site.add(sw); }
+for (let x = -126; x < 130; x += 8) { const d = new THREE.Mesh(new THREE.BoxGeometry(4, .02, .15).translate(0, .01, 0), mat.paint); d.position.set(x, .12, ROADZ); G.site.add(d); }
 // parking marks
-for (let i = 0; i <= 5; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.1, 3.9), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set(14 + i * 3, .012, -43.25); G.site.add(s); }
-for (let i = 0; i <= 12; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.06, 3.9), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set(-24 + i, .012, -43.25); G.site.add(s); }
+for (let i = 0; i <= 5; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.1, 3.9), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set((V2 ? 27 : 14) + i * 3, .012, P.site.z0 + 2.75); G.site.add(s); }
+for (let i = 0; i <= 12; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.06, 3.9), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set((V2 ? -36 : -24) + i, .012, P.site.z0 + 2.75); G.site.add(s); }
 // fence: side/back brick 3 m, front low wall + bars, gate
 { const s = P.site;
   const walls = [[s.x0, s.z1, s.x1, s.z1], [s.x0, s.z0, s.x0, s.z1], [s.x1, s.z0, s.x1, s.z1]];
@@ -1816,12 +1892,12 @@ for (let i = 0; i <= 12; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry
   gate.add(box(gw, .14, .14, mat.signal, gw / 2, 2.0, 0));
   gate.position.set(P.gate.x0, 0, s.z0 + .2); gate.userData.gx = [P.gate.x0, P.gate.x0 - gw + .4]; G.site.add(gate); reg(gate, 5, .2, 'pop'); window.__gate = gate; info(gate, 'gate');
   // street lamps
-  for (const x of [-30, -2, 26]) { const pole = box(.12, 7, .12, mat.dark, x, 0, s.z0 + 1.2); G.site.add(pole); reg(pole, 5, .3, 'grow'); const arm = box(1.6, .08, .08, mat.dark, x + .8, 7, s.z0 + 1.2); G.site.add(arm); reg(arm, 5, .35, 'pop'); const hd = box(.6, .12, .25, mat.lamp, x + 1.5, 6.9, s.z0 + 1.2); G.site.add(hd); reg(hd, 5, .35, 'pop'); STREET.push(V(x + 1.5, 6.6, s.z0 + 1.2)); }
+  for (const x of (V2 ? [-20, 18, 38] : [-30, -2, 26])) { const pole = box(.12, 7, .12, mat.dark, x, 0, s.z0 + 1.2); G.site.add(pole); reg(pole, 5, .3, 'grow'); const arm = box(1.6, .08, .08, mat.dark, x + .8, 7, s.z0 + 1.2); G.site.add(arm); reg(arm, 5, .35, 'pop'); const hd = box(.6, .12, .25, mat.lamp, x + 1.5, 6.9, s.z0 + 1.2); G.site.add(hd); reg(hd, 5, .35, 'pop'); STREET.push(V(x + 1.5, 6.6, s.z0 + 1.2)); }
 }
 
 // trees (instanced)
 /* ---------- coconut palms (procedural, Poly Haven palm bark) ---------- */
-const TREES = DWG.trees.map(([x, z], i) => ({x, z, h: 6.2 + ((i * 37) % 10) / 10 * 3.2, d: i / DWG.trees.length, v: i % 3, ry: (i * 2.399) % (Math.PI * 2)}));
+const TREES = (V2 ? DWG.trees.map(([x, z]) => [x + VSH[0], z + VSH[1]]).filter(([x, z]) => !(z < P.site.z0 + 4.5 && ((x > P.gate.x0 - 1.5 && x < P.gate.x1 + 1.5) || (x > P.pos.x0 - 1.8 && x < P.pos.x1 + 1.8)))) : DWG.trees).map(([x, z], i) => ({x, z, h: 6.2 + ((i * 37) % 10) / 10 * 3.2, d: i / DWG.trees.length, v: i % 3, ry: (i * 2.399) % (Math.PI * 2)}));
 const frondTex = canvasTex(256, 1024, (g, w, h) => {
   g.clearRect(0, 0, w, h); let sd = 3; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   for (let y = 40; y < h - 10; y += 9) { const t = y / h; const env = Math.sin(Math.PI * Math.min(1, t * 1.15)) * (1 - t * .25); const len = w * .5 * env;
@@ -1920,8 +1996,8 @@ setTimeout(() => { applyPBR(); applyEnv(); }, 400);
   const SH_P = [], GR_P = []; let sd = 9; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   for (const t of TREES) { for (let k = 0; k < 3; k++) { const a = rnd() * 6.28, r = .9 + rnd() * 1.4; SH_P.push([t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, .7 + rnd() * .7, a]); }
     for (let k = 0; k < 26; k++) { const a = rnd() * 6.28, r = rnd() * 2.6; GR_P.push([t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, .7 + rnd() * .8, a]); } }
-  for (let x = -40; x <= 40; x += 2.2) if (x < P.gate.x0 - 1 || x > P.gate.x1 + 1) SH_P.push([x, -45.2, .55 + rnd() * .35, rnd() * 6]);
-  const keep = ([x, z]) => x > -44.6 && x < 44.6 && z > -45.8 && z < 33.8 && !(x > -42.5 && x < 42.5 && z > -31 && z < 30.5) && !(z < -40.8 && ((x > 13.5 && x < 29.5) || (x > -24.5 && x < -11.5) || (x > 3 && x < 7) || (x > 35 && x < 42.5)));
+  for (let x = P.site.x0 + 5; x <= P.site.x1 - 5; x += 2.2) if ((x < P.gate.x0 - 1 || x > P.gate.x1 + 1) && !(V2 && x > P.pos.x0 - 1 && x < P.pos.x1 + 1)) SH_P.push([x, P.site.z0 + .8, .55 + rnd() * .35, rnd() * 6]);
+  const keep = V2 ? ([x, z]) => x > P.site.x0 + .4 && x < P.site.x1 - .4 && z > P.site.z0 + .2 && z < P.site.z1 - .2 && !(x > -27.5 && x < 42.5 && z > -31 && z < 30.5) && !(z < P.site.z0 + 5.2 && ((x > 26.5 && x < 42.5) || (x > -36.5 && x < -23.5) || (x > P.pos.x0 - .5 && x < P.pos.x1 + .5))) : ([x, z]) => x > -44.6 && x < 44.6 && z > -45.8 && z < 33.8 && !(x > -42.5 && x < 42.5 && z > -31 && z < 30.5) && !(z < -40.8 && ((x > 13.5 && x < 29.5) || (x > -24.5 && x < -11.5) || (x > 3 && x < 7) || (x > 35 && x < 42.5)));
   const mk = (geo, m, list) => { const L = list.filter(keep); const im = new THREE.InstancedMesh(geo, m, L.length); const q = new THREE.Quaternion(), s3 = new THREE.Vector3(), p3 = new THREE.Vector3(), m4 = new THREE.Matrix4();
     L.forEach(([x, z, sc, a], i) => { m4.compose(p3.set(x, 0, z), q.setFromAxisAngle(V(0, 1, 0), a), s3.set(sc, sc, sc)); im.setMatrixAt(i, m4); }); im.castShadow = true; im.receiveShadow = true; return im; };
   const shrubs = mk(shrubGeo, mat.shrub, SH_P), grass = mk(tuft, mat.grassT, GR_P); grass.castShadow = false;
@@ -1930,7 +2006,7 @@ setTimeout(() => { applyPBR(); applyEnv(); }, 400);
   // soil beds under the palms so grass doesn't float on paving
   const bedGeo = new THREE.CircleGeometry(3.2, 28); bedGeo.rotateX(-Math.PI / 2); const bedM = M({color: 0x7f9b5a, roughness: 1, map: noiseTex}, false); bedM.polygonOffset = true; bedM.polygonOffsetFactor = -2; bedM.polygonOffsetUnits = -4;
   const beds = new THREE.InstancedMesh(bedGeo, bedM, TREES.length); const m4 = new THREE.Matrix4(); TREES.forEach((t, i) => { m4.makeTranslation(t.x, .02, t.z); beds.setMatrixAt(i, m4); });
-  { const S = P.site, lawn = [[S.x0, S.x0 + 3.4, S.z0 + 1.6, S.z1], [S.x1 - 3.4, S.x1, S.z0 + 1.6, S.z1], [S.x0, S.x1, S.z1 - 3.6, S.z1], [S.x0, P.gate.x0 - 1.2, S.z0, S.z0 + 1.6], [P.gate.x1 + 1.2, 35.5, S.z0, S.z0 + 1.6]]; for (const [a, b, c, d] of lawn) { const g = new THREE.PlaneGeometry(b - a, d - c).rotateX(-Math.PI / 2); const m = new THREE.Mesh(g, bedM); m.position.set((a + b) / 2, .018, (c + d) / 2); m.receiveShadow = true; veg.add(m); } } beds.receiveShadow = true; beds.visible = false; veg.add(beds);
+  { const S = P.site, lawn = [[S.x0, S.x0 + 3.4, S.z0 + 1.6, S.z1], [S.x1 - 3.4, S.x1, S.z0 + 1.6, S.z1], [S.x0, S.x1, S.z1 - 3.6, S.z1], [S.x0, P.gate.x0 - 1.2, S.z0, S.z0 + 1.6], ...(V2 ? [[P.gate.x1 + 1.2, P.pos.x0 - .3, S.z0, S.z0 + 1.6], [P.pos.x1 + .3, S.x1 - 9.5, S.z0, S.z0 + 1.6]] : [[P.gate.x1 + 1.2, 35.5, S.z0, S.z0 + 1.6]])]; for (const [a, b, c, d] of lawn) { const g = new THREE.PlaneGeometry(b - a, d - c).rotateX(-Math.PI / 2); const m = new THREE.Mesh(g, bedM); m.position.set((a + b) / 2, .018, (c + d) / 2); m.receiveShadow = true; veg.add(m); } } beds.receiveShadow = true; beds.visible = false; veg.add(beds);
 }
 
 /* ================= DWG linework + ghost sketch ================= */
@@ -1938,14 +2014,14 @@ const LINE = new THREE.Color('#15191C');
 const dwgGeo = new THREE.BufferGeometry();
 { const a = []; for (const [x1, z1, x2, z2] of DWG.site) a.push(x1, .03, z1, x2, .03, z2); dwgGeo.setAttribute('position', new THREE.Float32BufferAttribute(a, 3)); }
 const dwgMat = new THREE.LineBasicMaterial({color: LINE, transparent: true, opacity: .9, depthWrite: false});
-const dwgLines = new THREE.LineSegments(dwgGeo, dwgMat); dwgLines.renderOrder = 2; G.dwg.add(dwgLines);
+const dwgLines = new THREE.LineSegments(dwgGeo, dwgMat); dwgLines.renderOrder = 2; G.dwg.add(dwgLines); if (V2) dwgLines.visible = false;
 const DWG_N = dwgGeo.attributes.position.count;
 const ghostMat = new THREE.LineBasicMaterial({color: LINE, transparent: true, opacity: .5, depthWrite: false});
 { const a = []; const L = (p, q) => a.push(...p, ...q);
   for (const x of COLX) for (const z of FR) L([x, 0, z], [x, x === -42 ? P.lean.lo : P.eave, z]);
-  for (const z of FR) { for (const b of P.bays) { const xm = (b.x0 + b.x1) / 2; L([b.x0, P.eave, z], [xm, P.ridge, z]); L([xm, P.ridge, z], [b.x1, P.eave, z]); } L([-27, P.lean.hi, z], [-42, P.lean.lo, z]); }
+  for (const z of FR) { for (const b of P.bays) { const xm = (b.x0 + b.x1) / 2; L([b.x0, P.eave, z], [xm, P.ridge, z]); L([xm, P.ridge, z], [b.x1, P.eave, z]); } if (!V2) L([-27, P.lean.hi, z], [-42, P.lean.lo, z]); }
   for (const b of P.bays) { const xm = (b.x0 + b.x1) / 2; L([xm, P.ridge, P.z0], [xm, P.ridge, P.z1]); }
-  for (const x of [-27, -4, 19, 42]) L([x, P.eave, P.z0], [x, P.eave, P.z1]); L([-42, P.lean.lo, P.z0], [-42, P.lean.lo, P.z1]);
+  for (const x of [-27, -4, 19, 42]) L([x, P.eave, P.z0], [x, P.eave, P.z1]); if (!V2) L([-42, P.lean.lo, P.z0], [-42, P.lean.lo, P.z1]);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(a, 3));
   G.ghost.add(new THREE.LineSegments(g, ghostMat)); }
 
@@ -1962,6 +2038,14 @@ function dim(a, b, text, range, main = false, lift = 0) {
   const el = document.createElement('div'); el.className = 'dim'; el.textContent = text; $('#dims').appendChild(el);
   DIMS.push({ln, el, mid: A.clone().add(B).multiplyScalar(.5).add(V(0, lift, 0)), range, main, o: 0});
 }
+if (V2) {
+  dim([-27, 0, -46], [-4, 0, -46], '23.00', [.5, 1.4], true); dim([-4, 0, -46], [19, 0, -46], '23.00', [.5, 1.4], true); dim([19, 0, -46], [42, 0, -46], '23.00', [.5, 1.4], true);
+  dim([-27, 0, -56], [42, 0, -56], '69.00', [-1, 1.4], true); dim([52, 0, -30], [52, 0, 30], '60.00', [-1, 1.4], true);
+  dim([-31, 0, -30], [-31, 0, -24], '6.00', [1.2, 2.6], true); dim([-31, 0, -24], [-31, 0, -18], '6.00', [1.2, 2.6]);
+  dim([7.5, 0, -31.6], [7.5, P.ridge, -31.6], '+10.33', [2.4, 3.9], true, 0); dim([19, 0, -31.6], [19, P.eave, -31.6], '+7.00', [2.4, 3.9], true);
+  dim([4.5, P.floor, -31], [10.5, P.floor, -31], '6.00', [3.4, 4.4]); dim([11.2, P.floor, -31], [11.2, P.floor + P.door.h, -31], '5.00', [3.4, 4.4]);
+  dim([-42, 0, -60], [48, 0, -60], '90.00', [4.3, 9]); dim([56, 0, -42], [56, 0, 38], '80.00', [4.3, 9]);
+} else {
 dim([-42, 0, -49], [-27, 0, -49], '15.00', [.5, 1.4]); dim([-27, 0, -49], [-4, 0, -49], '23.00', [.5, 1.4], true); dim([-4, 0, -49], [19, 0, -49], '23.00', [.5, 1.4], true); dim([19, 0, -49], [42, 0, -49], '23.00', [.5, 1.4], true);
 dim([-42, 0, -60], [42, 0, -60], '84.00', [-1, 1.4], true);
 dim([48, 0, -30], [48, 0, 30], '60.00', [-1, 1.4], true);
@@ -1970,6 +2054,7 @@ dim([7.5, 0, -31.6], [7.5, P.ridge, -31.6], '+10.33', [2.4, 3.9], true, 0);
 dim([19, 0, -31.6], [19, P.eave, -31.6], '+7.00', [2.4, 3.9], true);
 dim([4.5, P.floor, -31], [10.5, P.floor, -31], '6.00', [3.4, 4.4]); dim([11.2, P.floor, -31], [11.2, P.floor + P.door.h, -31], '5.00', [3.4, 4.4]);
 dim([-45, 0, -64], [45, 0, -64], '90.00', [4.3, 9]); dim([52, 0, -46], [52, 0, 34], '80.00', [4.3, 9]);
+}
 
 /* ================= lights for dusk / night ================= */
 const NIGHT = []; // {l, k}: k = base intensity at full night
@@ -2035,6 +2120,7 @@ const VIEWS = {
   iso: {p: [-112, 74, -124], t: [2, 2, -4]}, front: {p: [8, 7, -118], t: [8, 5, 0]}, top: {p: [0, 230, -8], t: [0, 0, -6]},
   inside: {p: [5.6, 2.1, -27], t: [5.6, 3.4, 20]}, officeIn: {p: [52, 17, -54], t: [39, 1, -38]}, dock: {p: [-28, 4.2, -48], t: [-12, 4.5, -31]}, office: {p: [56, 12, -64], t: [38, 4, -38]},
 };
+if (V2) { delete VIEWS.office; delete VIEWS.officeIn; VIEWS.pos = {p: [2, 7, -54], t: [11.5, 1.5, -39.6]}; }
 const camPos = KEYS[0].p.clone(), camTgt = KEYS[0].t.clone();
 const curPos = V(0, 240, -4), curTgt = V(0, 0, -6);
 
@@ -2104,11 +2190,11 @@ let yaw = 0, pitch = 0, camYaw = 0, camPitch = .3, camDist = 4.6;
 const me = {p: V(0, 0, -40), foot: 0, head: 0, phase: 0, speed: 0};
 const inOffice = (x, z) => x > OF.x0 && x < OF.x1 && z > OF.z0 && z < OF.z1;
 function floorAt(x, z, y = 0) {
-  if (x > 35.15 && x < 36.15 && z < -32.3 && z > -38.6) return clamp((-32.3 - z) / 6.3) * OF.lv + .15;
-  if (x > 35.1 && x < 36.2 && z <= -38.6 && z > -39.7) return OF.lv + .15;
-  if (inOffice(x, z)) return y > 1.6 ? OF.lv + .15 : .15;
+  if (!V2 && x > 35.15 && x < 36.15 && z < -32.3 && z > -38.6) return clamp((-32.3 - z) / 6.3) * OF.lv + .15;
+  if (!V2 && x > 35.1 && x < 36.2 && z <= -38.6 && z > -39.7) return OF.lv + .15;
+  if (!V2 && inOffice(x, z)) return y > 1.6 ? OF.lv + .15 : .15;
   if (x > P.pos.x0 && x < P.pos.x1 && z > P.pos.z0 && z < P.pos.z1) return .15;
-  return (x > -27 && x < 42 && z > -30 && z < 30) ? P.floor : (x > -42 && x < -27 && z > -30 && z < 30) ? .15 : 0;
+  return (x > -27 && x < 42 && z > -30 && z < 30) ? P.floor : (!V2 && x > -42 && x < -27 && z > -30 && z < 30) ? .15 : 0;
 }
 // collision: wall segments [x0,z0,x1,z1,openWhen?] and boxes [x0,z0,x1,z1]
 const WALLS = [];
@@ -2116,12 +2202,12 @@ const WALLS = [];
   for (const x of [42.22, -27.18, -4, 19]) W(x, -30, x, 30); W(-27, 30.22, 42.22, 30.22);
   P.bays.forEach((b, i) => { const xm = (b.x0 + b.x1) / 2; W(b.x0, -30.22, xm - 3, -30.22); W(xm + 3, -30.22, b.x1, -30.22); W(xm - 3, -30.22, xm + 3, -30.22, () => doorO[i] > .7); });
   const s = P.site; W(s.x0, s.z1, s.x1, s.z1); W(s.x0, s.z0, s.x0, s.z1); W(s.x1, s.z0, s.x1, s.z1); W(s.x0, s.z0, P.gate.x0, s.z0); W(P.gate.x1, s.z0, s.x1, s.z0); W(P.gate.x0, s.z0, P.gate.x1, s.z0, () => gateOpen > .7);
-  W(OF.x0, OF.z0, OF.x1, OF.z0); W(OF.x0, OF.z1, OF.x1, OF.z1); W(OF.x1, OF.z0, OF.x1, OF.z1); W(OF.x0, OF.z1, OF.x0, -38.5); W(OF.x0, -39.45, OF.x0, -39.8); W(OF.x0, -40.7, OF.x0, OF.z0); W(OF.x0, -39.8, OF.x0, -40.7, () => DOFF.o > .7);
+  if (!V2) { W(OF.x0, OF.z0, OF.x1, OF.z0); W(OF.x0, OF.z1, OF.x1, OF.z1); W(OF.x1, OF.z0, OF.x1, OF.z1); W(OF.x0, OF.z1, OF.x0, -38.5); W(OF.x0, -39.45, OF.x0, -39.8); W(OF.x0, -40.7, OF.x0, OF.z0); W(OF.x0, -39.8, OF.x0, -40.7, () => DOFF.o > .7);
   W(35.15, -32.3, 35.15, -39.7); W(35.15, -39.7, OF.x0, -39.7);
   // office partitions (same on both floors)
   W(OF.x0, -41, 38.0, -41); W(38.9, -41, OF.x1, -41); W(39.9, -41, 39.9, -40.75); W(39.9, -40.05, 39.9, -39.25); W(39.9, -38.55, 39.9, -38); W(39.9, -39.5, OF.x1, -39.5); W(39.15, -38, OF.x1, -38);
-  W(39.15, -39.6, 39.15, -37.3); W(39.15, -36.4, 39.15, OF.z1); W(OF.x0, -35, 38.3, -35); W(39.05, -35, 39.15, -35);
-  const p = P.pos; W(p.x0, p.z0, p.x1, p.z0); W(p.x0, p.z0, p.x0, p.z1); W(p.x1, p.z0, p.x1, p.z1); W(p.x0, p.z1, 4.5, p.z1); W(5.4, p.z1, p.x1, p.z1); W(4.5, p.z1, 5.4, p.z1, () => window.__DPOS.o > .7); }
+  W(39.15, -39.6, 39.15, -37.3); W(39.15, -36.4, 39.15, OF.z1); W(OF.x0, -35, 38.3, -35); W(39.05, -35, 39.15, -35); }
+  const p = P.pos; W(p.x0, p.z0, p.x1, p.z0); W(p.x0, p.z0, p.x0, p.z1); W(p.x1, p.z0, p.x1, p.z1); W(p.x0, p.z1, p.x0 + 1.37, p.z1); W(p.x0 + 2.27, p.z1, p.x1, p.z1); W(p.x0 + 1.37, p.z1, p.x0 + 2.27, p.z1, () => window.__DPOS.o > .7); }
 function segX(ax, az, bx, bz, [cx, cz, dx, dz]) { const d = (bx - ax) * (dz - cz) - (bz - az) * (dx - cx); if (Math.abs(d) < 1e-9) return false;
   const t = ((cx - ax) * (dz - cz) - (cz - az) * (dx - cx)) / d, u = ((cx - ax) * (bz - az) - (cz - az) * (bx - ax)) / d; return t > 0 && t < 1 && u > 0 && u < 1; }
 function collide(pos, r = .3) {
@@ -2220,9 +2306,9 @@ function enterOrbit() { stopDrive(); $('#prompt').hidden = true; near = null;
 }
 const enterWalk = (x, z) => enterNav(nav === 'third' ? 'third' : 'walk', x, z);
 const INTER = [...P.bays.map((b, i) => ({p: V((b.x0 + b.x1) / 2, 0, -30.8), r: 6.5, label: () => `${doorT[i] ? 'Tutup' : 'Buka'} pintu ${['Gudang 3', 'Gudang 2', 'Gudang 1'][i]}`, act: () => setDoor(i, doorT[i] ? 0 : 1)})),
-  {p: V(-3, 0, -46), r: 7, label: () => `${gateTarget ? 'Tutup' : 'Buka'} gerbang`, act: () => setGate(gateTarget ? 0 : 1)},
-  {p: V(OF.x0 - .6, 0, -40.25), r: 2.2, label: () => `${DOFF.t ? 'Tutup' : 'Buka'} pintu kantor`, act: () => { DOFF.t = DOFF.t ? 0 : 1; SFX.door(DOFF.t); }},
-  {p: V(4.95, 0, -40.6), r: 2.2, label: () => `${window.__DPOS.t ? 'Tutup' : 'Buka'} pintu pos jaga`, act: () => { const d = window.__DPOS; d.t = d.t ? 0 : 1; SFX.door(d.t); }},
+  {p: V((P.gate.x0 + P.gate.x1) / 2, 0, P.site.z0), r: 7, label: () => `${gateTarget ? 'Tutup' : 'Buka'} gerbang`, act: () => setGate(gateTarget ? 0 : 1)},
+  ...(V2 ? [] : [{p: V(OF.x0 - .6, 0, -40.25), r: 2.2, label: () => `${DOFF.t ? 'Tutup' : 'Buka'} pintu kantor`, act: () => { DOFF.t = DOFF.t ? 0 : 1; SFX.door(DOFF.t); }}]),
+  {p: V(P.pos.x0 + 1.82, 0, P.pos.z1 + .8), r: 2.2, label: () => `${window.__DPOS.t ? 'Tutup' : 'Buka'} pintu pos jaga`, act: () => { const d = window.__DPOS; d.t = d.t ? 0 : 1; SFX.door(d.t); }},
   ...P.bays.map((b, i) => ({p: V((b.x0 + b.x1) / 2 - 4.2, 0, -28.8), r: 2.2, label: () => `${bayOn[i] ? 'Matikan' : 'Nyalakan'} lampu ${['Gudang 3', 'Gudang 2', 'Gudang 1'][i]}`, act: () => { bayOn[i] = bayOn[i] ? 0 : 1; applyBayLights(); SFX.click(); }})),
   {p: V(-24.5, 0, -27.5), r: 2.6, label: () => 'Panggil crane ke sini', act: () => { craneCall = {x: me.p.x, z: me.p.z, until: performance.now() + 25000}; SFX.door(1); }}];
 const RIDES = [...FORKS, ...G.props.children.filter(o => o.userData.forks && !FORKS.some(f => f.g === o)).map(g => ({g}))];
@@ -2297,7 +2383,7 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = 0; joy.x = joy.
 function setMin(on) { $('#xp').classList.toggle('min', on); document.body.classList.toggle('xpmin', on); $('#xpMin').setAttribute('aria-expanded', String(!on)); $('#dExpand').setAttribute('aria-pressed', String(!on)); SFX.click(); }
 $('#xpMin').onclick = () => setMin(true);
 $('#dExpand').onclick = () => setMin(!$('#xp').classList.contains('min'));
-{ const order = ['iso', 'front', 'inside', 'dock', 'office', 'officeIn', 'top']; let vi = 0; $('#dView').onclick = () => { vi = (vi + 1) % order.length; document.querySelector(`[data-view=${order[vi]}]`).click(); $('#dView').title = 'Sudut pandang: ' + document.querySelector(`[data-view=${order[vi]}]`).textContent; }; }
+{ const order = V2 ? ['iso', 'front', 'inside', 'dock', 'top'] : ['iso', 'front', 'inside', 'dock', 'office', 'officeIn', 'top']; let vi = 0; $('#dView').onclick = () => { vi = (vi + 1) % order.length; document.querySelector(`[data-view=${order[vi]}]`).click(); $('#dView').title = 'Sudut pandang: ' + document.querySelector(`[data-view=${order[vi]}]`).textContent; }; }
 { const ns = ['orbit', 'walk', 'third'], nm = {orbit: 'orbit', walk: 'orang pertama', third: 'orang ketiga'}; $('#dNav').onclick = () => { const n = ns[(ns.indexOf(nav) + 1) % 3]; n === 'orbit' ? enterOrbit() : enterNav(n); $('#dNav').title = 'Navigasi: ' + nm[n]; $('#dNav').setAttribute('aria-pressed', String(n !== 'orbit')); }; }
 { const ls = ['day', 'dusk', 'night'], nm = {day: 'siang', dusk: 'senja', night: 'malam'}; $('#dLight').onclick = () => { const k = ls[(ls.indexOf(light) + 1) % 3]; setLight(k); $('#dLight').title = 'Cahaya: ' + nm[k]; $('#dLight').setAttribute('aria-pressed', String(k !== 'day')); }; }
 $('#dTour').onclick = () => startTour(); $('#prompt').onclick = () => interact();
@@ -2311,12 +2397,12 @@ const INFO = {
   g2: ['Gudang 2', 'Unit tengah', [['Bentang', '23.00 m'], ['Panjang', '60.00 m'], ['Luas', '1.380 m²'], ['Lantai', '±0.00, cor t = 15 cm'], ['Pintu', 'plat baja 6 × 5 m']]],
   g3: ['Gudang 3', 'Unit barat', [['Bentang', '23.00 m'], ['Panjang', '60.00 m'], ['Luas', '1.380 m²'], ['Lantai', '±0.00, cor t = 15 cm'], ['Pintu', 'plat baja 6 × 5 m']]],
   lean: ['Sosoran', 'Atap samping terbuka', [['Lebar', '15.00 m'], ['Panjang', '60.00 m'], ['Tinggi', '+6.00 → +5.50'], ['Kolom tepi', 'WF 250']]],
-  steel: ['Struktur baja', 'Portal @ 6.00 m', [['Pedestal', '40 × 60 cm, puncak +1.00'], ['Kolom', 'WF 350 / WF 250'], ['Kuda-kuda', 'WF 250 + konsol'], ['Gording', 'CNP 125 × 2 mm @ 1.20'], ['Ikatan', 'trekstang Ø12, tali angin Ø16']]],
+  steel: ['Struktur baja', 'Portal @ 6.00 m', [['Pedestal', '40 × 60 cm, puncak +1.00'], ['Kolom', V2 ? 'WF 250' : 'WF 350 / WF 250'], ['Kuda-kuda', 'WF 250 + konsol'], ['Gording', 'CNP 125 × 2 mm @ 1.20'], ['Ikatan', 'trekstang Ø12, tali angin Ø16']]],
   door: ['Pintu gudang', 'Dua daun, buka keluar', [['Ukuran', '6.00 × 5.00 m'], ['Material', 'plat baja'], ['Ambang', '±0.00']]],
   canopy: ['Kanopi', 'Di atas tiap pintu', [['Ukuran', '8.00 × 4.00 m'], ['Penutup', 'galvalume'], ['Tinggi', '± +5.85']]],
   office: ['Kantor', 'Dua lantai, sudut timur laut', [['Denah', '6.2 × 12.1 m'], ['Lt. 1', 'admin, tamu, staf, kacab, KM/WC'], ['Lt. 2', '+3.00 · meeting, staf'], ['Tangga', 'luar, sisi barat']]],
   gate: ['Gerbang pagar', 'Geser, klik untuk buka/tutup', [['Lebar', '12.00 m'], ['Tinggi', '2.00 m'], ['Material', 'besi hollow']]],
-  pos: ['Pos jaga', 'Samping gerbang', [['Denah', '3.5 × 3.5 m'], ['Isi', 'R. jaga, R. ganti, KM/WC']]],
+  pos: ['Pos jaga', 'Samping gerbang', [['Denah', V2 ? '3.0 × 3.0 m' : '3.5 × 3.5 m'], ['Isi', 'R. jaga, R. ganti, KM/WC']]],
 };
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(e) {
@@ -2379,7 +2465,7 @@ function setGate(v) { if (gateTarget === v) return; gateTarget = v; SFX.gate(); 
 /* ================= UI wiring ================= */
 function setPressed(sel, val) { document.querySelectorAll(`${sel} [aria-pressed]`).forEach(b => b.setAttribute('aria-pressed', String(Object.values(b.dataset)[0] === val))); }
 const layerBox = $('#layers');
-for (const [k, n] of LAYERS) { const l = document.createElement('label'); l.className = 'tg'; l.innerHTML = `<input type="checkbox" id="ly-${k}" ${k === 'dwg' ? '' : 'checked'}>${n}`; layerBox.appendChild(l);
+for (const [k, n0] of LAYERS) { const n = V2 && k === 'office' ? 'Pos jaga' : n0; const l = document.createElement('label'); l.className = 'tg'; l.innerHTML = `<input type="checkbox" id="ly-${k}" ${k === 'dwg' ? '' : 'checked'}>${n}`; layerBox.appendChild(l); if (V2 && ['officeUp', 'officeRoof', 'dwg'].includes(k)) l.hidden = true;
   l.querySelector('input').addEventListener('change', e => { G[k].visible = e.target.checked; if (k === 'found') foundView = e.target.checked; }); }
 let foundView = true;
 
@@ -2482,21 +2568,24 @@ const FX = (() => {
   const C = {truck: 0xffa62b, fork: 0x2be0ff, walk: 0x7dff6a, elec: 0xffe14a, water: 0x3aa9ff, fire: 0xff4a5c, ac: 0xc77dff};
   // ---- sirkulasi: truck in/out, forklift loops, pedestrian apron
   const gx = (P.gate.x0 + P.gate.x1) / 2, fy = P.floor + .06; const TRUCKP = [];
-  P.bays.forEach((b, i) => { const xm = (b.x0 + b.x1) / 2; const pts = [[-75, .3, -53.5], [gx - 3, .3, -53.5], [gx - 3, .3, -44], [gx - 3, .3, -41], [xm - 1.5, .3, -39.5], [xm - 1.5, .3, -34]]; route(L.sirkulasi, pts, C.truck, .16, 'chev', 6, 2.6); TRUCKP.push(pts);
-    const out = [[xm + 1.5, .3, -34], [xm + 1.5, .3, -37.5], [gx + 3, .3, -40.5], [gx + 3, .3, -44], [gx + 3, .3, -55], [75, .3, -55]]; route(L.sirkulasi, out, C.truck, .16, 'chev', 6, 2.6);
+  P.bays.forEach((b, i) => { const xm = (b.x0 + b.x1) / 2; const pts = [[-75, .3, -53.5 + DZS], [gx - 3, .3, -53.5 + DZS], [gx - 3, .3, -44 + DZS], [gx - 3, .3, -41 + DZS], [xm - 1.5, .3, -39.5 + DZS * .5], [xm - 1.5, .3, -34]]; route(L.sirkulasi, pts, C.truck, .16, 'chev', 6, 2.6); TRUCKP.push(pts);
+    const out = [[xm + 1.5, .3, -34], [xm + 1.5, .3, -37.5 + DZS * .5], [gx + 3, .3, -40.5 + DZS], [gx + 3, .3, -44 + DZS], [gx + 3, .3, -55 + DZS], [75, .3, -55 + DZS]]; route(L.sirkulasi, out, C.truck, .16, 'chev', 6, 2.6);
     const x0 = b.x0 + 4.5, x1 = b.x1 - 4.5; route(L.sirkulasi, [[x0, fy, -26], [x1, fy, -26], [x1, fy, 26], [x0, fy, 26], [x0, fy, -26]], C.fork, .12, 'chev', 3, 2); });
-  route(L.sirkulasi, [[-26, .3, -36.5], [41, .3, -36.5]], C.walk, .08, 'chev', 1.3, 1.4); route(L.sirkulasi, [[41, .3, -36.6], [41, .3, -43]], C.walk, .08, 'chev', 1.3, 1.4);
+  route(L.sirkulasi, [[-26, .3, -36.5], [41, .3, -36.5]], C.walk, .08, 'chev', 1.3, 1.4); if (!V2) route(L.sirkulasi, [[41, .3, -36.6], [41, .3, -43]], C.walk, .08, 'chev', 1.3, 1.4); else route(L.sirkulasi, [[P.pos.x0 + 1.8, .3, -36.6], [P.pos.x0 + 1.8, .3, P.pos.z1 + .4]], C.walk, .08, 'chev', 1.3, 1.4);
   // ---- utilitas: power (from the office MDP), clean water, hydrant ring, AC; panels/junctions as glowing boxes
   const ey = P.eave - .35;
-  glowBox(L.utilitas, OF.x0 - .3, 1.2, -40.6, .5, 1.2, .3, C.elec);
-  route(L.utilitas, [[OF.x0 - .3, 1.8, -40.6], [OF.x0 - .3, ey, -40.6], [OF.x0 - .3, ey, -31.5], [P.bays[0].x0, ey, -31.5]], C.elec, .08, 'pulse', 8, 6);
+  if (V2) { const mx = P.pos.x1 + .3, mz = P.pos.z1 - .6; glowBox(L.utilitas, mx, 1.2, mz, .3, 1.2, .5, C.elec);
+    route(L.utilitas, [[mx, 1.8, mz], [mx, .4, mz], [mx, .4, -31.5], [P.bays[0].x0, .4, -31.5], [P.bays[0].x0, ey, -31.5]], C.elec, .08, 'pulse', 8, 6); }
+  else { glowBox(L.utilitas, OF.x0 - .3, 1.2, -40.6, .5, 1.2, .3, C.elec);
+  route(L.utilitas, [[OF.x0 - .3, 1.8, -40.6], [OF.x0 - .3, ey, -40.6], [OF.x0 - .3, ey, -31.5], [P.bays[0].x0, ey, -31.5]], C.elec, .08, 'pulse', 8, 6); }
   for (const b of P.bays) for (const x of [b.x0 + .6, b.x1 - .6]) { route(L.utilitas, [[x, ey, -30], [x, ey, 30]], C.elec, .07, 'pulse', 8, 7); for (let z = -24; z <= 24; z += 12) glowBox(L.utilitas, x, ey - .25, z, .25, .25, .25, C.elec); }
   P.bays.forEach(b => { const xm = (b.x0 + b.x1) / 2; glowBox(L.utilitas, b.x0 + .6, 1.4, -29.2, .45, .7, .2, C.elec); });
-  route(L.utilitas, [[gx, .4, -46], [gx, .4, -42], [OF.x0 - 1.4, .4, -42], [OF.x0 - 1.4, .4, -38], [OF.x1 - .4, .4, -38]], C.water, .08, 'pulse', 3, 5);
-  glowBox(L.utilitas, OF.x1 + .9, 1.1, -33.0, .9, 2.2, .9, C.water);
-  const hy = [[-43.5, .5, -32], [43.3, .5, -32], [43.3, .5, 31.5], [-43.5, .5, 31.5], [-43.5, .5, -32]]; route(L.utilitas, hy, C.fire, .09, 'pulse', 4, 8);
-  for (const [x, z] of [[-43.5, -10], [-43.5, 14], [43.3, -10], [43.3, 14], [0, 31.5], [-20, -32], [20, -32]]) glowBox(L.utilitas, x, .7, z, .35, .8, .35, C.fire);
-  for (const [y, z] of [[.5, -36.5], [OF.lv + .5, -36.5], [OF.lv + .5, -41]]) { glowBox(L.utilitas, OF.x1 + .3, y + .29, z, .4, .66, .9, C.ac); route(L.utilitas, [[OF.x1 + .1, y + .6, z], [OF.x1 - .2, y + .6, z], [OF.x1 - .2, OF.lv * (y > 1 ? 2 : 1) - .3, z]], C.ac, .05, 'pulse', 2, 3); }
+  if (V2) { const wz = P.site.z0 + 4.6; route(L.utilitas, [[gx, .4, P.site.z0], [gx, .4, wz], [P.pos.x1 + 1.4, .4, wz], [P.pos.x1 + 1.4, .4, -31.5], [42.6, .4, -31.5]], C.water, .08, 'pulse', 3, 5); glowBox(L.utilitas, 43.6, 1.1, -33.0, .9, 2.2, .9, C.water); }
+  else { route(L.utilitas, [[gx, .4, -46], [gx, .4, -42], [OF.x0 - 1.4, .4, -42], [OF.x0 - 1.4, .4, -38], [OF.x1 - .4, .4, -38]], C.water, .08, 'pulse', 3, 5);
+  glowBox(L.utilitas, OF.x1 + .9, 1.1, -33.0, .9, 2.2, .9, C.water); }
+  const hx = BX0 - 1.5; const hy = [[hx, .5, -32], [43.3, .5, -32], [43.3, .5, 31.5], [hx, .5, 31.5], [hx, .5, -32]]; route(L.utilitas, hy, C.fire, .09, 'pulse', 4, 8);
+  for (const [x, z] of [[hx, -10], [hx, 14], [43.3, -10], [43.3, 14], [0, 31.5], [-20, -32], [20, -32]]) glowBox(L.utilitas, x, .7, z, .35, .8, .35, C.fire);
+  for (const [y, z] of (V2 ? [] : [[.5, -36.5], [OF.lv + .5, -36.5], [OF.lv + .5, -41]])) { glowBox(L.utilitas, OF.x1 + .3, y + .29, z, .4, .66, .9, C.ac); route(L.utilitas, [[OF.x1 + .1, y + .6, z], [OF.x1 - .2, y + .6, z], [OF.x1 - .2, OF.lv * (y > 1 ? 2 : 1) - .3, z]], C.ac, .05, 'pulse', 2, 3); }
   // ---- aktivitas: trucks docking, forklifts, workers walking / working
   const AGENTS = []; const tr = (pts, t) => { const {p, L} = pathOf(pts); return {p, L}; };
   TRUCKP.forEach((pts, i) => { const t = truck(); t.scale.setScalar(.92); L.aktivitas.add(t); const back = [...pts].reverse(); AGENTS.push({kind: 'truck', o: t, a: tr(pts), b: tr(back), ph: i * 9, T: 34}); });
@@ -2505,7 +2594,7 @@ const FX = (() => {
     const bd = new THREE.Mesh(new THREE.CapsuleGeometry(.17, .38, 3, 10), wM[3]); bd.position.y = 1.22; bd.scale.z = .7; const hd = new THREE.Mesh(new THREE.SphereGeometry(.11, 12, 10), wM[2]); hd.position.y = 1.62; const hat = new THREE.Mesh(new THREE.SphereGeometry(.125, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), wM[0]); hat.position.y = 1.67;
     const arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * .23, 1.42, 0); a.add(new THREE.Mesh(new THREE.CapsuleGeometry(.05, .5, 3, 8).translate(0, -.3, 0), wM[1])); w.add(a); return a; });
     w.add(bd, hd, hat); w.userData = {legs, arms}; w.traverse(m => { if (m.isMesh) m.castShadow = true; }); return w; };
-  const walkers = [[[-25, .3, -36], [40, .3, -36]], [[40, .3, -37], [40, .3, -43.5], [36, .3, -44.6]], [[-24, fy, -28], [-24, fy, 28]], [[1, fy, 28], [1, fy, -28]], [[24, fy, -28], [24, fy, 28]], [[-40, fy, -25], [-30, fy, -25], [-30, fy, 20]], [[gx, .3, -45.5], [gx, .3, -38]]];
+  const walkers = V2 ? [[[-25, .3, -36], [40, .3, -36]], [[30, .3, -37], [P.pos.x0 + 1.8, .3, -37], [P.pos.x0 + 1.8, .3, P.pos.z1 + .5]], [[-24, fy, -28], [-24, fy, 28]], [[1, fy, 28], [1, fy, -28]], [[24, fy, -28], [24, fy, 28]], [[-29.5, .3, -25], [-29.5, .3, 20]], [[gx, .3, P.site.z0 + .5], [gx, .3, -34]]] : [[[-25, .3, -36], [40, .3, -36]], [[40, .3, -37], [40, .3, -43.5], [36, .3, -44.6]], [[-24, fy, -28], [-24, fy, 28]], [[1, fy, 28], [1, fy, -28]], [[24, fy, -28], [24, fy, 28]], [[-40, fy, -25], [-30, fy, -25], [-30, fy, 20]], [[gx, .3, -45.5], [gx, .3, -38]]];
   walkers.forEach((pts, i) => { const w = worker(); L.aktivitas.add(w); AGENTS.push({kind: 'walk', o: w, a: tr(pts), b: tr([...pts].reverse()), ph: i * 7.3, T: 0}); });
   for (const [x, z, r] of [[-8.5, -18, 0], [-8.5, 6, 0], [14.5, -10, Math.PI], [26, 2, 0], [37.5, 16, Math.PI], [-35, -5, Math.PI / 2], [-35, 10, Math.PI / 2]]) { const w = worker(); w.position.set(x, P.floor, z); w.rotation.y = r; L.aktivitas.add(w); AGENTS.push({kind: 'work', o: w, ph: x + z}); }
   RACKS.forEach((r, i) => r.aisles.forEach((ax, j) => { if (!((i + j) % 2)) return; const f = forklift(); L.aktivitas.add(f); AGENTS.push({kind: 'fork', o: f, x: ax, ph: i * 5 + j * 3}); }));
@@ -2557,24 +2646,24 @@ function storyOffset(dt, b, on) { const w = innerWidth, h = innerHeight; const m
 const SITE = (() => {
   const S = JSON.parse(document.getElementById('sitedata').textContent);
   const A = 14.9 * Math.PI / 180, ca = Math.cos(A), sa = Math.sin(A), DZ = -22.7;
-  const toModel = (mx, my) => [mx * ca + my * sa, -mx * sa + my * ca + DZ];
-  const toMap = (X, Z) => { const z = Z - DZ; return [X * ca - z * sa, X * sa + z * ca]; };
+  const toModel = (mx, my) => [mx * ca + my * sa + VSH[0], -mx * sa + my * ca + DZ + VSH[1]];
+  const toMap = (X0, Z) => { const X = X0 - VSH[0], z = Z - DZ - VSH[1]; return [X * ca - z * sa, X * sa + z * ca]; };
   let src = 'srtm', delta = .3;
   const dem = (mx, my) => { const g = S.dem[src], n = S.dem.n, st = S.dem.step; let fi = mx / st + (n - 1) / 2, fj = -my / st + (n - 1) / 2; fi = Math.max(0, Math.min(n - 1.001, fi)); fj = Math.max(0, Math.min(n - 1.001, fj));
     const i = Math.floor(fi), j = Math.floor(fj), u = fi - i, v = fj - j, a = g[j * n + i], b = g[j * n + i + 1], c = g[(j + 1) * n + i], d = g[(j + 1) * n + i + 1]; return a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v; };
   const eAt = (X, Z) => { const [mx, my] = toMap(X, Z); return dem(mx, my); };
-  const roadE = () => eAt(0, -54);
+  const roadE = () => eAt(0, ROADZ);
   const H0 = () => roadE() + delta;
   // ---- cut & fill on a 1 m grid inside the site; building pad filled to +1.00 less a 15 cm slab
   function calc(d = delta) { const h0 = roadE() + d, s = P.site; let fill = 0, cut = 0, mn = 1e9, mx = -1e9, sum = 0, n = 0;
-    for (let x = s.x0 + .5; x < s.x1; x += 1) for (let z = s.z0 + .5; z < s.z1; z += 1) { const ex = eAt(x, z) - h0; const pad = x > -42 && x < 42 && z > -30 && z < 30 ? .85 : 0; const df = pad - ex; if (df > 0) fill += df; else cut -= df; const e = eAt(x, z); mn = Math.min(mn, e); mx = Math.max(mx, e); sum += e; n++; }
+    for (let x = s.x0 + .5; x < s.x1; x += 1) for (let z = s.z0 + .5; z < s.z1; z += 1) { const ex = eAt(x, z) - h0; const pad = x > BX0 && x < 42 && z > -30 && z < 30 ? .85 : 0; const df = pad - ex; if (df > 0) fill += df; else cut -= df; const e = eAt(x, z); mn = Math.min(mn, e); mx = Math.max(mx, e); sum += e; n++; }
     return {fill, cut, net: fill - cut, mn, mx, mean: sum / n, road: roadE(), h0}; }
   function balance() { let a = -6, b = 6; for (let k = 0; k < 40; k++) { const m = (a + b) / 2; const r = calc(m); if (r.fill > r.cut) b = m; else a = m; } return (a + b) / 2; }
   // ---- 3D context group
   const g = new THREE.Group(); g.visible = false; root.add(g);
   const terrM = M({color: 0xe9e9e6, roughness: 1, side: THREE.DoubleSide}, false), lineM = new THREE.LineBasicMaterial({color: 0x8d9093, transparent: true, opacity: .55}), line5 = new THREE.LineBasicMaterial({color: 0x4a4f53, transparent: true, opacity: .7});
   const roadM = M({color: 0xbdbfbc, roughness: .95}, false), massM = M({color: 0xd9dad7, roughness: .9}, false), massRoof = M({color: 0xc6c8c5, roughness: .7, metalness: .2}, false), wallM = M({color: 0xcfcfca, roughness: .95}, false), cutM = M({color: 0x15191c, transparent: true, opacity: .14, side: THREE.DoubleSide, depthWrite: false}, false);
-  const R = 200, NS = 100, step = 2 * R / NS, cx0 = 0, cz0 = -6; let terr = null, cont = null, skirt = null; const parts = [];
+  const R = 200, NS = 100, step = 2 * R / NS, cx0 = (P.site.x0 + P.site.x1) / 2, cz0 = (P.site.z0 + P.site.z1) / 2; let terr = null, cont = null, skirt = null; const parts = [];
   const inSite = (x, z, m = 0) => x > P.site.x0 - m && x < P.site.x1 + m && z > P.site.z0 - m && z < P.site.z1 + m;
   function build() { for (const o of parts) { g.remove(o); o.geometry && o.geometry.dispose(); } parts.length = 0; const h0 = H0();
     const pos = [], idx = [], H = [];
@@ -2625,7 +2714,7 @@ VIEWS.site = {p: [-210, 150, -330], t: [0, 0, -10]};
   const port = $('#stMap'), img = $('#stImg'), ov = $('#stOv'); let z = 'z17', sc = 1, tx = 0, ty = 0;
   const IM = SITE.S.img; const W0 = 1792;
   function draw() { const k = IM[z], [px, py] = k.px, mpp = k.mpp; const s = P.site; const pts = [[s.x0, s.z0], [s.x1, s.z0], [s.x1, s.z1], [s.x0, s.z1]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
-    const bld = [[-42, -30], [42, -30], [42, 30], [-42, 30]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
+    const bld = [[BX0, -30], [42, -30], [42, 30], [BX0, 30]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
     ov.innerHTML = `<polygon points="${pts.map(p => p.join(',')).join(' ')}" class="st-lot"/><polygon points="${bld.map(p => p.join(',')).join(' ')}" class="st-bld"/><circle cx="${px}" cy="${py}" r="${z === 'z17' ? 9 : 14}" class="st-pin"/><text x="${pts[1][0] + 14}" y="${pts[1][1] - 10}" class="st-lbl">Gudang Ngoro · 90 × 80 m</text>`;
     const W = port.clientWidth, H = port.clientHeight; const f = Math.max(W, H) / W0 * sc; const cxp = px, cyp = py; const ox = W / 2 - cxp * f + tx, oy = H / 2 - cyp * f + ty;
     for (const el of [img, ov]) { el.style.transform = `translate(${ox}px,${oy}px) scale(${f})`; } }
@@ -2646,7 +2735,7 @@ VIEWS.site = {p: [-210, 150, -330], t: [0, 0, -10]};
     const ex = []; for (let zz = z0; zz <= z1; zz += 2) ex.push([zz, eRel(zz) ]); const ys = ex.map(p => p[1]).concat([0, .85]); const lo = Math.min(...ys) - 1, hi = Math.max(...ys) + 1; const yv = v => H - 14 - (v - lo) / (hi - lo) * (H - 28);
     const exP = ex.map(([zz, v]) => `${xs(zz).toFixed(1)},${yv(v).toFixed(1)}`).join(' ');
     const pr = [[z0, 0], [s.z0, 0], [-30, 0], [-30, .85], [30, .85], [30, 0], [s.z1, 0]].map(([zz, v]) => `${xs(zz).toFixed(1)},${yv(v).toFixed(1)}`).join(' ');
-    $('#cfProf').innerHTML = `<rect x="${xs(s.z0)}" y="0" width="${xs(s.z1) - xs(s.z0)}" height="${H}" class="pf-site"/><polyline points="${exP}" class="pf-ex"/><polyline points="${pr}" class="pf-pr"/><line x1="${xs(-54)}" x2="${xs(-54)}" y1="${yv(-SITE.delta) - 6}" y2="${yv(-SITE.delta) + 6}" class="pf-rd"/>
+    $('#cfProf').innerHTML = `<rect x="${xs(s.z0)}" y="0" width="${xs(s.z1) - xs(s.z0)}" height="${H}" class="pf-site"/><polyline points="${exP}" class="pf-ex"/><polyline points="${pr}" class="pf-pr"/><line x1="${xs(ROADZ)}" x2="${xs(ROADZ)}" y1="${yv(-SITE.delta) - 6}" y2="${yv(-SITE.delta) + 6}" class="pf-rd"/>
       <text x="4" y="12" class="pf-t">Utara · jalan</text><text x="${W - 4}" y="12" class="pf-t" text-anchor="end">Selatan</text><text x="${xs(-30) + 4}" y="${yv(.85) - 6}" class="pf-t">lantai gudang +1.00</text><text x="${xs(s.z1) - 4}" y="${yv(0) + 14}" class="pf-t" text-anchor="end">halaman ±0.00</text>`; }
   const eRel = zz => SITE.eRel(0, zz);
   sl.oninput = () => { SITE.setDelta(+sl.value); upd(); };
@@ -2694,7 +2783,7 @@ function frame(now) {
     gateOpen += (gateTarget - gateOpen) * (RM ? 1 : 1 - Math.pow(.08, dt)); const g = window.__gate; g.position.x = g.userData.gx[0] + (g.userData.gx[1] - g.userData.gx[0]) * ease2(clamp(gateOpen));
     $('#needle').setAttribute('transform', `rotate(${(-Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z) * 180 / Math.PI + 180).toFixed(1)})`);
     if (!$('#plan').hidden) updateMe();
-    { const c = camera.position; const inside = c.x > -42 && c.x < 42 && c.z > -30 && c.z < 30 && c.y < 9; SFX.mix(inside, clamp((c.y - 2) / 60, .04, .3), true);
+    { const c = camera.position; const inside = c.x > BX0 && c.x < 42 && c.z > -30 && c.z < 30 && c.y < 9; SFX.mix(inside, clamp((c.y - 2) / 60, .04, .3), true);
       if (SFX.on && inside && Math.random() < dt * .35) { let dmin = 1e9; for (const f of FORKS) dmin = Math.min(dmin, f.g.position.distanceTo(c)); if (dmin < 30) SFX.beep(); } }
   }
   animateFit(now, dt);
@@ -2718,7 +2807,23 @@ addEventListener('resize', resize); resize();
 setLight('day'); applyBuild(0); setTrees(0); applyCut();
 requestAnimationFrame(t => { $('#loader').classList.add('done'); intro.s = 0; last = t; requestAnimationFrame(frame); });
 /* ================= cinematic tour ================= */
-const TOUR = [
+const TOUR = V2 ? [
+  [[-150, 92, -160], [0, 0, -4], 'Gudang Ngoro · Revisi 01 · tapak 90 × 80 m'],
+  [[-62, 14, -84], [-4, 4, -24], 'Tiga gudang tanpa sosoran, bentang bebas 23 m'],
+  [[46, 9, -70], [30.5, 4.5, -30], 'Gudang 1 · 23 × 60 m, sisi timur'],
+  [[30.5, 2.4, -36], [30.5, 2.8, 2], 'Gudang 1 · rak palet tiga tingkat'],
+  [[7.5, 8, -66], [7.5, 4.5, -30], 'Gudang 2 · pintu geser plat baja 6 × 5 m'],
+  [[7.5, 2.4, -38], [7.5, 2.6, -10], 'Masuk Gudang 2'],
+  [[5.6, 1.9, -22], [5.6, 2.8, 12], 'Gang rak 3.30 m untuk forklift'],
+  [[5.6, 5.6, 6], [-1, 8.6, 26], 'Kolom & kuda-kuda WF 250, gording @ 1.20 m'],
+  [[-15.5, 8, -66], [-15.5, 4.5, -30], 'Gudang 3 · gudang coil'],
+  [[-15.5, 3.2, -40], [-15.5, 3, -18], 'Gudang 3 · gulungan coil baja'],
+  [[-15.5, 4.6, -20], [-11, 3.2, 12], 'Crane menyusuri bentang'],
+  [[-62, 9, -44], [-27, 3.5, -4], 'Sisi barat · dinding penuh, tanpa sosoran'],
+  [[-3, 6, -58], [11.5, 1.6, -39.6], 'Pos jaga 3 × 3 m di samping gerbang 12 m'],
+  [[34.5, 3.2, -46], [34.5, .5, -38], 'Parkir mobil 15 × 4 m · parkir motor di sisi barat'],
+  [[118, 62, 36], [2, 2, 0], 'Bubungan +10.33 · tritisan +7.00'],
+] : [
   [[-150, 92, -160], [0, 0, -4], 'Gudang Ngoro · tapak 90 × 80 m'],
   [[-62, 14, -84], [-4, 4, -24], 'Tiga gudang + sosoran, bentang bebas 23 m'],
   [[46, 9, -70], [30.5, 4.5, -30], 'Gudang 1 · 23 × 60 m, sisi timur'],
@@ -2764,6 +2869,7 @@ function tourFrame(now) {
 }
 $('#btnTour').onclick = startTour; $('#btnTour2').onclick = startTour; $('#tourStop').onclick = stopTour;
 
+{ const bv = document.getElementById('btnVer'); if (bv) { bv.querySelector('b').textContent = V2 ? 'V2' : 'V1'; bv.querySelector('span').textContent = V2 ? 'Revisi 01' : 'Desain awal'; bv.title = V2 ? 'Versi 2 · Revisi tanpa kantor & sosoran — klik untuk ganti' : 'Versi 1 · Desain awal — klik untuk ganti'; bv.onclick = () => window.__vpOpen && window.__vpOpen(false); } }
 { const b3 = document.getElementById('btn3d'); if (b3) b3.onclick = () => document.getElementById('hero').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block: 'start'}); }
 document.querySelectorAll('.emo b').forEach(b => b.onclick = () => emote(b.dataset.e));
 addEventListener('keydown', e => { if (nav !== 'third' || e.target.tagName === 'INPUT') return; const m = {'1': 'wave', '2': 'clap', '3': 'dance', '4': 'jump', '5': 'salute'}[e.key]; if (m) emote(m); });
@@ -2772,7 +2878,20 @@ if (location.hash === '#jelajah') setTimeout(enterExplore, 300);
 
 /* ================= sheets: data ================= */
 const SH = JSON.parse(document.getElementById('sheetimgs').textContent);
-const SHEETS = [
+if (V2) { for (const k of ['site', 'layout', 'pondasi', 'kolom', 'atap', 'utara', 'timur', 'pos', 'pos2']) SH['r1_' + k] = `assets/sh/r1_${k}.jpg`;
+  Object.assign(SH, {site: SH.r1_site, layout: SH.r1_layout, pondasi: SH.r1_pondasi, kolom: SH.r1_kolom, atap: SH.r1_atap, utara: SH.r1_utara, potA: SH.r1_utara, tampak: SH.r1_utara, timur: SH.r1_timur, pos: SH.r1_pos, posB: SH.r1_pos2});
+  for (const k of ['aerial', 'dusk', 'night', 'interior', 'frame', 'found', 'dock', 'coils', 'avatar', 'front']) SH[k] = `assets/sh/v2_${k}.jpg`; }
+const SHEETS = V2 ? [
+  {k: 'r1_site', c: 'A-00', t: 'Siteplan', n: 'Revisi 01 · tapak 90 × 80 m: tiga gudang, pos jaga, gerbang 12 m dan deret pohon keliling.', go: () => xpGo({view: 'top'})},
+  {k: 'r1_layout', c: 'A-01', t: 'Layout plan', n: 'Tiga gudang 23 × 60 m, kanopi 6 m, pos jaga, parkir motor 12 × 4 m dan mobil 15 × 4 m.', go: () => xpGo({view: 'top'})},
+  {k: 'r1_pondasi', c: 'S-01', t: 'Rencana pondasi', n: 'Pondasi plat 1.50 × 1.50 m di 44 titik kolom, diikat sloof 20 × 40 cm.', go: () => xpGo({view: 'close', B: 1.05})},
+  {k: 'r1_kolom', c: 'S-02', t: 'Rencana kolom', n: 'Empat garis kolom WF 250, portal tiap 6.00 m, bentang 23 m tanpa kolom tengah.', go: () => xpGo({view: 'close', B: 2.05})},
+  {k: 'r1_atap', c: 'S-03', t: 'Rencana atap', n: 'Kuda-kuda WF 250, gording CNP 125 × 2 mm, trekstang Ø12 dan tali angin Ø16.', go: () => xpGo({view: 'top', B: 3.1})},
+  {k: 'r1_utara', c: 'A-02', t: 'Tampak utara & potongan A-A', n: 'Tiga pintu plat baja; tritisan +7.00, bubungan +10.33, pedestal +1.00.', go: () => xpGo({view: 'secA', cut: ['z', .575]})},
+  {k: 'r1_timur', c: 'A-03', t: 'Tampak timur & potongan B-B', n: 'Sebelas portal sepanjang 60 m, dinding bata 3 m dan seng galvalume.', go: () => xpGo({view: 'east'})},
+  {k: 'r1_pos', c: 'A-04', t: 'Pos security — pondasi & denah', n: 'Pos 3.00 × 3.00 m: R. jaga, R. ganti dan KM/WC, sloof 15 × 20.', go: () => xpGo({view: 'pos'})},
+  {k: 'r1_pos2', c: 'A-05', t: 'Pos security — potongan', n: 'Potongan B-B dan potongan selatan pos jaga.', go: () => xpGo({view: 'pos'})},
+] : [
   {k: 'site', c: 'A-00', t: 'Siteplan', n: 'Tapak 90 × 80 m: tiga gudang, sosoran, deret pohon keliling dan akses gerbang.', go: () => xpGo({view: 'top', dwg: true})},
   {k: 'layout', c: 'A-01', t: 'Layout plan', n: 'Tapak 90 × 80 m dengan tiga gudang, sosoran, kantor, pos jaga, parkir, dan 47 pohon.', go: () => xpGo({view: 'top', dwg: true})},
   {k: 'tampak', c: 'A-02', t: 'Tampak depan & potongan C-C', n: 'Muka utara keseluruhan: tiga pelana gudang dan kantor dua lantai beratap miring.', go: () => xpGo({view: 'front'})},
@@ -2826,29 +2945,29 @@ const SHEETS = [
   const Im = (src, x, y, w, h) => I(src, x, y, w, h, 0, 'plain');
   const SP = [
     {k: 'cover', n: 'Halaman judul', tags: 'sampul judul gudang ngoro jurnal', go: () => xpGo({view: 'iso'}),
-      L: {items: [C('Jurnal proyek · 2026', 8, 9), X('Gudang\nNgoro', 8, 14, 84, 2.6), Rl(8, 44, 84), Tx('Tiga unit gudang baja bentang bebas 23 m, sosoran samping, kantor dua lantai, dan pos jaga di atas tapak 90 × 80 m.', 8, 47, 76, 1), TB([['Lokasi', 'Ngoro, Mojokerto'], ['Pemilik', 'PT Oasia Andalan Indosteel'], ['Blok', '84 × 60 m'], ['Bubungan', '+10.33'], ['Di bawah atap', '5.040 m²']], 8, 66, 84)]},
+      L: {items: [C('Jurnal proyek · 2026', 8, 9), X('Gudang\nNgoro', 8, 14, 84, 2.6), Rl(8, 44, 84), Tx(V2 ? 'Revisi 01 — tiga unit gudang baja bentang bebas 23 m dan pos jaga di atas tapak 90 × 80 m, tanpa kantor dan sosoran.' : 'Tiga unit gudang baja bentang bebas 23 m, sosoran samping, kantor dua lantai, dan pos jaga di atas tapak 90 × 80 m.', 8, 47, 76, 1), TB([['Lokasi', 'Ngoro, Mojokerto'], ['Pemilik', 'PT Oasia Andalan Indosteel'], ['Blok', V2 ? '69 × 60 m' : '84 × 60 m'], ['Bubungan', '+10.33'], ['Di bawah atap', V2 ? '4.140 m²' : '5.040 m²']], 8, 66, 84)]},
       R: {items: [F('aerial'), C('Tampak udara · siang', 6, 93, 80, 'w')]}},
     {k: 'dusk', n: 'Tapak saat senja', tags: 'senja tampak timur pelana', bleed: 'dusk', go: () => { xpGo({view: 'east'}); setLight('dusk'); },
       L: {items: [C('01 — Tapak saat senja', 6, 93, 80, 'w')]}, R: {items: [C('Tampak timur', 6, 93, 80, 'w')]}},
     {k: 'build', n: 'Struktur', tags: 'pondasi kolom rangka struktur konstruksi tahap portal', go: () => xpGo({view: 'close', B: 2.05}),
-      L: {items: [C('02 — Struktur', 8, 9), X('Portal baja\n@ 6.00 m', 8, 14, 84, 1.35), Tx('Pondasi plat 1.50 × 1.50 m menopang pedestal 40 × 60 cm sampai +1.00. Kolom WF 350 berdiri di garis unit, jadi bentang 23 m bebas tanpa kolom tengah.', 8, 33, 80, .95), Im('found', 8, 58, 40, 28), Im('front', 52, 58, 40, 28), C('Pedestal', 8, 88, 40), C('Tampak utara', 52, 88, 40)]},
+      L: {items: [C('02 — Struktur', 8, 9), X('Portal baja\n@ 6.00 m', 8, 14, 84, 1.35), Tx('Pondasi plat 1.50 × 1.50 m menopang pedestal 40 × 60 cm sampai +1.00. ' + (V2 ? 'Kolom WF 250' : 'Kolom WF 350') + ' berdiri di garis unit, jadi bentang 23 m bebas tanpa kolom tengah.', 8, 33, 80, .95), Im('found', 8, 58, 40, 28), Im('front', 52, 58, 40, 28), C('Pedestal', 8, 88, 40), C('Tampak utara', 52, 88, 40)]},
       R: {items: [F('frame'), C('Rangka atap terpasang', 6, 93, 80, 'w')]}},
     {k: 'sheets', n: 'Rencana pondasi & kolom', tags: 'rencana pondasi kolom grid dwg lembar', go: () => xpGo({view: 'top', B: 1.05}),
-      L: {items: [C('S-01 · Rencana pondasi', 8, 9), Im('pondasi', 6, 18, 88, 62), C('Skala 1:100 · 55 titik', 8, 86)]},
+      L: {items: [C('S-01 · Rencana pondasi', 8, 9), Im('pondasi', 6, 18, 88, 62), C(V2 ? 'Skala 1:100 · 44 titik' : 'Skala 1:100 · 55 titik', 8, 86)]},
       R: {items: [C('S-02 · Rencana kolom', 8, 9), Im('kolom', 6, 18, 88, 62), C('Grid 6.00 m · 11 portal', 8, 86)]}},
     {k: 'aisle', n: 'Gudang 2', tags: 'rak palet gudang 2 interior forklift gang', bleed: 'interior', go: () => xpGo({view: 'inside'}),
       L: {items: [C('03 — Gudang 2', 6, 93, 80, 'w')]}, R: {items: [C('Gang rak 3.30 m', 6, 93, 80, 'w')]}},
     {k: 'section', n: 'Potongan A-A', tags: 'potongan a-a section pintu elevasi lantai pedestal', go: () => xpGo({view: 'secA', cut: ['z', .575]}),
-      L: {items: [C('A-04 · Potongan A-A', 8, 9), Im('potA', 3, 22, 94, 40), TB([['Tritisan', '+7.00'], ['Bubungan', '+10.33'], ['Pedestal', '+1.00'], ['Lantai', '±0.00 · cor 15 cm']], 8, 70, 84)]},
+      L: {items: [C(V2 ? 'A-02 · Tampak utara & potongan A-A' : 'A-04 · Potongan A-A', 8, 9), Im('potA', 3, 22, 94, 40), TB([['Tritisan', '+7.00'], ['Bubungan', '+10.33'], ['Pedestal', '+1.00'], ['Lantai', '±0.00 · cor 15 cm']], 8, 70, 84)]},
       R: {items: [F('dock'), C('Pintu plat baja dua daun · 6 × 5 m', 6, 93, 86, 'w')]}},
     {k: 'coils', n: 'Gudang 3', tags: 'coil baja crane gudang 3', go: () => xpGo({view: 'iso'}),
       L: {items: [F('coils'), C('Gudang 3', 6, 93, 80, 'w')]},
       R: {items: [C('04 — Gudang 3', 8, 9), X('Coil &\ncrane', 8, 14, 84, 1.6), Tx('Gulungan coil baja tersusun di atas bantalan kayu. Crane berjalan menyusuri bentang 23 m di atas balok runway.', 8, 36, 78, .95), TB([['Bentang', '23.00 m'], ['Panjang', '60.00 m'], ['Luas', '1.380 m²']], 8, 62, 84)]}},
-    {k: 'office', n: 'Kantor', tags: 'kantor denah lantai meeting staf admin', go: () => { document.querySelector('[data-view=officeIn]').click(); },
+    ...(V2 ? [] : [{k: 'office', n: 'Kantor', tags: 'kantor denah lantai meeting staf admin', go: () => { document.querySelector('[data-view=officeIn]').click(); },
       L: {items: [C('A-06 · Denah kantor', 8, 9), Im('kantor', 4, 20, 92, 60), C('Lt. 1 · Lt. 2 (+3.00)', 8, 86)]},
-      R: {items: [F('office'), C('Interior kantor', 6, 93, 80, 'w')]}},
+      R: {items: [F('office'), C('Interior kantor', 6, 93, 80, 'w')]}}]),
     {k: 'night', n: 'Malam', tags: 'malam lampu kanopi night', bleed: 'night', go: () => { xpGo({view: 'iso'}); setLight('night'); },
-      L: {items: [C('05 — Malam', 6, 93, 80, 'w')]}, R: {items: [C('Lampu kanopi & kantor', 6, 93, 80, 'w')]}},
+      L: {items: [C('05 — Malam', 6, 93, 80, 'w')]}, R: {items: [C(V2 ? 'Lampu kanopi & pos jaga' : 'Lampu kanopi & kantor', 6, 93, 80, 'w')]}},
     {k: 'end', n: 'Layout plan', tags: 'layout plan tapak site penutup luas', go: () => xpGo({view: 'top', dwg: true}),
       L: {items: [F('avatar'), C('Jelajahi sebagai orang ketiga', 6, 93, 86, 'w')]},
       R: {items: [C('A-01 · Layout plan', 8, 9), Im('layout', 6, 18, 88, 62), Rl(8, 85, 84), C('Model presentasi, bukan gambar kerja', 8, 88)]}},
@@ -2998,11 +3117,11 @@ const SHEETS = [
     g2.font = `800 ${em * 1.3}px "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif`; g2.fillText('GUDANG NGORO', m, H * .1);
     g2.font = `400 ${em * .5}px "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif`; g2.fillStyle = 'rgba(244,242,236,.82)';
     wrap(g2, 'Jurnal proyek tiga unit gudang baja bentang bebas 23 m di Ngoro, Mojokerto. Berisi gambar kerja — denah, tampak, potongan, pondasi, kolom dan atap — beserta render tapak, interior, senja dan malam.', W - 2 * m).forEach((l, i) => g2.fillText(l, m, H * .2 + i * em * .78));
-    g2.font = `500 ${em * .38}px "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif`; g2.fillStyle = 'rgba(244,242,236,.7)'; ['20 HALAMAN · 9 LEMBAR DWG · 11 RENDER', 'SKALA 1:100 — 1:500', 'PT OASIA ANDALAN INDOSTEEL'].forEach((l, i) => g2.fillText(l, m, H * .48 + i * em * .7));
+    g2.font = `500 ${em * .38}px "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif`; g2.fillStyle = 'rgba(244,242,236,.7)'; [V2 ? 'REVISI 01 · 9 LEMBAR GAMBAR · TANPA KANTOR & SOSORAN' : '20 HALAMAN · 9 LEMBAR DWG · 11 RENDER', 'SKALA 1:100 — 1:500', 'PT OASIA ANDALAN INDOSTEEL'].forEach((l, i) => g2.fillText(l, m, H * .48 + i * em * .7));
     const bx = W - m - W * .3, by = H * .82; g2.fillStyle = '#F4F2EC'; g2.fillRect(bx - em * .4, by - em * .4, W * .3 + em * .8, H * .1 + em * .8); g2.fillStyle = '#15191C'; let xx = bx; let sd = 7; while (xx < bx + W * .3) { sd = (sd * 16807) % 2147483647; const w = 1 + (sd % 4); g2.fillRect(xx, by, w * W / 900, H * .08); xx += (w + 1 + (sd >> 3) % 3) * W / 900; }
     const t2 = new THREE.CanvasTexture(c2); t2.colorSpace = THREE.SRGBColorSpace; t2.anisotropy = 8; backArtM.map = t2; backArtM.needsUpdate = true; dirty = true; kick(); }
   /* ---------- gallery cards: DWG sheets, renders and type cards floating in a white room ---------- */
-  const XK = [['layout', 'Layout plan'], ['aerial', 'Aerial'], ['tampak', 'Tampak'], ['interior', 'Interior gudang'], ['pondasi', 'Denah pondasi'], ['dusk', 'Senja'], ['T', '23 × 60 m'], ['kolom', 'Denah kolom'], ['frame', 'Rangka baja'], ['atap', 'Rencana atap'], ['night', 'Malam'], ['T', '3 unit'], ['utara', 'Tampak utara'], ['dock', 'Dock & kanopi'], ['potA', 'Potongan A-A'], ['coils', 'Coil baja'], ['T', 'Baja WF'], ['timur', 'Tampak timur'], ['office', 'Kantor'], ['kantor', 'Denah kantor'], ['found', 'Pondasi'], ['T', '+10.33'], ['front', 'Tampak depan']];
+  const XK = [['layout', 'Layout plan'], ['aerial', 'Aerial'], ['tampak', 'Tampak'], ['interior', 'Interior gudang'], ['pondasi', 'Denah pondasi'], ['dusk', 'Senja'], ['T', '23 × 60 m'], ['kolom', 'Denah kolom'], ['frame', 'Rangka baja'], ['atap', 'Rencana atap'], ['night', 'Malam'], ['T', '3 unit'], ['utara', 'Tampak utara'], ['dock', 'Dock & kanopi'], ['potA', 'Potongan A-A'], ['coils', 'Coil baja'], ['T', 'Baja WF'], ['timur', 'Tampak timur'], ['office', 'Kantor'], ['kantor', 'Denah kantor'], ['found', 'Pondasi'], ['T', '+10.33'], ['front', 'Tampak depan']].filter(([k]) => !V2 || !['office', 'kantor'].includes(k));
   const EXTRAS = XK.map(([k, n], i) => { const m = new THREE.MeshBasicMaterial({map: blankTex, transparent: true, side: THREE.DoubleSide}); const me = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.25), m); me.matrixAutoUpdate = false; bs.add(me);
     const side = [-1, 1, 0][i % 3], z = 12.5 - i * .92, x = side ? side * (1.9 + (i * 7 % 5) * .32) : ((i * 5 % 3) - 1) * .9, y = side ? ((i * 3 % 5) - 2) * .34 : (i % 2 ? 1.25 : -1.2) + .1;
     return {me, m, k, n, gp: new THREE.Vector3(x, y, z), gq: new THREE.Quaternion().setFromEuler(new THREE.Euler(side ? 0 : (y > 0 ? .5 : -.5), side ? -side * (Math.PI / 2 - .5) : 0, 0)), ph: i * 1.7}; });
@@ -3169,7 +3288,7 @@ const SHEETS = [
   $('#jSearch').onclick = () => { const b = $('#jSearchBox'); b.hidden = !b.hidden; $('#jMenuBox').hidden = true; if (!b.hidden) $('#jq').focus(); };
   $('#jq').addEventListener('input', e => { const q = e.target.value.trim().toLowerCase(); const out = $('#jRes'); out.innerHTML = ''; if (!q) return;
     SP.forEach((s, i) => { if ((s.n + ' ' + s.tags).toLowerCase().includes(q)) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = s.n; b.onclick = () => { $('#jSearchBox').hidden = true; setGrid(false); goSpread(i); }; out.appendChild(b); } });
-    if (!out.children.length) out.textContent = 'Tidak ada halaman yang cocok. Coba "kolom", "atap" atau "kantor".'; });
+    if (!out.children.length) out.textContent = V2 ? 'Tidak ada halaman yang cocok. Coba "kolom", "atap" atau "pos".' : 'Tidak ada halaman yang cocok. Coba "kolom", "atap" atau "kantor".'; });
   $('#jMenu').onclick = () => { const b = $('#jMenuBox'); b.hidden = !b.hidden; $('#jSearchBox').hidden = true; };
   $('#jmPlan').onclick = () => { $('#jMenuBox').hidden = true; openGamtek(); }; $('#jmExplore').onclick = () => { $('#jMenuBox').hidden = true; enterExplore(); }; $('#jmTour').onclick = () => { $('#jMenuBox').hidden = true; startTour(); };
 
