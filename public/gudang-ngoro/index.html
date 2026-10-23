@@ -2172,8 +2172,13 @@ function setTrees(B) { palmGrow = clamp((B - 4) / 1);
 
 /* ================= Poly Haven PBR textures + HDRI ================= */
 const TL = new THREE.TextureLoader();
-const HI = new Set(SMALL || GFX.tier < 2 ? [] : ['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
-function phTex(name, rx, ry, srgb) { const t = TL.load(`assets/${HI.has(name) ? 'tex4k' : 'tex'}/${name}.jpg`, () => { dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
+const HI = new Set(['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
+/* textures decode off the main thread (createImageBitmap) and upload to the GPU one per frame while nobody is scrolling */
+const UPQ = [], TEXS = {}; let lastScroll = 0; addEventListener('scroll', () => { lastScroll = performance.now(); }, {passive: true}); addEventListener('wheel', () => { lastScroll = performance.now(); }, {passive: true}); addEventListener('touchmove', () => { lastScroll = performance.now(); }, {passive: true});
+const scrolling = () => performance.now() - lastScroll < 220;
+function loadBitmap(t, url) { return fetch(url).then(r => r.blob()).then(b => createImageBitmap(b, {imageOrientation: 'flipY'})).then(bmp => { if (t.image && t.image.close) t.image.close(); t.image = bmp; t.flipY = false; UPQ.push(t); dirtyTex = true; }).catch(() => { TL.load(url, img => { t.image = img.image; t.needsUpdate = true; dirtyTex = true; }); }); }
+function upgrade4k() { if (upgrade4k.done || GFX.lvl !== 'tinggi' || SMALL) return; upgrade4k.done = true; let i = 0; for (const n of HI) for (const t of (TEXS[n] || [])) setTimeout(() => loadBitmap(t, `assets/tex4k/${n}.jpg`), 400 * i++); }
+function phTex(name, rx, ry, srgb) { const t = new THREE.Texture(); (TEXS[name] = TEXS[name] || []).push(t); if (window.createImageBitmap) loadBitmap(t, `assets/tex/${name}.jpg`); else TL.load(`assets/tex/${name}.jpg`, img => { t.image = img.image; t.needsUpdate = true; dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
 let dirtyTex = false;
 function pbr(m, base, rx, ry, {diff = true, color, rough, metal, ns = 1} = {}) {
   if (diff) m.map = phTex(base + '_diff', rx, ry, true); m.normalMap = phTex(base + '_nor', rx, ry); m.normalScale = new THREE.Vector2(ns, ns); m.roughnessMap = phTex(base + '_rough', rx, ry);
@@ -2193,7 +2198,7 @@ function applyPBR() {
 }
 const HDRI = {day: 'kloofendal_48d_partly_cloudy_puresky_2k', dusk: 'industrial_sunset_02_puresky_1k', night: 'kloppenheim_02_puresky_1k'}; const ENV = {};
 function loadEnv(k) { if (ENV[k]) return ENV[k];
-  ENV[k] = fetch(`assets/hdri/${HDRI[k]}.hdr.txt`).then(r => r.text()).then(b64 => { const bin = atob(b64.trim()), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  ENV[k] = fetch(`assets/hdri/${HDRI[k]}.hdr`).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(b => new Uint8Array(b)).catch(() => fetch(`assets/hdri/${HDRI[k]}.hdr.txt`).then(r => r.text()).then(b64 => { const bin = atob(b64.trim()), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8; })).then(u8 => {
     const L = new RGBELoader(); L.setDataType(THREE.HalfFloatType); const d = L.parse(u8.buffer); const t = new THREE.DataTexture(d.data, d.width, d.height, THREE.RGBAFormat, d.type); t.colorSpace = THREE.LinearSRGBColorSpace; t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.flipY = false; t.needsUpdate = true;
     t.mapping = THREE.EquirectangularReflectionMapping; return {bg: t, env: pmrem.fromEquirectangular(t).texture}; }).catch(() => null); return ENV[k]; }
 function applyEnv() { const k = light; loadEnv(k).then(e => { if (!e || k !== light) return; scene.environment = e.env; if (mode === 'explore') { scene.background = e.bg; scene.backgroundIntensity = {day: .9, dusk: .85, night: .7}[k]; } }); }
@@ -3034,7 +3039,7 @@ const EXP = (() => { const box = $('#xlab'); const L = [['Atap seng galvalume 0.
   return {x: 0, label(X) { if (!box) return; box.classList.toggle('on', X > .6); if (X <= .6) return; L.forEach(([, g, y], i) => { pv.set(-30, y + g.position.y, -30).project(camera); els[i].style.transform = `translate(${((pv.x + 1) / 2 * innerWidth).toFixed(0)}px,${((1 - pv.y) / 2 * innerHeight).toFixed(0)}px)`; }); }}; })();
 const PERF = {ema: 16.7, n: 0, skip: 3, t: 0, bad: 0, good: 0, frame: 0, vis: true};
 const inView = el => { if (!el) return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
-function applyGfx(full) { pr = GFX.pr(); renderer.setPixelRatio(pr); resize();
+function applyGfx(full) { pr = mode === 'story' ? Math.min(GFX.pr(), 1.25) : GFX.pr(); renderer.setPixelRatio(pr); resize();
   if (full) { const c = GFX.c; HQ = c.post; $('#optHQ').checked = HQ; const st = c.soft ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
     if (renderer.shadowMap.type !== st) { renderer.shadowMap.type = st; scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); }); }
     if (sun.shadow.mapSize.x !== c.sm) { sun.shadow.mapSize.set(c.sm, c.sm); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } } shadowBias();
@@ -3050,6 +3055,8 @@ function perfTick(rawMs) { if (PERF.skip > 0) { PERF.skip--; return; } PERF.ema 
   else { PERF.bad = PERF.good = 0; } window.__gfxUI && window.__gfxUI(true); }
 function frame(now) {
   const raw = now - last; const dt = Math.min(.05, raw / 1000); last = now;
+  if (UPQ.length && !scrolling()) { const t = UPQ.shift(); t.needsUpdate = true; try { renderer.initTexture(t); } catch (e) {} }
+  if (mode !== PERF.mode) { PERF.mode = mode; applyGfx(false); if (mode === 'explore') setTimeout(upgrade4k, 1500); }
   { const want = mode !== 'story' || tour.on || inView($('#hero')) || inView($('#steps')); if (want) WARM.firstShow(); const vis = want && !WARM.hold; if (vis !== PERF.vis) { PERF.vis = vis; canvas.style.visibility = vis ? '' : 'hidden'; PERF.skip = 3; renderer.shadowMap.needsUpdate = true; } if (!vis) { requestAnimationFrame(frame); return; } }
   perfTick(raw); PERF.frame++; if (PERF.frame % GFX.c.shadowEvery === 0) renderer.shadowMap.needsUpdate = true;
   if (mode === 'story') {
@@ -3109,14 +3116,14 @@ addEventListener('resize', resize); resize();
 setLight('day'); applyBuild(0); setTrees(0); applyCut();
 /* ---------- WARM: pre-compile shaders, upload textures and bake the shadow map while the loader/book is on screen ---------- */
 const WARM = (() => { let done = false, started = false, shown = false, prog = 0, hold = false, ov = null;
-  const idle = () => new Promise(r => (window.requestIdleCallback ? requestIdleCallback(() => r(), {timeout: 1200}) : setTimeout(r, 60)));
+  const idle = () => new Promise(r => { const go = () => (window.requestIdleCallback ? requestIdleCallback(() => scrolling() ? setTimeout(go, 160) : r(), {timeout: 1500}) : setTimeout(() => scrolling() ? go() : r(), 60)); go(); });
   async function run() { if (started) return; started = true; const t0 = performance.now();
     try { const groups = [...Object.values(G), G.ghost, ...root.children.filter(o => !Object.values(G).includes(o))];
       let gi = 0; for (const g of groups) { prog = .7 * (++gi / groups.length); if (!g) continue; const saved = []; g.traverse(o => { saved.push([o, o.visible]); o.visible = true; });
         try { if (renderer.compileAsync && renderer.extensions.has('KHR_parallel_shader_compile')) await renderer.compileAsync(g, camera, scene); else renderer.compile(g, camera, scene); } catch (e) {}
         for (const [o, v] of saved) o.visible = v; await idle(); }
       const tex = new Set(); scene.traverse(o => { const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; for (const m of ms) for (const k of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'alphaMap', 'emissiveMap']) if (m[k] && m[k].isTexture) tex.add(m[k]); });
-      let n = 0; for (const t of tex) { prog = .7 + .2 * (++n / Math.max(1, tex.size)); if (t.image) { renderer.initTexture(t); if (n % 4 === 0) await idle(); } }
+      for (let w = 0; w < 60 && UPQ.length; w++) { prog = .7 + .2 * (1 - UPQ.length / Math.max(1, tex.size)); await new Promise(r => setTimeout(r, 120)); }
       await idle(); const rt = new THREE.WebGLRenderTarget(64, 36); const saved = []; scene.traverse(o => { saved.push([o, o.visible]); }); renderer.shadowMap.needsUpdate = true; renderer.setRenderTarget(rt); renderer.render(scene, camera); renderer.setRenderTarget(null); rt.dispose();
       if (HQ && !composer) { await idle(); makeComposer(); } } catch (e) { console.warn('warm', e); }
     done = true; prog = 1; window.__warm = Math.round(performance.now() - t0); if (hold) release(); }
