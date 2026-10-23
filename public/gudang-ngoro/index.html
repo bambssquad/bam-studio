@@ -908,6 +908,16 @@ body.night .mega-w{color:#F7F7F5}
 .spill{display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding-left:10px;padding-right:10px}
 .spill .snd-on{display:none}.spill[aria-pressed=true] .snd-on{display:block}
 @media (max-width:760px){.bar .btn3d{display:none}}.spill[aria-pressed=true] .snd-off{display:none}
+/* Revisi 37 — back to book + transition */
+.bar .btn.back{display:none;align-items:center;gap:8px;background:#0B0B0B;color:#F7F7F5;border-color:#0B0B0B}
+body.explore .bar .btn.back{display:inline-flex}body.explore .bar #btnExplore{display:none}
+.xfx{position:fixed;inset:0;z-index:130;background:#0B0B0B;color:#F7F7F5;display:grid;place-items:center;font-family:var(--HV)}
+.xfx[hidden]{display:none}
+.xfx-in{text-align:center}.xfx-logo{width:min(26vw,220px);margin:0 auto 26px}.xfx-logo svg{display:block;width:100%;height:auto;color:#F7F7F5}
+.xfx p{margin:0 0 12px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.65}
+.xfx h2{margin:0;font-size:clamp(64px,13vw,210px);line-height:.86;letter-spacing:-.06em;font-weight:700;display:flex;flex-direction:column;align-items:center}
+.xfx h2 span{display:block;overflow:hidden}
+@media (max-width:760px){.bar .btn.back .lbl{display:none}.bar .btn.back{padding-left:12px;padding-right:12px}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -1010,6 +1020,7 @@ body.night .mega-w{color:#F7F7F5}
   <div class="ldr-top"><span>Selaras Adhi Perkasa</span><span>Gudang Ngoro — Mojokerto</span></div>
   <div class="ldr-foot"><span id="l3dPct">000</span><span class="ldr-bar"><b id="l3dBar"></b></span><span>Memuat model 3D</span></div>
 </div>
+<div class="xfx" id="xfx" hidden aria-hidden="true"><div class="xfx-in"><div class="xfx-logo"><svg class="ldr-svg" viewBox="18 21 692 165" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M18 186L172 186L228 145L228 186L362 186L414 145L414 186L554 186L554 150L661 150L710 113L710 21L554 21L494 69L494 21L345 21L283 69L283 21L102 21L18 81L18 126L128 126L128 138L18 138ZM403 124L332 124L371 82ZM128 89L128 77L273 77L228 113L228 89ZM554 73L640 73L640 102L554 102Z"/></svg></div><p class="mono">Jurnal proyek</p><h2><span>Gambar</span><span>Kerja</span></h2></div></div>
 <div class="mega" id="mega" aria-hidden="true"><span class="mega-w" id="megaW">Gudang</span><span class="mega-n mono" id="megaN">00 / 05</span></div>
 <div class="xlab" id="xlab" aria-hidden="true"></div>
 <canvas id="stage" tabindex="0" aria-label="Model 3D gudang. Di mode jelajah: seret untuk memutar, gulir untuk zoom."></canvas>
@@ -1025,7 +1036,7 @@ body.night .mega-w{color:#F7F7F5}
   <div class="brand"><b>Gudang Ngoro</b><span class="mono">PT HP Metals Indonesia · 3 unit</span></div>
   <div class="bar-actions">
     <button class="btn spill" id="btnSnd" type="button" aria-pressed="false" aria-label="Suara aktif/nonaktif" title="Suara"><svg class="snd-on" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><svg class="snd-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9l6 6M22 9l-6 6"/></svg></button><button class="btn gpill" id="btnGfx" type="button" aria-label="Pengaturan grafis" title="Grafis"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><b class="mono">Auto</b></button><button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
-    <button class="btn primary" id="btnExplore" type="button">Jelajahi model</button>
+    <button class="btn primary" id="btnExplore" type="button">Jelajahi model</button><button class="btn back" id="btnBack" type="button" aria-label="Keluar ke buku" title="Kembali ke buku (Esc)"><span class="lbl">Kembali ke buku</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
 </header>
 
@@ -2760,6 +2771,25 @@ function exitExplore() { setTimeout(() => { realGround(false); scene.background 
 }
 for (const id of ['#btnExplore', '#btnExplore2']) $(id).onclick = enterExplore;
 $('#btnExit').onclick = exitExplore;
+/* back to the book: camera lifts away, an iris of ink closes from the button, the page jumps to the journal and the curtain lifts */
+function backToBook() { const fx = $('#xfx'), btn = $('#btnBack'); if (!fx || fx.dataset.busy) return; fx.dataset.busy = '1';
+  const r = btn.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, R = Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy)) + 20;
+  if (window.__rv) window.__rv.close(); stopTour(); if (drive) stopDrive(); if (nav !== 'orbit') enterOrbit();
+  flyTo([camera.position.x * .4, 230, camera.position.z * .4 - 6], [0, 0, -6], RM ? .01 : .9); canvas.animate([{filter: 'none', transform: 'scale(1)'}, {filter: 'blur(6px)', transform: 'scale(1.06)'}], {duration: 800, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards'});
+  const ws = [...fx.querySelectorAll('h2 span')], lg = fx.querySelector('.xfx-logo'), pp = fx.querySelector('p');
+  fx.hidden = false; for (const e of [...ws, lg, pp]) e.style.opacity = 0;
+  const close = fx.animate([{clipPath: `circle(0px at ${cx}px ${cy}px)`}, {clipPath: `circle(${R}px at ${cx}px ${cy}px)`}], {duration: RM ? 1 : 850, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards'});
+  close.onfinish = () => {
+    lg.animate([{opacity: 0, transform: 'scale(1.6)', filter: 'blur(8px)'}, {opacity: 1, transform: 'scale(1)', filter: 'blur(0)'}], {duration: 600, easing: 'cubic-bezier(.2,.75,.15,1)', fill: 'forwards'});
+    pp.animate([{opacity: 0}, {opacity: .65}], {duration: 400, delay: 200, fill: 'forwards'});
+    ws.forEach((w, i) => w.animate([{opacity: 0, transform: 'translateY(60%)'}, {opacity: 1, transform: 'none'}], {duration: 700, delay: 150 + i * 110, easing: 'cubic-bezier(.2,.75,.15,1)', fill: 'forwards'}));
+    exitExplore(); canvas.getAnimations().forEach(a => a.cancel());
+    const book = $('#book'); window.scrollTo({top: book ? book.offsetTop + (book.offsetHeight - innerHeight) * .82 : 0, behavior: 'instant'});
+    setTimeout(() => { const open = fx.animate([{clipPath: 'inset(0 0 0% 0)'}, {clipPath: 'inset(0 0 100% 0)'}], {duration: RM ? 1 : 950, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards'});
+      ws.forEach((w, i) => w.animate([{transform: 'none'}, {transform: 'translateY(-40%)'}], {duration: 900, delay: i * 60, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards'}));
+      open.onfinish = () => { fx.hidden = true; close.cancel(); open.cancel(); delete fx.dataset.busy; }; }, RM ? 10 : 1150); }; }
+$('#btnBack').onclick = backToBook;
+addEventListener('keydown', e => { if (e.key === 'Escape' && mode === 'explore' && !tour.on && !drive && !document.querySelector('.rv.open') && $('#gamtek').hidden && $('#dwgv').hidden) backToBook(); });
 document.querySelectorAll('#views [data-view]').forEach(b => b.onclick = () => { const v = VIEWS[b.dataset.view]; if (nav !== 'orbit') enterOrbit(); if (b.dataset.view === 'officeIn') { $('#ly-officeRoof').checked = G.officeRoof.visible = false; $('#ly-officeUp').checked = G.officeUp.visible = false; } flyTo(v.p, v.t); setPressed('#views', b.dataset.view); });
 document.querySelectorAll('#nav [data-nav]').forEach(b => b.onclick = () => b.dataset.nav === 'orbit' ? enterOrbit() : enterNav(b.dataset.nav));
 document.querySelectorAll('#light [data-light]').forEach(b => b.onclick = () => setLight(b.dataset.light));
@@ -3960,5 +3990,3 @@ const SHEETS = V2 ? [
 
 
 </script>
-
-</html>
