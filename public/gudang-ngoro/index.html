@@ -1430,7 +1430,7 @@ const pmrem = new THREE.PMREMGenerator(renderer);
 const skyScene = new THREE.Scene(); const sky = new Sky(); sky.scale.setScalar(1000); skyScene.add(sky);
 Object.assign(sky.material.uniforms.turbidity, {value: 5}); sky.material.uniforms.rayleigh.value = 1.4; sky.material.uniforms.mieCoefficient.value = .004; sky.material.uniforms.mieDirectionalG.value = .82;
 let envRT = null;
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+const STUDIO_ENV = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; scene.environment = STUDIO_ENV;
 function buildEnv() {} // studio IBL kept (sky IBL over-exposed the paper palette); per-preset strength set in setLight
 
 const hemi = new THREE.HemisphereLight(0xf4f6f8, 0xc9c6bc, 1.1); scene.add(hemi);
@@ -2211,8 +2211,19 @@ const HDRI = {day: 'kloofendal_48d_partly_cloudy_puresky_2k', dusk: 'industrial_
 function loadEnv(k) { if (ENV[k]) return ENV[k];
   ENV[k] = fetch(`assets/hdri/${HDRI[k]}.hdr`).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(b => new Uint8Array(b)).catch(() => fetch(`assets/hdri/${HDRI[k]}.hdr.txt`).then(r => r.text()).then(b64 => { const bin = atob(b64.trim()), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8; })).then(u8 => {
     const L = new RGBELoader(); L.setDataType(THREE.HalfFloatType); const d = L.parse(u8.buffer); const t = new THREE.DataTexture(d.data, d.width, d.height, THREE.RGBAFormat, d.type); t.colorSpace = THREE.LinearSRGBColorSpace; t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.flipY = false; t.needsUpdate = true;
-    t.mapping = THREE.EquirectangularReflectionMapping; return {bg: t, env: pmrem.fromEquirectangular(t).texture}; }).catch(() => null); return ENV[k]; }
-function applyEnv() { const k = light; loadEnv(k).then(e => { if (!e || k !== light) return; scene.environment = e.env; if (mode === 'explore') { scene.background = e.bg; scene.backgroundIntensity = {day: .9, dusk: .85, night: .7}[k]; } }); }
+    t.mapping = THREE.EquirectangularReflectionMapping;
+    /* every PMREM at the same cube size (256, = studio IBL) so switching presets never changes envMapCubeUVHeight -> no shader recompile of every material */
+    renderer.initTexture(t); const iw = t.image.width; t.image.width = 1024; const env = pmrem.fromEquirectangular(t).texture; t.image.width = iw; return {bg: t, env}; }).catch(() => null); return ENV[k]; }
+/* low spec: no HDRI, studio IBL + cheap gradient sky */
+const SKYG = {}; function skyGrad(k) { if (SKYG[k]) return SKYG[k]; const c = document.createElement('canvas'); c.width = 4; c.height = 256; const x = c.getContext('2d'), g = x.createLinearGradient(0, 0, 0, 256);
+  const st = {day: ['#9fbcd6', '#dfe7ec', '#eef0ee'], dusk: ['#5d6f8f', '#e7b79a', '#f3dcc8'], night: ['#060a14', '#121a2b', '#1d2636']}[k]; g.addColorStop(0, st[0]); g.addColorStop(.62, st[1]); g.addColorStop(1, st[2]); x.fillStyle = g; x.fillRect(0, 0, 4, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return SKYG[k] = t; }
+const liteEnv = () => GFX.lvl === 'rendah';
+/* pre-warm every HDRI + PMREM during idle so a day/night switch never decodes or convolves on click */
+function warmEnvs() { if (warmEnvs.on || liteEnv()) return; warmEnvs.on = true; try { pmrem.compileEquirectangularShader(); } catch (e) {}
+  const idle = () => new Promise(r => window.requestIdleCallback ? requestIdleCallback(r, {timeout: 2500}) : setTimeout(r, 300));
+  (async () => { for (const k of [light, 'night', 'dusk', 'day']) { await idle(); if (scrolling()) await new Promise(r => setTimeout(r, 600)); await loadEnv(k); } })(); }
+function applyEnv() { const k = light; if (liteEnv()) { scene.environment = STUDIO_ENV; if (mode === 'explore') { scene.background = skyGrad(k); scene.backgroundIntensity = 1; } return; } loadEnv(k).then(e => { if (!e || k !== light) return; scene.environment = e.env; if (mode === 'explore') { scene.background = e.bg; scene.backgroundIntensity = {day: .9, dusk: .85, night: .7}[k]; } }); }
 const realGround = on => { const m = mat.ground; m.normalMap = null; m.roughnessMap = null; if (on) { m.map = null; m.color.set(light === 'night' ? 0x2b313a : light === 'dusk' ? 0xf1e9e1 : 0xf6f6f3); } else { m.map = gridTex; } m.needsUpdate = true; };
 setTimeout(() => { applyPBR(); applyEnv(); }, 400);
 
@@ -2757,7 +2768,7 @@ for (const [k, n0] of LAYERS) { const n = V2 && k === 'office' ? 'Pos jaga' : n0
   l.querySelector('input').addEventListener('change', e => { G[k].visible = e.target.checked; if (k === 'found') foundView = e.target.checked; }); }
 let foundView = true;
 
-function enterExplore() { setTimeout(() => { setLight(light); realGround(true); }, 0);
+function enterExplore() { setTimeout(() => { setLight(light); realGround(true); }, 0); setTimeout(warmEnvs, 2500);
   if (mode === 'explore') return; mode = 'explore'; document.body.classList.add('explore'); barEl.classList.remove('ondark');
   B = 5; applyBuild(5); Bshown = 5; setMin(SMALL); syncOpenings(); $('#stage5').value = 500; $('#stageval').textContent = 'selesai'; G.ghost.visible = false; G.dwg.visible = $('#ly-dwg').checked;
   controls.target.copy(curTgt); camera.position.copy(curPos); controls.enabled = nav === 'orbit';
@@ -2770,6 +2781,7 @@ function exitExplore() { setTimeout(() => { realGround(false); scene.background 
   curPos.copy(camera.position); curTgt.copy(controls.target); Bshown = -1;
 }
 for (const id of ['#btnExplore', '#btnExplore2']) $(id).onclick = enterExplore;
+{ const go = () => setTimeout(() => { const t = () => WARM.done ? warmEnvs() : setTimeout(t, 1500); t(); }, 3000); if (window.__ldrDone) go(); else addEventListener('ldr:done', go, {once: true}); }
 $('#btnExit').onclick = exitExplore;
 /* back to the book: camera lifts away, an iris of ink closes from the button, the page jumps to the journal and the curtain lifts */
 function backToBook() { const fx = $('#xfx'), btn = $('#btnBack'); if (!fx || fx.dataset.busy) return; fx.dataset.busy = '1';
@@ -2792,7 +2804,13 @@ $('#btnBack').onclick = backToBook;
 addEventListener('keydown', e => { if (e.key === 'Escape' && mode === 'explore' && !tour.on && !drive && !document.querySelector('.rv.open') && $('#gamtek').hidden && $('#dwgv').hidden) backToBook(); });
 document.querySelectorAll('#views [data-view]').forEach(b => b.onclick = () => { const v = VIEWS[b.dataset.view]; if (nav !== 'orbit') enterOrbit(); if (b.dataset.view === 'officeIn') { $('#ly-officeRoof').checked = G.officeRoof.visible = false; $('#ly-officeUp').checked = G.officeUp.visible = false; } flyTo(v.p, v.t); setPressed('#views', b.dataset.view); });
 document.querySelectorAll('#nav [data-nav]').forEach(b => b.onclick = () => b.dataset.nav === 'orbit' ? enterOrbit() : enterNav(b.dataset.nav));
-document.querySelectorAll('#light [data-light]').forEach(b => b.onclick = () => setLight(b.dataset.light));
+/* 0.6 s crossfade: freeze the current frame onto a 2D canvas, switch underneath, fade the snapshot away */
+function fadeLight(k) { if (k === light) return; if (mode !== 'explore' || RM) return setLight(k);
+  let fc = $('#lfx'); if (!fc) { fc = document.createElement('canvas'); fc.id = 'lfx'; fc.setAttribute('aria-hidden', 'true'); Object.assign(fc.style, {position: 'fixed', inset: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: 4, opacity: 0}); canvas.after(fc); }
+  try { const w = Math.round(innerWidth * Math.min(1, pr)), h = Math.round(innerHeight * Math.min(1, pr)); if (fc.width !== w || fc.height !== h) { fc.width = w; fc.height = h; } draw(); fc.getContext('2d').drawImage(canvas, 0, 0, w, h); fc.getAnimations().forEach(a => a.cancel()); fc.style.opacity = 1; } catch (e) { return setLight(k); }
+  setLight(k); renderer.shadowMap.needsUpdate = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => { const a = fc.animate([{opacity: 1}, {opacity: 0}], {duration: 600, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards'}); a.onfinish = () => { fc.style.opacity = 0; a.cancel(); }; })); }
+document.querySelectorAll('#light [data-light]').forEach(b => b.onclick = () => fadeLight(b.dataset.light));
 document.querySelectorAll('#cut [data-cut]').forEach(b => b.onclick = () => { cut.axis = b.dataset.cut; setPressed('#cut', cut.axis); applyCut(); });
 $('#cutpos').addEventListener('input', e => { cut.v = e.target.value / 1000; applyCut(); });
 $('#optShadow').addEventListener('change', e => { renderer.shadowMap.enabled = e.target.checked; CLIP.forEach(m => m.needsUpdate = true); mat.ground.needsUpdate = mat.pave.needsUpdate = mat.road.needsUpdate = true; });
@@ -3487,7 +3505,7 @@ document.querySelectorAll('.emo b').forEach(b => b.onclick = () => emote(b.datas
   el.querySelectorAll('.at-menu b').forEach(b => b.addEventListener('click', () => setTimeout(() => open(false), 250)));
   addEventListener('pointerdown', e => { if (el.classList.contains('open') && !el.contains(e.target)) open(false); }); } }
 addEventListener('keydown', e => { if (nav !== 'third' || e.target.tagName === 'INPUT') return; const m = {'1': 'wave', '2': 'clap', '3': 'dance', '4': 'jump', '5': 'salute'}[e.key]; if (m) emote(m); });
-window.__scene = scene; window.__gn = {flyTo: (p, t) => { flyTo(p, t, .01); }, setStage, setLight, enterExplore, enterNav, me, xpGo, VIEWS, setMin, cam: camera, avatar, setAllDoors, setGate, emote};
+window.__scene = scene; window.__ren = renderer; window.__envs = () => Object.keys(ENV); window.__gn = {flyTo: (p, t) => { flyTo(p, t, .01); }, setStage, setLight, enterExplore, enterNav, me, xpGo, VIEWS, setMin, cam: camera, avatar, setAllDoors, setGate, emote};
 if (location.hash === '#jelajah') setTimeout(enterExplore, 300);
 
 /* ================= sheets: data ================= */
