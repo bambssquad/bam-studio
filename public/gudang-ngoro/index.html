@@ -2208,7 +2208,7 @@ setTimeout(() => { applyPBR(); applyEnv(); }, 400);
 /* ---------- wet ground: puddles that mirror the sky ---------- */
 { mat.puddle = new THREE.MeshPhysicalMaterial({color: 0x2c3136, roughness: .03, metalness: .0, clearcoat: 1, clearcoatRoughness: .02, transparent: true, opacity: .92, envMapIntensity: 1.6});
   const blob = (r, seed) => { const pts = []; for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2; const k = 1 + .28 * Math.sin(a * 3 + seed) + .16 * Math.sin(a * 5 + seed * 2.3); pts.push(new THREE.Vector2(Math.cos(a) * r * k, Math.sin(a) * r * k * .62)); } return new THREE.ShapeGeometry(new THREE.Shape(pts)); };
-  const PUD = [[-20, -40, 1.6], [24, -36.5, 1.4], [-38, -33.5, 1.3]];
+  const PUD = []; // puddles removed (read as odd dark blobs)
   PUD.forEach(([x, z, r], i) => { const m = new THREE.Mesh(blob(r, i * 1.7), mat.puddle); m.rotation.x = -Math.PI / 2; m.rotation.z = i * .7; m.position.set(x, z < -46 ? .05 : .03, z); m.material.polygonOffset = true; m.material.polygonOffsetFactor = -4; m.material.polygonOffsetUnits = -8; m.receiveShadow = true; G.site.add(m); reg(m, 5, .5, 'pop'); }); }
 
 /* ---------- shrubs and grass tufts under the palms ---------- */
@@ -2601,7 +2601,7 @@ function driveFrame(dt, fwd, str) {
   /* headlight */
   { const front = -2.2 - (d.f.kind === 'truck' ? 3.2 : 0) + (d.f.kind === 'motor' ? 1.5 : 0), hy = d.f.kind === 'truck' ? .9 : d.f.kind === 'forklift' ? 1.95 : .72;
     HL.intensity = d.lights ? (light === 'day' ? 120 : 260) : 0; if (d.lights) { HL.position.copy(L2W([0, hy, front])); HL.target.position.copy(L2W([0, 0, front - 16])); }
-    BEAM.g.visible = d.lights; if (d.lights) { const len = 11, wid = d.f.kind === 'motor' ? 2.2 : 3.6; BEAM.g.position.copy(L2W([0, 0, 0])); BEAM.g.rotation.set(0, d.h, 0); BEAM.pool.position.set(0, fy + .03 - f.position.y + .02, front - len * .55); BEAM.pool.scale.set(wid * 1.6, 1, len); BEAM.cone.position.set(0, hy, front); BEAM.cone.scale.set(wid * .55, hy * .9, len); BEAM.cone.material.opacity = light === 'day' ? .035 : .08; BEAM.pool.material.opacity = light === 'day' ? .45 : 1; } }
+    BEAM.g.visible = d.lights; if (d.lights) { const len = 11, wid = d.f.kind === 'motor' ? 2.2 : 3.6; BEAM.g.position.copy(L2W([0, 0, 0])); BEAM.g.rotation.set(0, d.h, 0); BEAM.pool.position.set(0, fy + .03 - f.position.y + .02, front - len * .55); BEAM.pool.scale.set(wid * 1.6, 1, len); BEAM.cone.position.set(0, hy, front); BEAM.cone.scale.set(wid * .55, hy * .9, len); BEAM.cone.material.opacity = light === 'day' ? 0 : .08; BEAM.pool.material.opacity = light === 'day' ? .1 : 1; BEAM.cone.visible = light !== 'day'; } }
   { const kmh = Math.abs(d.v) * 3.6; const el = $('#dvSpd'); if (el) el.textContent = Math.round(kmh); }
   if (nav === 'walk') { yaw = d.h; const e = L2W(k.eye); camera.position.copy(e); camera.rotation.set(pitch, yaw, 0, 'YXZ'); }
   else { let dh = d.h - camYaw; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); camYaw += dh * Math.min(1, dt * 2.5); const head = V(p.x, fy + k.hh, p.z); let dist = k.dist;
