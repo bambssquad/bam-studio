@@ -904,6 +904,10 @@ body.night .mega-w{color:#F7F7F5}
 .emo.at .at-menu b i{display:block;font:500 10px var(--HV);font-style:normal;color:rgba(255,255,255,.75)}
 .emo.at .at-menu b:hover{background:rgba(255,255,255,.14)}.emo.at .at-menu b.on{background:#fff;color:#0B0B0B;transform:none}.emo.at .at-menu b.on i{color:#333}
 @media (max-width:760px){.emo.at{width:50px;height:50px}.at-btn{width:50px;height:50px;border-radius:14px}.at-menu{grid-template-columns:repeat(3,56px)}.emo.at .at-menu b{width:56px;height:56px;font-size:21px}.emo.at .at-menu b i{display:block}}
+/* Revisi 34 — header sound toggle */
+.spill{display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding-left:10px;padding-right:10px}
+.spill .snd-on{display:none}.spill[aria-pressed=true] .snd-on{display:block}
+@media (max-width:760px){.bar .btn3d{display:none}}.spill[aria-pressed=true] .snd-off{display:none}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -1020,7 +1024,7 @@ body.night .mega-w{color:#F7F7F5}
 <header class="bar">
   <div class="brand"><b>Gudang Ngoro</b><span class="mono">PT HP Metals Indonesia · 3 unit</span></div>
   <div class="bar-actions">
-    <button class="btn gpill" id="btnGfx" type="button" aria-label="Pengaturan grafis" title="Grafis"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><b class="mono">Auto</b></button><button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
+    <button class="btn spill" id="btnSnd" type="button" aria-pressed="false" aria-label="Suara aktif/nonaktif" title="Suara"><svg class="snd-on" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><svg class="snd-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9l6 6M22 9l-6 6"/></svg></button><button class="btn gpill" id="btnGfx" type="button" aria-label="Pengaturan grafis" title="Grafis"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><b class="mono">Auto</b></button><button class="btn vpill" id="btnVer" type="button" aria-label="Ganti versi desain"><b class="mono">V1</b><span>Desain awal</span></button><button class="btn btn3d" id="btn3d" type="button" aria-label="Ke model 3D">3D ↓</button><button class="btn" id="btnPlan" type="button">Gambar</button>
     <button class="btn primary" id="btnExplore" type="button">Jelajahi model</button>
   </div>
 </header>
@@ -2656,8 +2660,8 @@ $('#dExpand').onclick = () => setMin(!$('#xp').classList.contains('min'));
 { const ls = ['day', 'dusk', 'night'], nm = {day: 'siang', dusk: 'senja', night: 'malam'}; $('#dLight').onclick = () => { const k = ls[(ls.indexOf(light) + 1) % 3]; setLight(k); $('#dLight').title = 'Cahaya: ' + nm[k]; $('#dLight').setAttribute('aria-pressed', String(k !== 'day')); }; }
 $('#dTour').onclick = () => startTour('tour'); { const a = $('#dvLight'), b = $('#dvHorn'), c = $('#dvOut'); if (a) a.onclick = () => driveToggle('lights'); if (b) b.onclick = () => driveToggle('horn'); if (c) c.onclick = () => stopDrive(); } $('#prompt').onclick = () => interact();
 for (const [id, k] of [['#forkUp', 'up'], ['#forkDown', 'down']]) { const b = $(id); b.addEventListener('pointerdown', e => { keys[k] = 1; b.setPointerCapture(e.pointerId); }); for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => keys[k] = 0); }
-const setSound = v => { const r = SFX.toggle(v); $('#dSound').setAttribute('aria-pressed', String(r)); $('#swSound').checked = r; $('#dSound').setAttribute('aria-label', r ? 'Matikan suara' : 'Nyalakan suara'); };
-$('#dSound').onclick = () => setSound(!SFX.on); $('#swSound').addEventListener('change', e => setSound(e.target.checked));
+const setSound = v => { const r = SFX.toggle(v); $('#dSound').setAttribute('aria-pressed', String(r)); { const hb = $('#btnSnd'); if (hb) { hb.setAttribute('aria-pressed', String(r)); hb.title = r ? 'Matikan suara' : 'Nyalakan suara'; } } $('#swSound').checked = r; $('#dSound').setAttribute('aria-label', r ? 'Matikan suara' : 'Nyalakan suara'); };
+$('#dSound').onclick = () => setSound(!SFX.on); { const hb = $('#btnSnd'); if (hb) { hb.onclick = () => setSound(!SFX.on); hb.setAttribute('aria-pressed', String(SFX.on)); } } $('#swSound').addEventListener('change', e => setSound(e.target.checked));
 
 /* ================= picking ================= */
 const INFO = {
