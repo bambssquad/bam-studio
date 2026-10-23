@@ -891,6 +891,19 @@ body.night .mega-w{color:#F7F7F5}
 .l3d-ed p{margin:0 0 10px;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
 .l3d-ed h2{margin:0;overflow:hidden;font-weight:700;font-size:clamp(76px,17vw,280px);line-height:.86;letter-spacing:-.065em}.l3d-ed h2 span{display:block}
 .l3d .ldr-foot{mix-blend-mode:difference;color:#fff}
+/* Revisi 33 — emote as AssistiveTouch */
+.emo.at{position:fixed;z-index:49;left:auto;right:auto;top:auto;bottom:auto;transform:none;flex-direction:row;gap:0;padding:0;border-radius:0;background:none;box-shadow:none;width:56px;height:56px;touch-action:none}
+.at-btn{all:unset;position:relative;display:grid;place-items:center;width:56px;height:56px;border-radius:16px;background:rgba(20,22,24,.55);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);cursor:grab;box-shadow:0 8px 24px rgba(0,0,0,.22);transition:opacity .3s,transform .25s cubic-bezier(.2,1.4,.4,1);opacity:.78;touch-action:none}
+.at-btn:hover,.emo.at.open .at-btn{opacity:1}.at-btn:active{cursor:grabbing;transform:scale(.94)}
+.at-r{position:absolute;inset:9px;border-radius:50%;background:rgba(255,255,255,.22)}.at-r2{position:absolute;inset:6px;border-radius:50%;background:rgba(255,255,255,.32)}
+.at-btn em{position:relative;font-style:normal;font-size:20px;line-height:1}
+.at-menu{position:absolute;top:50%;display:grid;grid-template-columns:repeat(3,64px);gap:6px;padding:10px;border-radius:22px;background:rgba(20,22,24,.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);box-shadow:0 18px 50px rgba(0,0,0,.3);opacity:0;pointer-events:none;transform:translateY(-50%) scale(.6);transition:opacity .22s,transform .3s cubic-bezier(.2,1.3,.4,1)}
+.emo.at.right .at-menu{right:64px;transform-origin:100% 50%}.emo.at:not(.right) .at-menu{left:64px;transform-origin:0 50%}
+.emo.at.open .at-menu{opacity:1;pointer-events:auto;transform:translateY(-50%) scale(1)}
+.emo.at .at-menu b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:64px;height:64px;min-width:0;padding:0;border-radius:16px;color:#fff;font:400 24px/1 var(--HV);cursor:pointer;background:transparent;transition:background .2s,transform .2s}
+.emo.at .at-menu b i{display:block;font:500 10px var(--HV);font-style:normal;color:rgba(255,255,255,.75)}
+.emo.at .at-menu b:hover{background:rgba(255,255,255,.14)}.emo.at .at-menu b.on{background:#fff;color:#0B0B0B;transform:none}.emo.at .at-menu b.on i{color:#333}
+@media (max-width:760px){.emo.at{width:50px;height:50px}.at-btn{width:50px;height:50px;border-radius:14px}.at-menu{grid-template-columns:repeat(3,56px)}.emo.at .at-menu b{width:56px;height:56px;font-size:21px}.emo.at .at-menu b i{display:block}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Ngoro</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -1265,7 +1278,7 @@ body.night .mega-w{color:#F7F7F5}
   <button id="dvHorn" type="button" title="Klakson (H)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6l-5 4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><span class="lbl">Klakson</span><kbd>H</kbd></button>
   <button id="dvOut" type="button" title="Turun (E)">Turun</button></div>
 <button class="prompt lg" id="prompt" type="button" hidden><kbd>E</kbd><span id="promptT">Buka pintu</span></button>
-<div class="emo lg" id="emo" aria-label="Emote"><b data-e="wave" title="Lambai (1)">👋<i>Lambai</i></b><b data-e="clap" title="Tepuk (2)">👏<i>Tepuk</i></b><b data-e="dance" title="Joget (3)">💃<i>Joget</i></b><b data-e="jump" title="Lompat (4)">⤒<i>Lompat</i></b><b data-e="salute" title="Hormat (5)">🫡<i>Hormat</i></b></div>
+<div class="emo at" id="emo" aria-label="Emote"><button class="at-btn" id="atBtn" type="button" aria-label="Emote" aria-expanded="false"><span class="at-r"><span class="at-r2"></span></span><em>🙂</em></button><div class="at-menu" id="atMenu"><b data-e="wave" title="Lambai (1)">👋<i>Lambai</i></b><b data-e="clap" title="Tepuk (2)">👏<i>Tepuk</i></b><b data-e="dance" title="Joget (3)">💃<i>Joget</i></b><b data-e="jump" title="Lompat (4)">🤸<i>Lompat</i></b><b data-e="salute" title="Hormat (5)">🎖️<i>Hormat</i></b></div></div>
 <div class="joy" id="joy" aria-label="Joystick: seret untuk berjalan"><i id="knob"></i></div>
 <div class="compass" aria-hidden="true"><svg viewBox="-20 -20 40 40"><g id="needle"><path d="M0-15 5 0H-5Z" fill="#2A5BD7"/><path d="M0 15 5 0H-5Z" fill="#8E989C"/></g><text x="0" y="-16" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#15191C">U</text></svg></div>
 
@@ -1410,7 +1423,7 @@ const sun = new THREE.DirectionalLight(0xfff4e6, 3.0);
 sun.castShadow = true;
 const SM = GFX.c.sm; sun.shadow.mapSize.set(SM, SM);
 Object.assign(sun.shadow.camera, {left: -78, right: 78, top: 78, bottom: -78, near: 10, far: 420});
-sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04;
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04; const shadowBias = () => { const sm = sun.shadow.mapSize.x; sun.shadow.normalBias = sm <= 1024 ? .14 : sm <= 2048 ? .08 : .045; sun.shadow.bias = sm <= 1024 ? -.0012 : sm <= 2048 ? -.0007 : -.0004; }; shadowBias();
 scene.add(sun, sun.target);
 
 /* ---------- textures ---------- */
@@ -2156,7 +2169,7 @@ function setTrees(B) { palmGrow = clamp((B - 4) / 1);
 /* ================= Poly Haven PBR textures + HDRI ================= */
 const TL = new THREE.TextureLoader();
 const HI = new Set(SMALL || GFX.tier < 2 ? [] : ['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
-function phTex(name, rx, ry, srgb) { const t = TL.load(`assets/${HI.has(name) ? 'tex4k' : 'tex'}/${name}.jpg`, () => { dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 8; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
+function phTex(name, rx, ry, srgb) { const t = TL.load(`assets/${HI.has(name) ? 'tex4k' : 'tex'}/${name}.jpg`, () => { dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
 let dirtyTex = false;
 function pbr(m, base, rx, ry, {diff = true, color, rough, metal, ns = 1} = {}) {
   if (diff) m.map = phTex(base + '_diff', rx, ry, true); m.normalMap = phTex(base + '_nor', rx, ry); m.normalScale = new THREE.Vector2(ns, ns); m.roughnessMap = phTex(base + '_rough', rx, ry);
@@ -2168,8 +2181,8 @@ function applyPBR() {
   pbr(mat.slab, 'brushed_concrete', .25, .25, {color: 0xffffff, rough: 1}); pbr(mat.concrete, 'brushed_concrete', .5, .5, {color: 0xd8d4cc, rough: 1});
   pbr(mat.plaster, 'beige_wall_001', .4, .4, {diff: false, color: 0xf8f8f6, rough: 1, ns: .5}); pbr(mat.wallSite, 'beige_wall_001', .4, .4, {diff: false, color: 0xf8f8f6, rough: 1, ns: .5});
   pbr(mat.office, 'beige_wall_001', .5, .5, {diff: false, color: 0xf7f6f2, rough: 1, ns: .7});
-  pbr(mat.pave, 'concrete_pavement', 90 / 3.2, 80 / 3.2, {diff: false, color: 0xd3d4d0, rough: 1, ns: 1.4});
-  pbr(mat.road, 'asphalt_02', 260 / 5, 12 / 5, {color: 0xa9abaa, rough: .72});
+  pbr(mat.pave, 'concrete_pavement', 90 / 3.2, 80 / 3.2, {diff: false, color: 0xd3d4d0, rough: 1, ns: .55});
+  pbr(mat.road, 'asphalt_02', 260 / 5, 12 / 5, {color: 0xa9abaa, rough: .72, ns: .7});
   pbr(mat.door, 'painted_metal_shutter', 1, 2, {color: 0xaab3b8, rough: 1, metal: .4});
   pbr(mat.bark, 'palm_tree_bark', 1, 1, {color: 0xffffff, rough: 1});
   mat.grass = {map: phTex('grass_path_2_diff', 300, 300, true), normalMap: phTex('grass_path_2_nor', 300, 300), roughnessMap: phTex('grass_path_2_rough', 300, 300)};
@@ -2541,14 +2554,19 @@ const RIDE_CFG = {
 const RIDES = [...FORKS.map(f => Object.assign(f, {kind: 'forklift'})), ...G.props.children.filter(o => o.userData.forks && !FORKS.some(f => f.g === o)).map(g => ({g, kind: 'forklift'})), ...G.props.children.filter(o => o.userData.ride).map(g => ({g, kind: g.userData.ride}))];
 let drive = null;
 for (const f of RIDES) INTER.push({get p() { return f.g.position; }, r: RIDE_CFG[f.kind].r, label: () => `Naik ${RIDE_CFG[f.kind].n}`, act: () => startDrive(f)});
-const HL = new THREE.SpotLight(0xfff1d6, 0, 46, .48, .55, 1.1); HL.visible = false; root.add(HL, HL.target);
+/* headlight: the real spotlight stays in the scene from the start (intensity 0) so toggling never changes the light count -> no shader recompiles; plus a cheap fake beam (cone + ground pool) */
+const HL = new THREE.SpotLight(0xfff1d6, 0, 46, .48, .55, 1.1); HL.position.set(0, -50, 0); root.add(HL, HL.target);
+const BEAM = (() => { const g = new THREE.Group(); g.visible = false; const gc = document.createElement('canvas'); gc.width = gc.height = 128; const x = gc.getContext('2d'); const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,240,205,.85)'); gr.addColorStop(.5, 'rgba(255,230,190,.32)'); gr.addColorStop(1, 'rgba(255,230,190,0)'); x.fillStyle = gr; x.fillRect(0, 0, 128, 128);
+  const pool = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({map: new THREE.CanvasTexture(gc), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false})); pool.renderOrder = 4;
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(1, 1, 24, 1, true).translate(0, -.5, 0).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({color: 0xfff0cf, transparent: true, opacity: .07, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false})); cone.renderOrder = 4;
+  g.add(pool, cone); root.add(g); return {g, pool, cone}; })();
 function startDrive(f) { const k = RIDE_CFG[f.kind]; const wh = []; f.g.traverse(o => { if (o.userData.wheel) wh.push(o); });
   drive = {f, k, v: 0, h: f.g.rotation.y, wh, lights: false, base: f.g.rotation.clone()}; f.driven = true; me.p.set(f.g.position.x, 0, f.g.position.z); camYaw = drive.h;
   if (f.g.userData.obst) f.g.userData.obst.splice(0, 4, 1e5, 1e5, 1e5, 1e5);
   document.body.classList.add('driving', 'drive-' + f.kind); $('#dvName').textContent = k.n[0].toUpperCase() + k.n.slice(1); SFX.door(1); }
 function stopDrive() { if (!drive) return; const f = drive.f, k = drive.k; f.g.rotation.set(0, drive.h, 0); const side = V(Math.cos(drive.h), 0, -Math.sin(drive.h)).multiplyScalar(k.rad + .9); me.p.copy(f.g.position).add(side); me.p.y = 0; collide(me.p);
   if (f.g.userData.obst) { const bb = new THREE.Box3().setFromObject(f.g); f.g.userData.obst.splice(0, 4, bb.min.x, bb.min.z, bb.max.x, bb.max.z); }
-  HL.visible = false; HL.intensity = 0; avatar.visible = nav === 'third'; avatar.rotation.set(0, 0, 0); document.body.classList.remove('driving', 'drive-' + f.kind); drive = null; }
+  HL.intensity = 0; HL.position.set(0, -50, 0); BEAM.g.visible = false; avatar.visible = nav === 'third'; avatar.rotation.set(0, 0, 0); document.body.classList.remove('driving', 'drive-' + f.kind); drive = null; }
 window.__drv = {RIDES, startDrive: f => startDrive(f), stopDrive: () => stopDrive(), keys, toggle: w => driveToggle(w)};
 function driveToggle(what) { if (!drive) return; if (what === 'lights') { drive.lights = !drive.lights; $('#dvLight').setAttribute('aria-pressed', String(drive.lights)); SFX.click(); } if (what === 'horn') { SFX.beep(); setTimeout(() => SFX.beep(), 160); } }
 let near = null;
@@ -2572,7 +2590,9 @@ function driveFrame(dt, fwd, str) {
     for (const s2 of ['l', 'r']) { AV['h' + s2].rotation.set(-1.45, 0, 0); AV['k' + s2].rotation.set(1.4, 0, 0); AV['f' + s2].rotation.set(0, 0, 0); AV['s' + s2].rotation.set(-1.0, 0, s2 === 'l' ? -.12 : .12); AV['e' + s2].rotation.set(-.4, 0, 0); }
     AV.body.position.y = 0; AV.spine.rotation.set(d.f.kind === 'motor' ? .25 : 0, 0, 0); AV.head.rotation.set(-.05, -str * .25, 0); }
   /* headlight */
-  HL.visible = d.lights; if (d.lights) { HL.intensity = 260; HL.position.copy(L2W([0, k.hh * .45, -2.2 - (d.f.kind === 'truck' ? 3.2 : 0)])); HL.target.position.copy(L2W([0, 0, -18])); }
+  { const front = -2.2 - (d.f.kind === 'truck' ? 3.2 : 0) + (d.f.kind === 'motor' ? 1.5 : 0), hy = d.f.kind === 'truck' ? .9 : d.f.kind === 'forklift' ? 1.95 : .72;
+    HL.intensity = d.lights ? (light === 'day' ? 120 : 260) : 0; if (d.lights) { HL.position.copy(L2W([0, hy, front])); HL.target.position.copy(L2W([0, 0, front - 16])); }
+    BEAM.g.visible = d.lights; if (d.lights) { const len = 11, wid = d.f.kind === 'motor' ? 2.2 : 3.6; BEAM.g.position.copy(L2W([0, 0, 0])); BEAM.g.rotation.set(0, d.h, 0); BEAM.pool.position.set(0, fy + .03 - f.position.y + .02, front - len * .55); BEAM.pool.scale.set(wid * 1.6, 1, len); BEAM.cone.position.set(0, hy, front); BEAM.cone.scale.set(wid * .55, hy * .9, len); BEAM.cone.material.opacity = light === 'day' ? .035 : .08; BEAM.pool.material.opacity = light === 'day' ? .45 : 1; } }
   { const kmh = Math.abs(d.v) * 3.6; const el = $('#dvSpd'); if (el) el.textContent = Math.round(kmh); }
   if (nav === 'walk') { yaw = d.h; const e = L2W(k.eye); camera.position.copy(e); camera.rotation.set(pitch, yaw, 0, 'YXZ'); }
   else { let dh = d.h - camYaw; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); camYaw += dh * Math.min(1, dt * 2.5); const head = V(p.x, fy + k.hh, p.z); let dist = k.dist;
@@ -3013,7 +3033,7 @@ const inView = el => { if (!el) return false; const r = el.getBoundingClientRect
 function applyGfx(full) { pr = GFX.pr(); renderer.setPixelRatio(pr); resize();
   if (full) { const c = GFX.c; HQ = c.post; $('#optHQ').checked = HQ; const st = c.soft ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
     if (renderer.shadowMap.type !== st) { renderer.shadowMap.type = st; scene.traverse(o => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.needsUpdate = true); }); }
-    if (sun.shadow.mapSize.x !== c.sm) { sun.shadow.mapSize.set(c.sm, c.sm); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+    if (sun.shadow.mapSize.x !== c.sm) { sun.shadow.mapSize.set(c.sm, c.sm); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } } shadowBias();
     renderer.shadowMap.needsUpdate = true; window.__bookGfx && window.__bookGfx(); }
   window.__gfxUI && window.__gfxUI(); }
 function setGfx(p) { GFX.pref = p; try { localStorage.setItem('gn-gfx', p); } catch (e) {} GFX.lvl = p === 'auto' ? GFX.LV[GFX.tier] : p; GFX.scale = 1; PERF.bad = PERF.good = 0; applyGfx(true); }
@@ -3413,6 +3433,18 @@ const RVID = [['v_orbit', 'Film · orbit udara'], ['v_dusk', 'Film · senja']];
 { const bv = document.getElementById('btnVer'); if (bv) { bv.querySelector('b').textContent = V2 ? 'V2' : 'V1'; bv.querySelector('span').textContent = V2 ? 'Revisi 01' : 'Desain awal'; bv.title = V2 ? 'Versi 2 · Revisi tanpa kantor & sosoran — klik untuk ganti' : 'Versi 1 · Desain awal — klik untuk ganti'; bv.onclick = () => window.__vpOpen && window.__vpOpen(false); } }
 { const b3 = document.getElementById('btn3d'); if (b3) b3.onclick = () => document.getElementById('hero').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block: 'start'}); }
 document.querySelectorAll('.emo b').forEach(b => b.onclick = () => emote(b.dataset.e));
+/* AssistiveTouch-style emote button: drag anywhere, snaps to the nearest side edge, hover/tap opens the menu */
+{ const el = $('#emo'), btn = $('#atBtn'); if (el && btn) { const S = SMALL ? 50 : 56; let pos = {side: 'left', y: .44}; try { pos = Object.assign(pos, JSON.parse(localStorage.getItem('gn-at') || '{}')); } catch (e) {}
+  const place = () => { const y = clamp(pos.y, .14, .86) * innerHeight - S / 2; el.style.top = y + 'px'; el.style.left = pos.side === 'left' ? '10px' : (innerWidth - S - 10) + 'px'; el.classList.toggle('right', pos.side === 'right'); };
+  place(); addEventListener('resize', place);
+  const open = v => { el.classList.toggle('open', v); btn.setAttribute('aria-expanded', String(v)); };
+  let drag = null, hoverT = 0;
+  if (matchMedia('(hover: hover)').matches) { el.addEventListener('pointerenter', () => { clearTimeout(hoverT); if (!drag) open(true); }); el.addEventListener('pointerleave', () => { hoverT = setTimeout(() => open(false), 380); }); }
+  btn.addEventListener('pointerdown', e => { drag = {x: e.clientX, y: e.clientY, l: el.offsetLeft, t: el.offsetTop, m: 0}; btn.setPointerCapture(e.pointerId); });
+  btn.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.m = Math.max(drag.m, Math.hypot(dx, dy)); if (drag.m < 6) return; open(false); el.style.transition = 'none'; el.style.left = clamp(drag.l + dx, 4, innerWidth - S - 4) + 'px'; el.style.top = clamp(drag.t + dy, 60, innerHeight - S - 60) + 'px'; });
+  btn.addEventListener('pointerup', () => { if (!drag) return; const moved = drag.m >= 6; drag = null; if (moved) { pos = {side: el.offsetLeft + S / 2 < innerWidth / 2 ? 'left' : 'right', y: (el.offsetTop + S / 2) / innerHeight}; try { localStorage.setItem('gn-at', JSON.stringify(pos)); } catch (e) {} el.style.transition = 'left .35s cubic-bezier(.2,1.2,.4,1), top .35s cubic-bezier(.2,1.2,.4,1)'; place(); } else open(!el.classList.contains('open')); });
+  el.querySelectorAll('.at-menu b').forEach(b => b.addEventListener('click', () => setTimeout(() => open(false), 250)));
+  addEventListener('pointerdown', e => { if (el.classList.contains('open') && !el.contains(e.target)) open(false); }); } }
 addEventListener('keydown', e => { if (nav !== 'third' || e.target.tagName === 'INPUT') return; const m = {'1': 'wave', '2': 'clap', '3': 'dance', '4': 'jump', '5': 'salute'}[e.key]; if (m) emote(m); });
 window.__scene = scene; window.__gn = {flyTo: (p, t) => { flyTo(p, t, .01); }, setStage, setLight, enterExplore, enterNav, me, xpGo, VIEWS, setMin, cam: camera, avatar, setAllDoors, setGate, emote};
 if (location.hash === '#jelajah') setTimeout(enterExplore, 300);
