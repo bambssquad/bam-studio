@@ -1832,7 +1832,8 @@ G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof)
   for (const [u, v] of [[4.5, 9], [2.2, 5.5], [5.6, 2.2], [2, 1.2]]) { const [x, z] = p(u, v); ceilLamp(g, x, z, .15 + HK - .04); }
   window.__DPOS = smallDoor(g, ox + .07, oz + .075 + 2.85, .9, 'z', 1.4, 'pintu kantor');
   const L = W + .75, ang = .08, y0 = .15 + HK + .3 + L * Math.tan(ang); // east edge on the boundary: no overhang past the fence
-  const r = new THREE.Mesh(ribGeo(L, D + 1.2), mat.roofSmall); r.position.set(ox - .6, y0, oz - .6); r.rotation.z = -ang; shadow(r); g.add(r); g.add(shedFrame(L, D + 1.2, r));
+  const RD = (P.z0 - .26) - (oz - .6); // stop the roof at the warehouse cladding, no overhang into the wall
+  const r = new THREE.Mesh(ribGeo(L, RD), mat.roofSmall); r.position.set(ox - .6, y0, oz - .6); r.rotation.z = -ang; shadow(r); g.add(r); g.add(shedFrame(L, RD, r));
   g.add(box(W + .3, .3, D + .3, mat.office, cx, .15 + HK, cz));
   g.traverse(m => { if (m.isMesh && m.material !== mat.glass) { m.castShadow = true; m.receiveShadow = true; } });
   info(g, 'pos'); G.office.add(g); reg(g, 5, .3, 'rise'); }
