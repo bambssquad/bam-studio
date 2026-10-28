@@ -1831,7 +1831,7 @@ G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof)
   for (const [u, v] of [[2.45, 10.05], [6.6, 7.95], [.45, 7.15], [6.65, 4.15]]) { const [x, z] = p(u, v); plant(g, x, z, .15); }
   for (const [u, v] of [[4.5, 9], [2.2, 5.5], [5.6, 2.2], [2, 1.2]]) { const [x, z] = p(u, v); ceilLamp(g, x, z, .15 + HK - .04); }
   window.__DPOS = smallDoor(g, ox + .07, oz + .075 + 2.85, .9, 'z', 1.4, 'pintu kantor');
-  const L = W + 1.2, ang = .08, y0 = .15 + HK + .3 + L * Math.tan(ang);
+  const L = W + .75, ang = .08, y0 = .15 + HK + .3 + L * Math.tan(ang); // east edge on the boundary: no overhang past the fence
   const r = new THREE.Mesh(ribGeo(L, D + 1.2), mat.roofSmall); r.position.set(ox - .6, y0, oz - .6); r.rotation.z = -ang; shadow(r); g.add(r); g.add(shedFrame(L, D + 1.2, r));
   g.add(box(W + .3, .3, D + .3, mat.office, cx, .15 + HK, cz));
   g.traverse(m => { if (m.isMesh && m.material !== mat.glass) { m.castShadow = true; m.receiveShadow = true; } });
@@ -2027,7 +2027,7 @@ for (let i = 0; i <= 3; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(
 for (let i = 0; i <= 10; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.06, 3.9), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set(-13.4 + i * .8, .012, P.site.z0 + 2.75); G.site.add(s); }
 // fence: side/back brick 3 m, front low wall + bars, gate
 { const s = P.site;
-  const walls = [[s.x0, s.z1, s.x1, s.z1], [s.x0, s.z0, s.x0, s.z1], [s.x1, s.z0, s.x1, s.z1]];
+  const walls = [[s.x0, s.z1, s.x1, s.z1], [s.x0, s.z0, s.x0, s.z1], [s.x1, s.z0, s.x1, P.kantor.z0 - .15], [s.x1, P.kantor.z1 + .15, s.x1, s.z1]]; // kantor east wall doubles as boundary wall
   for (const [ax, az, bx, bz] of walls) { const len = Math.hypot(bx - ax, bz - az); const w = box(len, 3, .2, mat.wallSite, 0, 0, 0); const g = new THREE.Group(); g.add(w); w.position.x = len / 2; g.position.set(ax, 0, az); g.rotation.y = -Math.atan2(bz - az, bx - ax); G.site.add(g); reg(g, 5, .05, 'grow');
     for (let t = 0; t <= len; t += 3) { const pl = box(.3, 3.15, .3, mat.wallSite, ax + (bx - ax) * t / len, 0, az + (bz - az) * t / len); G.site.add(pl); reg(pl, 5, .05, 'grow'); } }
   const front = [[s.x0, P.gate.x0], [P.gate.x1, s.x1]];
@@ -3125,7 +3125,7 @@ const TOUR = [
   [[-44, 11, -78], [-18, 3.4, -50], 'Mess dua lantai 8 × 12 m di sudut barat daya'],
   [[-13.5, 1.75, -60], [-17.6, 1.6, -54], 'Masuk mess · ruang tunggu sopir & pos security'],
   [[44, 9, -70], [23, 2.2, -47], 'Kantor 7 × 10.50 m di sudut tenggara'],
-  [[2, 3.2, -58], [12, .5, -53], 'Halaman depan · parkir mobil & motor'],
+  [[-2, 5, -70], [10, 1.2, -50], 'Halaman depan · parkir mobil & motor'],
   [[118, 64, 40], [2, 2, 0], 'Bubungan +12.33 · tritisan +9.00'],
 ];
 const BUILD = [
