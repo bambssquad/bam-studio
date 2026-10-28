@@ -701,8 +701,8 @@ body.explore.third .emo{display:flex}
 .st-map img,.st-ov{position:absolute;left:0;top:0;width:1792px;height:1792px;transform-origin:0 0;max-width:none}
 .st-map img{filter:grayscale(1) contrast(1.05) brightness(1.04)}
 .st-ov{pointer-events:none;overflow:visible}
-.st-lot{fill:rgba(21,25,28,.12);stroke:#15191C;stroke-width:3;vector-effect:non-scaling-stroke}
-.st-bld{fill:#15191C;fill-opacity:.85}
+.st-lot{fill:rgba(255,255,255,.55);stroke:#15191C;stroke-width:1.6;stroke-dasharray:5 3;vector-effect:non-scaling-stroke}
+.st-bld{fill:#15191C;fill-opacity:.85;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}.st-bld.st-lean{fill-opacity:.45}.st-ridge{stroke:#fff;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .st-pin{fill:#fff;stroke:#15191C;stroke-width:3;vector-effect:non-scaling-stroke}
 .st-lbl{font:700 22px var(--HV);fill:#15191C;paint-order:stroke;stroke:#fff;stroke-width:5px}
 .st-attr{margin:8px 2px 0;font:400 11px var(--HV);color:#6b7378}
@@ -2948,12 +2948,14 @@ VIEWS.site = {p: [-210, 150, -340], t: [0, 0, -14]};
 (function siteUI() { const sec = $('#site'); if (!sec) return; const fmt = n => Math.round(n).toLocaleString('id-ID');
   const port = $('#stMap'), img = $('#stImg'), ov = $('#stOv'); let z = 'z17', sc = 1, tx = 0, ty = 0;
   const IM = SITE.S.img; const W0 = 1792;
-  function draw() { const k = IM[z], [px, py] = k.px, mpp = k.mpp; const s = P.site; const pts = [[s.x0, s.z0], [s.x1, s.z0], [s.x1, s.z1], [s.x0, s.z1]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
-    const bld = [[BX0, P.z0], [BX1, P.z0], [BX1, P.z1], [BX0, P.z1]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
-    ov.innerHTML = `<polygon points="${pts.map(p => p.join(',')).join(' ')}" class="st-lot"/><polygon points="${bld.map(p => p.join(',')).join(' ')}" class="st-bld"/><circle cx="${px}" cy="${py}" r="${z === 'z17' ? 9 : 14}" class="st-pin"/><text x="${pts[1][0] + 14}" y="${pts[1][1] - 10}" class="st-lbl">Gudang Ngoro · 90 × 80 m</text>`;
+  function draw() { const k = IM[z], [px, py] = k.px, mpp = k.mpp; const s = P.site; const pts = [[-23.4, -57.0], [26.7, -53.1], [26.85, 43.0], [-23.4, 43.0]].map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp]; });
+    const toP = q => q.map(([x, zz]) => { const [mx, my] = SITE.toMap(x, zz); return [px + mx / mpp, py + my / mpp].join(','); }).join(' ');
+    const rect = (x0, z0, x1, z1) => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+    const blds = [rect(BX0, P.z0, GX1, P.z1), rect(GX1, P.z0, BX1, P.z1), rect(P.office.x0, P.office.z0, P.office.x1, P.office.z1), rect(P.kantor.x0, P.kantor.z0, P.kantor.x1, P.kantor.z1), ...P.bays.map(b => rect(b.dx - P.canopy.w / 2, P.z0 - P.canopy.d, b.dx + P.canopy.w / 2, P.z0))];
+    ov.innerHTML = `<polygon points="${pts.map(p => p.join(',')).join(' ')}" class="st-lot"/>${blds.map((q, i) => `<polygon points="${toP(q)}" class="st-bld${i === 1 || i > 3 ? ' st-lean' : ''}"/>`).join('')}<line x1="${toP([[0, P.z0]]).split(',')[0]}" y1="${toP([[0, P.z0]]).split(',')[1]}" x2="${toP([[0, P.z1]]).split(',')[0]}" y2="${toP([[0, P.z1]]).split(',')[1]}" class="st-ridge"/><circle cx="${px}" cy="${py}" r="${z === 'z17' ? 3.5 : 7}" class="st-pin"/><text x="${pts[1][0] + 14}" y="${pts[1][1] - 10}" class="st-lbl">Gudang Maros · 4.940 m²</text>`;
     const W = port.clientWidth, H = port.clientHeight; const f = Math.max(W, H) / W0 * sc; const cxp = px, cyp = py; const ox = W / 2 - cxp * f + tx, oy = H / 2 - cyp * f + ty;
     for (const el of [img, ov]) { el.style.transform = `translate(${ox}px,${oy}px) scale(${f})`; } }
-  function setZ(k) { z = k; img.src = `assets/site/osm_${k}.jpg`; sc = k === 'z17' ? 1.6 : 1.3; tx = ty = 0; sec.querySelectorAll('.st-z').forEach(b => b.classList.toggle('on', b.dataset.z === k)); draw(); }
+  function setZ(k) { z = k; img.src = `assets/site/osm_${k}.jpg`; sc = k === 'z17' ? 3.4 : 1.6; tx = ty = 0; sec.querySelectorAll('.st-z').forEach(b => b.classList.toggle('on', b.dataset.z === k)); draw(); }
   sec.querySelectorAll('.st-z').forEach(b => b.onclick = () => setZ(b.dataset.z));
   let drag = null; port.addEventListener('pointerdown', e => { drag = {x: e.clientX, y: e.clientY}; port.setPointerCapture(e.pointerId); });
   port.addEventListener('pointermove', e => { if (!drag) return; tx += e.clientX - drag.x; ty += e.clientY - drag.y; drag = {x: e.clientX, y: e.clientY}; draw(); });
