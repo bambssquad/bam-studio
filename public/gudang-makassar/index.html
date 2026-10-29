@@ -918,6 +918,36 @@ body.explore .bar .btn.back{display:inline-flex}body.explore .bar #btnExplore{di
 .xfx h2{margin:0;font-size:clamp(64px,13vw,210px);line-height:.86;letter-spacing:-.06em;font-weight:700;display:flex;flex-direction:column;align-items:center}
 .xfx h2 span{display:block;overflow:hidden}
 @media (max-width:760px){.bar .btn.back .lbl{display:none}.bar .btn.back{padding-left:12px;padding-right:12px}}
+
+/* CTA: jelajahi model (after the book) */
+.xcta{position:relative;z-index:2;background:#F7F7F5;padding:clamp(28px,6vh,64px) clamp(16px,4vw,48px) 0;font-family:var(--HV)}
+.xcta-c{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1.15fr 1fr;max-width:1120px;margin:0 auto;border-radius:22px;overflow:hidden;background:#0E1114;color:#F4F2EC;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.75,.15,1),box-shadow .35s}
+.xcta-c:hover{transform:translateY(-3px);box-shadow:0 40px 70px -30px rgba(0,0,0,.55)}.xcta-c:focus-visible{outline:3px solid #2A5BD7;outline-offset:4px}
+.xcta-m{position:relative;display:block;min-height:280px;overflow:hidden}
+.xcta-m i{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;animation:xctaK 12s infinite}
+.xcta-m i:nth-child(2){animation-delay:4s}.xcta-m i:nth-child(3){animation-delay:8s}
+@keyframes xctaK{0%{opacity:0;transform:scale(1.04)}6%{opacity:1}33%{opacity:1}40%{opacity:0;transform:scale(1.14)}100%{opacity:0}}
+.xcta-m::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,#0E1114)}
+.xcta-live{position:absolute;left:16px;top:16px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(14,17,20,.72);backdrop-filter:blur(8px);font:600 11px/1 var(--HV);letter-spacing:.14em;text-transform:uppercase}
+.xcta-live s{width:8px;height:8px;border-radius:50%;background:#34C759;box-shadow:0 0 0 0 rgba(52,199,89,.7);animation:xctaP 1.6s infinite}
+@keyframes xctaP{70%{box-shadow:0 0 0 9px rgba(52,199,89,0)}100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}}
+.xcta-hand{position:absolute;left:50%;top:55%;z-index:2;width:44px;height:44px;margin:-22px;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:rgba(255,255,255,.18);animation:xctaD 2.8s ease-in-out infinite}
+@keyframes xctaD{0%,100%{transform:translateX(-46px)}50%{transform:translateX(46px)}}
+.xcta-t{display:flex;flex-direction:column;gap:14px;padding:clamp(22px,4vw,44px)}
+.xcta-k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#A9B3BC}
+.xcta-h{font-size:clamp(30px,4.2vw,54px);line-height:.95;letter-spacing:-.045em;font-weight:700}
+.xcta-p{font-size:15px;line-height:1.5;color:#C9CED2;max-width:36ch}
+.xcta-chips{display:flex;flex-wrap:wrap;gap:8px}.xcta-chips span{padding:7px 12px;border:1px solid rgba(244,242,236,.28);border-radius:999px;font-size:12px;letter-spacing:.04em}
+.xcta-go{margin-top:6px;align-self:flex-start;display:inline-flex;gap:10px;align-items:center;padding:14px 22px;border-radius:999px;background:#F4F2EC;color:#0E1114;font:700 13px/1 var(--HV);letter-spacing:.1em;text-transform:uppercase;transition:gap .3s}
+.xcta-c:hover .xcta-go{gap:16px}
+@media (max-width:760px){.xcta-c{grid-template-columns:1fr}.xcta-m{min-height:210px}.xcta-m::after{background:linear-gradient(180deg,transparent 55%,#0E1114)}.xcta-go{align-self:stretch;justify-content:center}}
+@media (prefers-reduced-motion:reduce){.xcta-m i{animation:none}.xcta-m i:first-child{opacity:1}.xcta-hand,.xcta-live s{animation:none}}
+/* header nudge until the model has been opened once */
+#btnExplore.nudge{animation:xctaN 2.2s ease-in-out infinite}
+@keyframes xctaN{0%,100%{box-shadow:0 0 0 0 rgba(21,25,28,.45)}60%{box-shadow:0 0 0 10px rgba(21,25,28,0)}}
+.xtip{position:fixed;z-index:60;padding:10px 14px;border-radius:12px;background:#15191C;color:#F4F2EC;font:600 13px/1.3 var(--HV);box-shadow:0 12px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(-4px);transition:opacity .35s,transform .35s;pointer-events:none}
+.xtip.in{opacity:1;transform:none}.xtip::before{content:"";position:absolute;top:-6px;right:28px;border:6px solid transparent;border-top:0;border-bottom-color:#15191C}
+@media (prefers-reduced-motion:reduce){#btnExplore.nudge{animation:none}}
 </style>
 <div class="loader" id="loader"><div><b>Gudang Maros</b><i></i><span class="mono" id="loadmsg">Menyusun model dari gambar kerja</span></div></div>
 
@@ -1040,6 +1070,18 @@ body.explore .bar .btn.back{display:inline-flex}body.explore .bar #btnExplore{di
     </div>
     <a class="j-down" href="#hero"><span>Gulir ke model 3D</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
    </div>
+  </section>
+  <section class="xcta" aria-labelledby="xctaT">
+    <button class="xcta-c" id="xcta" type="button" aria-describedby="xctaT">
+      <span class="xcta-m" aria-hidden="true"><i style="background-image:url(assets/sh/aerial.jpg)"></i><i style="background-image:url(assets/sh/interior.jpg)"></i><i style="background-image:url(assets/sh/dusk.jpg)"></i><b class="xcta-live"><s></s>Interaktif</b><em class="xcta-hand"></em></span>
+      <span class="xcta-t">
+        <span class="xcta-k">04 — Model 3D</span>
+        <span class="xcta-h" id="xctaT">Masuk ke model 3D</span>
+        <span class="xcta-p">Bukan sekadar gambar: gudangnya bisa diputar, dimasuki dan dijelajahi langsung di browser.</span>
+        <span class="xcta-chips"><span>Putar 360°</span><span>Jalan di dalam gudang</span><span>Siang · senja · malam</span></span>
+        <span class="xcta-go">Jelajahi model 3D <span aria-hidden="true">→</span></span>
+      </span>
+    </button>
   </section>
   <section class="cine" id="cine" aria-labelledby="cineT">
     <div class="cine-head"><p class="mono">03 — Sinematik</p><h2 id="cineT">Tur &amp; timelapse<br>pembangunan</h2><p class="cine-ver mono" id="cineVer"></p></div>
@@ -3771,7 +3813,7 @@ const SHEETS = [
     if ((moving || dragging) && visible) raf = requestAnimationFrame(loop); else lastT = 0; }
   const sec = $('#book');
   (function counter() { const el = $('#jhCount'); if (!el) return; if (!window.__ldrDone && document.getElementById('ldr')) { addEventListener('ldr:done', counter, {once: true}); return; } const T = [22, 84, 12.33]; const t0 = performance.now();
-    const f = () => { const k = Math.min(1, (performance.now() - t0) / 2400), e = 1 - Math.pow(1 - k, 3); el.innerHTML = T.map(v => (v * e).toFixed(2).padStart(5, '0')).join('<i>:</i>') + `<small>${String(Math.floor(performance.now() / 10) % 100).padStart(2, '0')}</small>`; if (k < 1) requestAnimationFrame(f); else el.innerHTML = '23.00<i>:</i>60.00<i>:</i>10.33<small>m</small>'; }; f(); })();
+    const f = () => { const k = Math.min(1, (performance.now() - t0) / 2400), e = 1 - Math.pow(1 - k, 3); el.innerHTML = T.map(v => (v * e).toFixed(2).padStart(5, '0')).join('<i>:</i>') + `<small>${String(Math.floor(performance.now() / 10) % 100).padStart(2, '0')}</small>`; if (k < 1) requestAnimationFrame(f); else el.innerHTML = '22.00<i>:</i>84.00<i>:</i>12.33<small>m</small>'; }; f(); })();
   function phase() { const r = sec.getBoundingClientRect(); spT = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))); kick(); }
   addEventListener('scroll', phase, {passive: true}); addEventListener('resize', phase); setTimeout(phase, 0);
   /* ---------- scroll guidance: stage rail + gesture cue + drag hint + auto 'Mulai' ---------- */
@@ -3904,6 +3946,18 @@ const SHEETS = [
 })();
 
 
+
+/* ---------- CTA: make "Jelajahi model" discoverable ---------- */
+{ const bx = $('#btnExplore'), c = $('#xcta'); let seen = false; try { seen = localStorage.getItem('gm-seen3d') === '1'; } catch (e) {}
+  const mark = () => { seen = true; bx && bx.classList.remove('nudge'); try { localStorage.setItem('gm-seen3d', '1'); } catch (e) {} };
+  if (c && bx) c.onclick = () => { mark(); bx.click(); };
+  if (bx) { bx.addEventListener('click', mark); if (!seen) bx.classList.add('nudge'); }
+  if (bx && !seen) { let shown = false; try { shown = sessionStorage.getItem('gm-tip') === '1'; } catch (e) {}
+    const tip = () => { if (shown || seen || mode !== 'story') return; shown = true; try { sessionStorage.setItem('gm-tip', '1'); } catch (e) {}
+      const r = bx.getBoundingClientRect(); const t = document.createElement('div'); t.className = 'xtip'; t.textContent = 'Coba model 3D-nya — bisa diputar & dimasuki'; document.body.appendChild(t);
+      t.style.top = (r.bottom + 10) + 'px'; t.style.right = Math.max(12, innerWidth - r.right) + 'px'; requestAnimationFrame(() => t.classList.add('in'));
+      const bye = () => { t.classList.remove('in'); setTimeout(() => t.remove(), 400); }; setTimeout(bye, 5200); bx.addEventListener('click', bye, {once: true}); };
+    if (window.__ldrDone) setTimeout(tip, 3500); else addEventListener('ldr:done', () => setTimeout(tip, 3500), {once: true}); } }
 
 </script>
 
