@@ -2370,7 +2370,9 @@ window.__PT = (() => { let lib = null, pt = null, ptScene = null, ptCam = null, 
     try { lib = await import(new URL('assets/js/pathtracer.js', location.href).href); } catch (e) { console.warn('pathtracer', e); want = false; ui(''); }
     loading = false; }
   function hdr(k) { const f = {day: 'kloofendal_48d_partly_cloudy_puresky_2k.hdr', dusk: 'industrial_sunset_02_puresky_1k.hdr', night: 'kloppenheim_02_puresky_1k.hdr'}[k];
-    if (!env[k]) env[k] = new Promise(r => new RGBELoader().load('assets/hdri/' + f, t => { t.mapping = THREE.EquirectangularReflectionMapping; r(t); }, undefined, () => r(null))); return env[k]; }
+    if (!env[k]) env[k] = fetch('assets/hdri/' + f).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).catch(() => fetch('assets/hdri/' + f + '.txt').then(r => r.text()).then(b64 => { const bin = atob(b64.trim()), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8.buffer; }))
+      .then(buf => { const L = new RGBELoader(); L.setDataType(THREE.FloatType); const d = L.parse(buf); const t = new THREE.DataTexture(d.data, d.width, d.height, THREE.RGBAFormat, d.type); t.colorSpace = THREE.LinearSRGBColorSpace; t.minFilter = t.magFilter = THREE.LinearFilter; t.flipY = true; t.mapping = THREE.EquirectangularReflectionMapping; t.needsUpdate = true; return t; }).catch(() => null);
+    return env[k]; }
   const skip = m => m.isLineSegments || m.isLine || m.isPoints || m.isSprite || (m.material && (m.material.blending === THREE.AdditiveBlending || (m.material.isMeshBasicMaterial && m.material.toneMapped === false) || m.material.isShadowMaterial));
   const shown = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
   async function build() { ptScene = new THREE.Scene(); root.updateMatrixWorld(true); const m4 = new THREE.Matrix4(); let n = 0;
