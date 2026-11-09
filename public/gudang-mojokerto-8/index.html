@@ -1421,7 +1421,7 @@ const GFX = (() => {
   if (/rtx|gtx|quadro|radeon rx|rx ?[5-9]\d{2,3}|radeon pro|arc\(?tm\)? a\d|apple m\d (pro|max|ultra)/.test(g) || (/apple m\d/.test(g) && cores >= 10)) tier = 2;
   if (SMALL || /swiftshader|llvmpipe|software|microsoft basic|mali|adreno|powervr|intel.*(hd|uhd) graphics/.test(g) || cores <= 4 || mem <= 4 || window.__LITE) tier = 0;
   const LV = ['rendah', 'sedang', 'tinggi', 'ultra'];
-  const CFG = {rendah: {pr: 1, prMin: .7, sm: 1024, soft: false, post: false, shadowEvery: 4, palmEvery: 3, book: 1.25},
+  const CFG = {rendah: {pr: 1, prMin: .7, sm: 2048, soft: false, post: false, shadowEvery: 4, palmEvery: 3, book: 1.25},
     sedang: {pr: 1.35, prMin: .85, sm: 2048, soft: true, post: false, shadowEvery: 2, palmEvery: 2, book: 1.6},
     tinggi: {pr: 1.75, prMin: 1, sm: 4096, soft: true, post: true, shadowEvery: 1, palmEvery: 1, book: 2},
     ultra: {pr: 2, prMin: 1, sm: 4096, soft: true, post: true, shadowEvery: 1, palmEvery: 1, book: 2, rtx: true}};
@@ -1646,7 +1646,7 @@ for (let z = -24; z <= 24.01; z += 6) addC(-18, z, 'partisi');
 for (let z = -24; z <= -5.99; z += 6) addC(18, z, 'partisi');
 const COLX = COLS.map(c => c[0]); // compat: COLX × FR counts are replaced by COLS.length in copy
 const colKind = x => 'tepi';
-const MEZ = []; for (const x of [-48, -42, -36, -30, -24]) for (const z of [-24, -18, -12, -6]) MEZ.push([x, z]);
+const MEZ = []; for (const x of [-48, -42, -36, -30, -24]) for (const z of [-24, -18]) MEZ.push([x, z]);
 const spanAt = (x, z) => P.spans.find(s => z >= s.z0 - .01 && z <= s.z1 + .01 && x <= s.x1 + .01);
 const topAt = (x, z) => { // underside of the rafter above a column
   const ss = P.spans.filter(s => z >= s.z0 - .01 && z <= s.z1 + .01 && x <= s.x1 + .01); if (!ss.length) return P.eave - .5; return Math.min(...ss.map(s => roofY(s, z))) - .5; };
@@ -1720,14 +1720,14 @@ for (const s of P.spans) {
 }
 
 /* ================= 4 · ROOF (metal corrugated) + talang stainless ================= */
-mat.ss = M({color: 0xd4d8da, metalness: 1, roughness: .22});
+mat.ss = M({color: 0xd4d8da, metalness: 1, roughness: .22}); mat.skyl = M({color: 0xdfe8ea, roughness: .25, transparent: true, opacity: .55, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4});
 for (const s of P.spans) {
   const zm = (s.z0 + s.z1) / 2, Lx = s.x1 - s.x0 + .8, xc = (s.x0 + s.x1) / 2;
   for (const ze of [s.z0, s.z1]) {
     const dir = Math.sign(ze - zm), zE = ze + dir * P.over, yE = P.eave - P.over * Math.tan(SLOPE);
     const sg = slopeG(xc, zE, yE + .07, zm, P.ridge + .07); const sh = roofSheet(Lx, sg.userData.L, mat.roof); info(sh, s.n); sg.add(sh);
     // skylight strips (polycarbonate) as in Rencana Atap
-    for (let x = -Lx / 2 + 9; x < Lx / 2 - 6; x += 18) { const sk = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 6).rotateX(-Math.PI / 2).translate(0, .012, 0), mat.glass); sk.position.set(x, 0, sg.userData.L * .45); sg.add(sk); }
+    for (let x = -Lx / 2 + 9; x < Lx / 2 - 6; x += 18) { const sk = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 6).rotateX(-Math.PI / 2).translate(0, .06, 0), mat.skyl); sk.position.set(x, 0, sg.userData.L * .45); sg.add(sk); }
     const wrap = new THREE.Group(); wrap.add(sg); wrap.position.x = -(Lx + 4); sg.position.x = xc + Lx + 4;
     G.roof.add(wrap); reg(wrap, 4, (ze === s.z0 ? 0 : .1) + (s.z0 + 30) / 60 * .3, 'x');
   }
@@ -1762,7 +1762,7 @@ function vwall(x0, z0, x1, z1, pts, holes, m = mat.hebel, t = T_W) {
 // profile under the roof along z for a wall line at x (both spans if present)
 function gableProfile(zA, zB) { const pts = [[0, 0], [zB - zA, 0]]; const top = [];
   for (const s of P.spans) { if (s.z1 <= zA + .01 || s.z0 >= zB - .01) continue; const za = Math.max(s.z0, zA), zb = Math.min(s.z1, zB), zm = (s.z0 + s.z1) / 2; top.push([za, roofY(s, za)]); if (zm > za && zm < zb) top.push([zm, roofY(s, zm)]); top.push([zb, roofY(s, zb)]); }
-  top.sort((a, b) => b[0] - a[0]); for (const [z, y] of top) pts.push([z - zA, y - .08]); return pts; }
+  top.sort((a, b) => b[0] - a[0] || a[1] - b[1]); for (const [z, y] of top) { const q = [z - zA, y - .08], l = pts[pts.length - 1]; if (Math.abs(l[0] - q[0]) > 1e-3 || Math.abs(l[1] - q[1]) > 1e-3) pts.push(q); } return pts; }
 const WALLM = [];
 function addWall(o, k, d) { info(o, k); G.wall.add(o); reg(o, 4, d, 'grow'); WALLM.push(o); return o; }
 // depan (A, z=-30): rolling doors + office windows (bays 2–7)
@@ -1885,19 +1885,19 @@ const L1 = .15, L2 = OF.lv + .2, HM1 = OF.lv - .15, HM2 = 3.0;
 mat.tile = M({color: 0xe7e5df, roughness: .35, map: noiseTex});
 { const ox = OF.x0, oz = OF.z0;
   // lantai 2 (+6.00): plat beton di atas balok WF
-  const slab = box(36 - .3, .2, 30 - .3, mat.office, -36, OF.lv - .05, -15); officeLt2.add(slab);
-  { const fl = new THREE.Mesh(new THREE.PlaneGeometry(35.4, 29.4).rotateX(-Math.PI / 2), mat.tile); fl.position.set(-36, OF.lv + .16, -15); officeLt2.add(fl); }
-  for (const z of [-24, -18, -12, -6, -.2]) officeLt2.add(box(36 - .3, .35, .18, mat.steel, -36, OF.lv - .4, z));
-  // railing on the void edge (z = 0) and stair void
-  for (let x = -53.5; x < -18.4; x += 1.2) officeLt2.add(box(.04, 1.0, .04, mat.dark, x, L2, -.35));
-  officeLt2.add(box(35.4, .05, .06, mat.dark, -36, L2 + 1.0, -.35), box(35.4, .04, .04, mat.dark, -36, L2 + .5, -.35));
+  // lantai 2 (+6.00) hanya strip depan A–C (12 m) di atas receptionist; grid C–F tetap void dua lantai
+  const slab = box(36 - .3, .2, 12 - .2, mat.tile, -36, OF.lv - .05, -24); officeLt2.add(slab);
+  for (const z of [-24, -18.1]) officeLt2.add(box(36 - .3, .35, .18, mat.steel, -36, OF.lv - .4, z));
+  // railing kaca di tepi void (z = −18)
+  for (let x = -53.5; x < -18.4; x += 1.2) officeLt2.add(box(.05, 1.05, .05, mat.dark, x, L2, -17.95));
+  officeLt2.add(box(35.4, .06, .08, mat.dark, -36, L2 + 1.05, -17.95)); { const gr = new THREE.Mesh(new THREE.PlaneGeometry(35.4, .95), mat.glass); gr.position.set(-36, L2 + .52, -17.95); officeLt2.add(gr); }
   // lt.1 partitions (Receptionist 144, 36 m², QC 36 m², Gudang 216 m²)
   pwall(officeLt1, -42, -30, -42, -18, [[2, 3]], L1, HM1); pwall(officeLt1, -36, -30, -36, -18, [[8, 9.2]], L1, HM1); pwall(officeLt1, -42, -24, -36, -24, [[2, 3]], L1, HM1);
   pwall(officeLt1, -54, -18, -18, -18, [[4, 5.2], [16, 17], [26, 30]], L1, HM1);
   // lt.2 rooms (R. Tertutup, Meeting kecil ×4, Office ×2, R. Meeting besar, KM)
-  pwall(officeLt2, -46, -6, -46, 0, [[1, 2]], L2, HM2); pwall(officeLt2, -54, -6, -38, -6, [[9, 10]], L2, HM2); pwall(officeLt2, -42, -4, -42, 0, [], L2, HM2); pwall(officeLt2, -38, -6, -38, 0, [[1, 2]], L2, HM2);
-  pwall(officeLt2, -48, -14, -48, -6, [[3, 4]], L2, HM2); pwall(officeLt2, -54, -14, -48, -14, [], L2, HM2); pwall(officeLt2, -54, -18, -50, -18, [], L2, HM2);
-  pwall(officeLt2, -54, -22, -34, -22, [[3, 4], [9, 10], [14, 15], [18, 19]], L2, HM2); pwall(officeLt2, -48, -30, -48, -22, [], L2, HM2); pwall(officeLt2, -42, -30, -42, -22, [], L2, HM2); pwall(officeLt2, -38, -30, -38, -26, [], L2, HM2); pwall(officeLt2, -34, -30, -34, -22, [], L2, HM2); pwall(officeLt2, -42, -26, -34, -26, [], L2, HM2);
+  // ruang lt.2 di strip depan: office, R. meeting besar, meeting kecil ×2, R. tertutup, KM; koridor z −22 … −18 menghadap void
+  pwall(officeLt2, -50, -22, -24, -22, [[2, 3], [7, 8], [11, 12], [15, 16], [21, 22]], L2, HM2);
+  for (const x of [-48, -42, -38, -34, -28]) pwall(officeLt2, x, -30, x, -22, [], L2, HM2); pwall(officeLt2, -38, -26, -34, -26, [], L2, HM2); pwall(officeLt2, -54, -21, -50, -21, [[1.2, 2.2]], L2, HM2);
   // tangga U (lobby → lt.2)
   { const n = 11, rise = OF.lv / 22; for (let i = 0; i < n; i++) officeLt1.add(box(1.2, rise * (i + 1), .28, mat.wood, -53.2, L1, -27.4 + i * .28));
     officeLt1.add(box(2.6, OF.lv / 2, 1.3, mat.wood, -52.6, L1, -23.75)); for (let i = 0; i < n; i++) officeLt1.add(box(1.2, OF.lv / 2 + rise * (i + 1), .28, mat.wood, -51.9, L1, -24.4 - i * .28)); }
@@ -1905,15 +1905,14 @@ mat.tile = M({color: 0xe7e5df, roughness: .35, map: noiseTex});
   desk(officeLt1, -46.5, -24, L1, Math.PI / 2, 2.4); chair(officeLt1, -45.6, -24, L1, -Math.PI / 2); sofa(officeLt1, -49.5, -28.5, L1, 3.0, Math.PI / 2); sofa(officeLt1, -43.4, -21, L1, 2.2, Math.PI);
   for (const [x, z] of [[-43, -29], [-52.8, -19], [-43, -19.2]]) plant(officeLt1, x, z, L1);
   for (const z of [-28.2, -26.2]) { desk(officeLt1, -39, z, L1, 0, 1.6); chair(officeLt1, -39, z + .75, L1, Math.PI); }
-  { const fl = new THREE.Mesh(new THREE.PlaneGeometry(18, 12).rotateX(-Math.PI / 2), mat.tile); fl.position.set(-45, .158, -24); officeLt1.add(fl); }
+  officeLt1.add(box(18, .05, 12, mat.tile, -45, .15, -24));
   // furniture lt.2: meeting tables, office desks
   const mt = (x, z, w, d) => { officeLt2.add(box(w, .04, d, mat.wood, x, L2 + .74, z)); for (const sx of [-1, 1]) officeLt2.add(box(.06, .72, d * .8, mat.dark, x + sx * (w / 2 - .3), L2, z)); for (let i = 0; i < Math.floor(w / .8); i++) { chair(officeLt2, x - w / 2 + .5 + i * .8, z - d / 2 - .45, L2, Math.PI); chair(officeLt2, x - w / 2 + .5 + i * .8, z + d / 2 + .45, L2, 0); } };
-  mt(-45, -26, 3.6, 1.2); mt(-50, -3, 3.2, 1.2); mt(-44, -2, 1.6, 1.0); mt(-40, -2, 1.6, 1.0); mt(-40, -28, 1.6, 1.0); mt(-36, -28, 1.6, 1.0);
+  mt(-45, -26, 3.6, 1.2); mt(-40, -28, 1.6, 1.0); mt(-36, -28, 1.6, 1.0); mt(-31, -26, 2.4, 1.0);
   for (const z of [-28.5, -26, -23.5]) { desk(officeLt2, -51, z, L2, 0, 1.4); chair(officeLt2, -51, z + .75, L2, Math.PI); }
-  for (const z of [-12, -9]) { desk(officeLt2, -51, z, L2, 0, 1.4); chair(officeLt2, -51, z + .75, L2, Math.PI); }
-  for (let x = -32; x < -20; x += 3) for (const z of [-20, -15, -10]) { desk(officeLt2, x, z, L2, 0, 1.4); chair(officeLt2, x, z + .75, L2, Math.PI); }
-  wc(officeLt2, -53, -16, L2, Math.PI / 2); wc(officeLt2, -51.5, -16, L2, Math.PI / 2);
-  for (const [x, z] of [[-30, -25], [-24, -25], [-36, -5], [-26, -5], [-48, -10], [-36, -12]]) ceilLamp(officeLt2, x, z, L2 + HM2 - .04);
+  for (let x = -26.5; x < -19; x += 2.6) for (const z of [-28.4, -25.4]) { desk(officeLt2, x, z, L2, 0, 1.4); chair(officeLt2, x, z + .75, L2, Math.PI); }
+  wc(officeLt2, -53.2, -19.4, L2, Math.PI / 2); wc(officeLt2, -51.8, -19.4, L2, Math.PI / 2);
+  for (const [x, z] of [[-45, -26], [-36, -27], [-29, -26], [-23, -26], [-40, -20], [-28, -20]]) ceilLamp(officeLt2, x, z, L2 + HM2 - .04);
   for (const [x, z] of [[-48, -24], [-39, -27], [-27, -24], [-45, -20]]) ceilLamp(officeLt1, x, z, L1 + HM1 - .3);
   // glazing for the front windows (lt.1 lobby + lt.2 band)
   for (const [u, y, w, h] of window.__frontHoles) { if (y < .2 && h > 4) continue; if (w === P.door.w) continue; const gl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat.glass); gl.position.set(-54 + u + w / 2, y + h / 2, -30 - .02); GLASS.push(gl); (y > 5 ? officeLt2 : officeLt1).add(gl);
@@ -2107,7 +2106,7 @@ mat.kerb = M({color: 0xd6d7d3, roughness: .9});
 }
 { // driveway ramp from the road to the gate (−1.20 → −0.20) and the 12 m jalan beton to the building
   const dw = new THREE.Shape([[16.62, -30.4], [28.8, -30.4], [33.78, -57.07], [22.01, -59.26]].map(([x, z]) => new THREE.Vector2(x, -z)));
-  const dm = new THREE.Mesh(new THREE.ExtrudeGeometry(dw, {depth: .04, bevelEnabled: false}).rotateX(-Math.PI / 2).translate(0, .005, 0), mat.slab); dm.receiveShadow = true; G.site.add(dm);
+  const dm = new THREE.Mesh(new THREE.ExtrudeGeometry(dw, {depth: .04, bevelEnabled: false}).rotateX(-Math.PI / 2).translate(0, .02, 0), mat.slab); dm.receiveShadow = true; G.site.add(dm);
 }
 // marka parkir (depan kantor)
 for (let i = 0; i <= 4; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry(.1, 5), mat.paint); s.rotation.x = -Math.PI / 2; s.position.set(-45.6 + i * 3.2, .012, -45); G.site.add(s); }
@@ -2318,7 +2317,7 @@ for (const [x, sd] of [...P.doorsA.map(x => [x, -1]), ...P.doorsK.map(x => [x, 1
 for (const p of STREET) { const l = addL(new THREE.SpotLight(0xfff0d8, 0, 28, 1.05, .7, 1.5), 300); l.position.copy(p); l.target.position.set(p.x, 0, p.z + 5); }
 for (const [x, z] of [[-86.6, 0], [58.4, 10]]) { reg(G.site.add(box(.14, 8, .14, mat.dark, x, 0, z)), 5, .3, 'grow'); const hd = box(.5, .2, .5, mat.lamp, x + Math.sign(-x) * .45, 7.9, z); reg(G.site.add(hd), 5, .35, 'pop'); reg(G.site.add(box(.5, .08, .08, mat.dark, x + Math.sign(-x) * .25, 8.0, z)), 5, .35, 'pop');
   const l = addL(new THREE.SpotLight(0xfff0d8, 0, 40, .9, .7, 1.4), 380); l.position.set(x + Math.sign(-x) * .4, 7.8, z); l.target.position.set(x * .8, 0, z); }
-{ const l = addL(new THREE.PointLight(0xffdcb0, 0, 12, 2), 22); l.position.set(-27, 3.6, -24); const l2 = addL(new THREE.PointLight(0xffdcb0, 0, 12, 2), 22); l2.position.set(-40, 8.4, -20); const l4 = addL(new THREE.PointLight(0xffdcb0, 0, 14, 2), 30); l4.position.set(-48, 3.6, -24); const l5 = addL(new THREE.PointLight(0xffdcb0, 0, 14, 2), 30); l5.position.set(-28, 8.4, -10);
+{ const l = addL(new THREE.PointLight(0xffdcb0, 0, 12, 2), 22); l.position.set(-27, 3.6, -24); const l2 = addL(new THREE.PointLight(0xffdcb0, 0, 12, 2), 22); l2.position.set(-40, 8.4, -25); const l4 = addL(new THREE.PointLight(0xffdcb0, 0, 14, 2), 30); l4.position.set(-48, 3.6, -24); const l5 = addL(new THREE.PointLight(0xffdcb0, 0, 14, 2), 30); l5.position.set(-26, 8.4, -24);
   const l3 = addL(new THREE.PointLight(0xffdcb0, 0, 12, 2), 26); l3.position.set((P.kantor.x0 + P.kantor.x1) / 2, 2.6, (P.kantor.z0 + P.kantor.z1) / 2); }
 
 /* ================= post: GTAO + bloom (render-grade) ================= */
@@ -2359,7 +2358,11 @@ function makeComposer() {
   composer.addPass(new OutputPass()); GRADE = new ShaderPass(GradeShader); composer.addPass(GRADE);
   composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight); GRADE.uniforms.res.value.set(innerWidth * pr, innerHeight * pr);
 }
-function draw() { if (mode === 'story') { const r = bookEl.getBoundingClientRect(); if (r.top <= 1 && r.bottom >= innerHeight - 1) return; }
+function depthFit() { // presisi depth: near plane mengikuti jarak kamera ke gedung (anti z-fighting/flicker di GPU HP)
+  const p = camera.position, dx = Math.max(-62 - p.x, 0, p.x - 66), dy = Math.max(0, p.y - 16), dz = Math.max(-38 - p.z, 0, p.z - (V2 ? 78 : 34)); const d = Math.hypot(dx, dy, dz);
+  const n = mode === 'explore' && nav !== 'orbit' ? .15 : clamp(d * .04, .25, 5); const f = clamp(250 + Math.hypot(p.x, p.y, p.z) * 3, 900, 1800);
+  if (Math.abs(n - camera.near) > .01 || Math.abs(f - camera.far) > 20) { camera.near = n; camera.far = f; camera.updateProjectionMatrix(); } }
+function draw() { if (mode === 'story') { const r = bookEl.getBoundingClientRect(); if (r.top <= 1 && r.bottom >= innerHeight - 1) return; } depthFit();
   BATCH.sync(!window.__noBatch && (mode === 'explore' || mode === 'story') && B >= 4.999 && !(tour.on && tour.kind === 'build'));
   let ptOn = false; try { ptOn = window.__PT && window.__PT.frame(); } catch (e) { console.error('PT', e); window.__PT.set(false); canvas.style.transform = ''; } if (ptOn) { if (REC.on) REC.grab(); return; }
   if (HQ && mode === 'explore') { if (!composer) makeComposer(); gtao.enabled = cut.axis === 'none';
@@ -3020,7 +3023,7 @@ const FX = (() => {
     const bd = new THREE.Mesh(new THREE.CapsuleGeometry(.17, .38, 3, 10), wM[3]); bd.position.y = 1.22; bd.scale.z = .7; const hd = new THREE.Mesh(new THREE.SphereGeometry(.11, 12, 10), wM[2]); hd.position.y = 1.62; const hat = new THREE.Mesh(new THREE.SphereGeometry(.125, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), wM[0]); hat.position.y = 1.67;
     const arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * .23, 1.42, 0); a.add(new THREE.Mesh(new THREE.CapsuleGeometry(.05, .5, 3, 8).translate(0, -.3, 0), wM[1])); w.add(a); return a; });
     w.add(bd, hd, hat); w.userData = {legs, arms}; w.traverse(m => { if (m.isMesh) m.castShadow = true; }); return w; };
-  const walkers = [[[-30, .3, -31.5], [-30, .3, -44], [-20, .3, -50]], [[-48, .3, -32], [-48, .3, -40]], [[-16, fy, -26], [-16, fy, -4]], [[20, fy, -4], [20, fy, -26]], [[40, fy, -26], [40, fy, -4]], [[-8, fy, 4], [-8, fy, 26]], [[gx, .3, gz + 2], [gx, .3, -40]], [[-40, OF.lv + .2, -10], [-24, OF.lv + .2, -10]]];
+  const walkers = [[[-30, .3, -31.5], [-30, .3, -44], [-20, .3, -50]], [[-48, .3, -32], [-48, .3, -40]], [[-16, fy, -26], [-16, fy, -4]], [[20, fy, -4], [20, fy, -26]], [[40, fy, -26], [40, fy, -4]], [[-8, fy, 4], [-8, fy, 26]], [[gx, .3, gz + 2], [gx, .3, -40]], [[-46, OF.lv + .2, -20], [-24, OF.lv + .2, -20]]];
   walkers.forEach((pts, i) => { const w = worker(); L.aktivitas.add(w); AGENTS.push({kind: 'walk', o: w, a: tr(pts), b: tr([...pts].reverse()), ph: i * 7.3, T: 0}); });
   for (const [x, z, r] of [[-11, -14, 0], [7, -18, Math.PI], [26, -12, 0], [44, -8, Math.PI], [-12, 14, Math.PI / 2], [16, 20, -Math.PI / 2], [-40, -12, Math.PI / 2]]) { const w = worker(); w.position.set(x, P.floor, z); w.rotation.y = r; L.aktivitas.add(w); AGENTS.push({kind: 'work', o: w, ph: x + z}); }
   RACKS.forEach((r, i) => r.aisles.forEach((ax, j) => { if (!((i + j) % 2)) return; const f = forklift(); L.aktivitas.add(f); AGENTS.push({kind: 'fork', o: f, x: ax, ph: i * 5 + j * 3}); }));
