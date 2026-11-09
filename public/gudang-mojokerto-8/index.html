@@ -1174,7 +1174,7 @@ addEventListener('DOMContentLoaded',function(){var VP=document.getElementById('v
         <div class="num mono"><b>02</b><span>Denah lt. 1</span></div>
         <h2>Kolom HB 300</h2>
         <p>Kolom berdiri di keliling, garis lembah F dan garis partisi unit. Tiap bentang 30 m bebas kolom, jadi lantai gudang lega untuk rak, coil dan forklift.</p>
-        <ul class="specs"><li><span>Kolom</span>HB 300 × 300</li><li><span>Finish</span>zincromate</li><li><span>Grid</span>2–19 × A–K @ 6.00 m</li><li><span>Portal</span>19</li></ul>
+        <ul class="specs"><li><span>Kolom</span>HB 300 × 300</li><li><span>Finish</span>cat maroon</li><li><span>Grid</span>2–19 × A–K @ 6.00 m</li><li><span>Portal</span>19</li></ul>
       </div>
     </article>
     <article class="step">
@@ -1504,7 +1504,7 @@ const hemi = new THREE.HemisphereLight(0xf4f6f8, 0xc9c6bc, 1.1); scene.add(hemi)
 const sun = new THREE.DirectionalLight(0xfff4e6, 3.0);
 sun.castShadow = true;
 const SM = GFX.c.sm; sun.shadow.mapSize.set(SM, SM);
-Object.assign(sun.shadow.camera, {left: -78, right: 78, top: 78, bottom: -78, near: 10, far: 420});
+Object.assign(sun.shadow.camera, {left: -96, right: 96, top: 96, bottom: -96, near: 10, far: 520});
 sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04; const shadowBias = () => { const sm = sun.shadow.mapSize.x; sun.shadow.normalBias = sm <= 1024 ? .14 : sm <= 2048 ? .08 : .045; sun.shadow.bias = sm <= 1024 ? -.0012 : sm <= 2048 ? -.0007 : -.0004; }; shadowBias();
 scene.add(sun, sun.target);
 
@@ -1542,21 +1542,21 @@ roughTex.repeat.set(.12, .12);
 const CLIP = []; const clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 9999);
 function M(o, clip = true, phys = false) { const m = phys ? new THREE.MeshPhysicalMaterial(o) : new THREE.MeshStandardMaterial(o); if (clip) { m.clippingPlanes = [clipPlane]; CLIP.push(m); } return m; }
 const mat = {
-  steel: M({color: 0x4b565e, metalness: .3, roughness: .5, side: THREE.DoubleSide}),
+  steel: M({color: 0x6a1a23, metalness: .28, roughness: .4, clearcoat: .35, clearcoatRoughness: .3, side: THREE.DoubleSide}, true, true), // baja WF/HB cat maroon
   steelLight: M({color: 0x8a959a, metalness: .75, roughness: .38, side: THREE.DoubleSide}),
   roof: M({color: 0xc3c8ca, metalness: .9, roughness: .34, roughnessMap: roughTex, side: THREE.DoubleSide, envMapIntensity: 1.1, normalMap: ribNormal, normalScale: new THREE.Vector2(-.8, .8)}),
   roofSmall: M({color: 0xbcc2c4, metalness: .85, roughness: .32}),
   clad: M({color: 0xd9dddd, metalness: .75, roughness: .4, roughnessMap: roughTex, normalMap: ribNormal, normalScale: new THREE.Vector2(-.9, .9)}),
-  plaster: M({color: 0xf1f1ec, roughness: .92, map: noiseTex, side: THREE.DoubleSide}),
+  plaster: M({color: 0xffffff, roughness: .88, map: noiseTex, side: THREE.DoubleSide}),
   plinth: M({color: 0xbfbcb3, roughness: .95, map: noiseTex}),
   concrete: M({color: 0xa9a59c, roughness: .95, map: noiseTex}),
-  slab: M({color: 0xc9c7c0, roughness: .55, roughnessMap: roughTex, map: noiseTex, envMapIntensity: .9}),
+  slab: M({color: 0xc9c7c0, roughness: .45, roughnessMap: roughTex, map: noiseTex, envMapIntensity: 1.1, clearcoat: .55, clearcoatRoughness: .18}, true, true), // lantai beton K400 dipoles
   door: M({color: 0xffffff, map: doorTex, metalness: .5, roughness: .45, side: THREE.DoubleSide}),
   dark: M({color: 0x2b3236, metalness: .4, roughness: .55}),
   signal: M({color: 0xf2b705, roughness: .6}),
   black: M({color: 0x1d2124, roughness: .8}),
-  glass: M({color: 0x9fb7c3, metalness: 0, roughness: .03, transparent: true, opacity: .32, clearcoat: 1, clearcoatRoughness: .02, envMapIntensity: 1.8, emissive: 0xffc98a, emissiveIntensity: 0}, true, true),
-  office: M({color: 0xf5f5f1, roughness: .9, map: noiseTex}),
+  glass: M({color: 0x9fb7c3, metalness: 0, roughness: .03, transparent: true, opacity: .32, clearcoat: 1, clearcoatRoughness: .02, envMapIntensity: 2.4, emissive: 0xffc98a, emissiveIntensity: 0}, true, true),
+  office: M({color: 0xffffff, roughness: .9, map: noiseTex}),
   lamp: M({color: 0xf6f3ea, emissive: 0xfff1d6, emissiveIntensity: 0, roughness: .4}),
   tyre: M({color: 0x22262a, roughness: .9}),
   carW: M({color: 0xe9ebec, metalness: .5, roughness: .25, clearcoat: 1, clearcoatRoughness: .08}, true, true),
@@ -1566,7 +1566,7 @@ const mat = {
   trunk: M({color: 0x6e665c, roughness: 1}),
   leaf: M({color: 0x8f9d84, roughness: .95, flatShading: true}),
   leaf2: M({color: 0x7b8c74, roughness: .95, flatShading: true}),
-  wallSite: M({color: 0xe0dfd8, roughness: .95, map: noiseTex}),
+  wallSite: M({color: 0xffffff, roughness: .95, map: noiseTex}),
   pave: new THREE.MeshStandardMaterial({color: 0xdbd9d3, roughness: .95, map: noiseTex, transparent: true}),
   ground: new THREE.MeshStandardMaterial({color: 0xffffff, map: gridTex, roughness: 1, transparent: true}),
   road: new THREE.MeshPhysicalMaterial({color: 0xb7b9b6, roughness: .95, clearcoat: .85, clearcoatRoughness: .12}),
@@ -1684,7 +1684,7 @@ for (const [x, z] of MEZ) { const c = new THREE.Mesh(colGeo200, mat.steel); c.po
 
 /* ================= 3 · RAFTERS (honeycomb 450), PURLINS, BRACING ================= */
 const rafterH = .45;
-mat.honey = M({color: 0x4b565e, metalness: .3, roughness: .5, side: THREE.DoubleSide, alphaTest: .5, map: canvasTex(64, 32, (g, w, h) => { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.fillStyle = '#000'; g.beginPath(); const r = h * .3, cx = w / 2, cy = h / 2; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; g.lineTo(cx + Math.cos(a) * r * 1.25, cy + Math.sin(a) * r); } g.closePath(); g.fill(); })});
+mat.honey = M({color: 0x6a1a23, metalness: .28, roughness: .4, side: THREE.DoubleSide, alphaTest: .5, map: canvasTex(64, 32, (g, w, h) => { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.fillStyle = '#000'; g.beginPath(); const r = h * .3, cx = w / 2, cy = h / 2; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; g.lineTo(cx + Math.cos(a) * r * 1.25, cy + Math.sin(a) * r); } g.closePath(); g.fill(); })});
 mat.honey.transparent = false; mat.honey.alphaMap = mat.honey.map; mat.honey.map = null;
 const SPAN_HALF = 15, SLL = SPAN_HALF / Math.cos(SLOPE);
 for (const s of P.spans) {
@@ -1741,8 +1741,15 @@ for (const s of P.spans) {
 { const gv = box(108.6, .25, .6, mat.ss, 0, P.eave - .1, 0); G.roof.add(gv); reg(gv, 4, .1, 'x'); }
 for (const [x0, x1, z] of [[-54.4, 54.4, -30 - P.over - .1], [-54.4, 48.4, 30 + P.over + .1]]) { const g = box(x1 - x0, .22, .22, mat.ss, (x0 + x1) / 2, P.eave - .22 - P.over * Math.tan(SLOPE), z); G.roof.add(g); reg(g, 4, .15, 'pop'); }
 
+// talang tegak (downpipe stainless) tiap 12 m + apron beton 1.0 m keliling gedung
+{ const pg = new THREE.CylinderGeometry(.075, .075, 1, 10).translate(0, .5, 0); const yT = P.eave - .3 - P.over * Math.tan(SLOPE);
+  for (const [z, xs] of [[-30.62, [-48, -36, -24, -12, 0, 24, 39, 51]], [30.62, [-48, -36, -24, -12, 0, 12, 27, 39]]]) for (const x of xs) {
+    const p = new THREE.Mesh(pg, mat.ss); p.position.set(x, .05, z); p.scale.y = yT; shadow(p); G.roof.add(p); reg(p, 4, .2, 'grow');
+    const e = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, .55, 10), mat.ss); e.rotation.x = Math.PI / 2; e.position.set(x, yT, z + Math.sign(z) * .25); G.roof.add(e); reg(e, 4, .2, 'pop');
+    const sh = box(.5, .06, .5, mat.concrete, x, .02, z + Math.sign(z) * .35); G.site.add(sh); }
+  for (const [x0, x1, z0, z1] of [[-55, 55, -31.3, -30.15], [-55, 49, 30.15, 31.3], [-55.3, -54.15, -30.15, 30.15], [54.15, 55.3, -30.15, 0], [48.15, 49.3, 0, 30.15]]) { const ap = box(x1 - x0, .08, z1 - z0, mat.concrete, (x0 + x1) / 2, 0, (z0 + z1) / 2); ap.receiveShadow = true; ap.castShadow = false; G.site.add(ap); reg(ap, 5, .1, 'grow'); } }
 /* ================= 5 · DINDING: hebel double, cat putih — keliling, garis F, partisi ================= */
-mat.hebel = M({color: 0xf3f2ee, roughness: .9, map: noiseTex, side: THREE.DoubleSide});
+mat.hebel = M({color: 0xffffff, roughness: .88, map: noiseTex, side: THREE.DoubleSide});
 mat.plaster = mat.hebel;
 const T_W = .25;
 // wall polygon in a vertical plane: pts = [[u, y]...] along a line from (x0,z0) to (x1,z1); holes [[u0, y0, w, h]]
@@ -1750,7 +1757,6 @@ function vwall(x0, z0, x1, z1, pts, holes, m = mat.hebel, t = T_W) {
   const s = new THREE.Shape(pts.map(([u, y]) => new THREE.Vector2(u, y)));
   for (const [u, y, w, h] of holes) s.holes.push(new THREE.Path([new THREE.Vector2(u, y), new THREE.Vector2(u + w, y), new THREE.Vector2(u + w, y + h), new THREE.Vector2(u, y + h)]));
   const g = new THREE.ExtrudeGeometry(s, {depth: t, bevelEnabled: false}); g.translate(0, 0, -t / 2);
-  { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * .25, uv.getY(i) * .25); }
   const me = new THREE.Mesh(g, m); me.position.set(x0, 0, z0); me.rotation.y = -Math.atan2(z1 - z0, x1 - x0); return shadow(me);
 }
 // profile under the roof along z for a wall line at x (both spans if present)
@@ -2184,24 +2190,24 @@ function setTrees(B) { palmGrow = clamp((B - 4) / 1);
 
 /* ================= Poly Haven PBR textures + HDRI ================= */
 const TL = new THREE.TextureLoader();
-const HI = new Set(['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough']);
+const HI = new Set(['box_profile_metal_sheet_nor', 'box_profile_metal_sheet_rough', 'brushed_concrete_diff', 'brushed_concrete_nor', 'brushed_concrete_rough', 'painted_plaster_wall_nor', 'painted_plaster_wall_rough', ...['concrete_pavement', 'asphalt_02', 'grass_path_2'].flatMap(n => [n + '_diff', n + '_nor', n + '_rough'])]);
 /* textures decode off the main thread (createImageBitmap) and upload to the GPU one per frame while nobody is scrolling */
 const UPQ = [], TEXS = {}; let lastScroll = 0; addEventListener('scroll', () => { lastScroll = performance.now(); }, {passive: true}); addEventListener('wheel', () => { lastScroll = performance.now(); }, {passive: true}); addEventListener('touchmove', () => { lastScroll = performance.now(); }, {passive: true});
 const scrolling = () => performance.now() - lastScroll < 220;
 function loadBitmap(t, url) { return fetch(url).then(r => r.blob()).then(b => createImageBitmap(b, {imageOrientation: 'flipY'})).then(bmp => { if (t.image && t.image.close) t.image.close(); t.image = bmp; t.flipY = false; UPQ.push(t); dirtyTex = true; }).catch(() => { TL.load(url, img => { t.image = img.image; t.needsUpdate = true; dirtyTex = true; }); }); }
-function upgrade4k() { if (upgrade4k.done || GFX.lvl !== 'tinggi' || SMALL) return; upgrade4k.done = true; let i = 0; for (const n of HI) for (const t of (TEXS[n] || [])) setTimeout(() => loadBitmap(t, `assets/tex4k/${n}.jpg`), 400 * i++); }
-function phTex(name, rx, ry, srgb) { const t = new THREE.Texture(); (TEXS[name] = TEXS[name] || []).push(t); if (window.createImageBitmap) loadBitmap(t, `assets/tex/${name}.jpg`); else TL.load(`assets/tex/${name}.jpg`, img => { t.image = img.image; t.needsUpdate = true; dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
+function upgrade4k() { if (upgrade4k.done || !['tinggi', 'ultra'].includes(GFX.lvl) || SMALL) return; upgrade4k.done = true; let i = 0; for (const n of HI) for (const t of (TEXS[n] || [])) setTimeout(() => loadBitmap(t, `assets/tex4k/${n}.jpg`), 400 * i++); }
+function phTex(name, rx, ry, srgb) { const t = new THREE.Texture(); (TEXS[name] = TEXS[name] || []).push(t); const TD = SMALL ? 'texm' : 'tex'; if (window.createImageBitmap) loadBitmap(t, `assets/${TD}/${name}.jpg`); else TL.load(`assets/${TD}/${name}.jpg`, img => { t.image = img.image; t.needsUpdate = true; dirtyTex = true; }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy()); t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; }
 let dirtyTex = false;
 function pbr(m, base, rx, ry, {diff = true, color, rough, metal, ns = 1} = {}) {
   if (diff) m.map = phTex(base + '_diff', rx, ry, true); m.normalMap = phTex(base + '_nor', rx, ry); m.normalScale = new THREE.Vector2(-ns, ns); // x negated: screen is mirrored (see camera) m.roughnessMap = phTex(base + '_rough', rx, ry);
   if (color !== undefined) m.color.set(color); if (rough !== undefined) m.roughness = rough; if (metal !== undefined) m.metalness = metal; m.needsUpdate = true; }
 function applyPBR() {
-  pbr(mat.roof, 'box_profile_metal_sheet', .125, 2, {diff: false, color: 0xcfd3d6, rough: 1, metal: .92});
+  pbr(mat.roof, 'box_profile_metal_sheet', .125, 2, {diff: false, color: 0xcfd3d6, rough: 1, metal: .92}); mat.roof.envMapIntensity = 1.35;
   pbr(mat.clad, 'box_profile_metal_sheet', .125, 2, {diff: false, color: 0xd9dcdd, rough: 1, metal: .85});
   pbr(mat.roofSmall, 'box_profile_metal_sheet', .125, 2, {diff: false, color: 0xcfd3d6, rough: 1, metal: .9});
   pbr(mat.slab, 'brushed_concrete', .25, .25, {color: 0xffffff, rough: 1}); pbr(mat.concrete, 'brushed_concrete', .5, .5, {color: 0xd8d4cc, rough: 1});
-  pbr(mat.plaster, 'beige_wall_001', .4, .4, {diff: false, color: 0xf8f8f6, rough: 1, ns: .5}); pbr(mat.wallSite, 'beige_wall_001', .4, .4, {diff: false, color: 0xf8f8f6, rough: 1, ns: .5});
-  pbr(mat.office, 'beige_wall_001', .5, .5, {diff: false, color: 0xf7f6f2, rough: 1, ns: .7});
+  pbr(mat.plaster, 'painted_plaster_wall', .5, .5, {diff: false, color: 0xffffff, rough: 1, ns: .8}); pbr(mat.wallSite, 'beige_wall_001', .4, .4, {diff: false, color: 0xffffff, rough: 1, ns: .5});
+  pbr(mat.office, 'beige_wall_001', .5, .5, {diff: false, color: 0xffffff, rough: 1, ns: .7});
   pbr(mat.pave, 'concrete_pavement', 1 / 3.2, 1 / 3.2, {color: 0xe2e2de, rough: 1, ns: .55});
   pbr(mat.road, 'asphalt_02', 213 / 5, 7.6 / 5, {color: 0xa9abaa, rough: .72, ns: .7}); pbr(mat.shutter, 'painted_metal_shutter', 2, 2, {color: 0xc9d0d4, rough: 1, metal: .5});
   pbr(mat.door, 'painted_metal_shutter', 1, 2, {color: 0xaab3b8, rough: 1, metal: .4});
@@ -2354,12 +2360,39 @@ function makeComposer() {
   composer.setPixelRatio(pr); composer.setSize(innerWidth, innerHeight); GRADE.uniforms.res.value.set(innerWidth * pr, innerHeight * pr);
 }
 function draw() { if (mode === 'story') { const r = bookEl.getBoundingClientRect(); if (r.top <= 1 && r.bottom >= innerHeight - 1) return; }
+  BATCH.sync(!window.__noBatch && (mode === 'explore' || mode === 'story') && B >= 4.999 && !(tour.on && tour.kind === 'build'));
   let ptOn = false; try { ptOn = window.__PT && window.__PT.frame(); } catch (e) { console.error('PT', e); window.__PT.set(false); canvas.style.transform = ''; } if (ptOn) { if (REC.on) REC.grab(); return; }
   if (HQ && mode === 'explore') { if (!composer) makeComposer(); gtao.enabled = cut.axis === 'none';
     const idle = RTX.tick(Math.min(.25, (performance.now() - (RTX.t || performance.now())) / 1000)), rtx = RTX.on(); RTX.t = performance.now(); const acc = rtx && idle; RP.enabled = !acc; TAA.enabled = acc; TAA.accumulate = acc; if (!acc) TAA.accumulateIndex = -1;
     GRADE.enabled = rtx; GRADE.uniforms.time.value = performance.now() / 1000; composer.render(); }
   else renderer.render(scene, camera); if (REC.on) REC.grab(); }
 
+
+/* ================= static batching: ribuan mesh statis → beberapa draw call per material (mulus di HP) ================= */
+const BATCH = (() => { const LAY = ['found', 'steel', 'purlin', 'roof', 'wall', 'door', 'office', 'officeUp', 'officeRoof', 'site', 'racks']; let built = false, on = false; const merged = [], parts = [];
+  const live = o => DOORS.includes(o) || o === window.__gate || (window.__crane && (o === window.__crane.g)) || SMALLDOORS.some(d => d.piv === o) || o.isInstancedMesh || o.isLine || o.isLineSegments || o.isPoints || o.isSprite || o.userData.wheel || o.userData.forks || (o.parent && o.parent.userData.forks === o);
+  const shown = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+  function geoOf(o, inv) { let g = o.geometry; if (!g || !g.attributes.position) return null; g = g.index ? g.toNonIndexed() : g.clone(); for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(k)) g.deleteAttribute(k);
+    if (!g.attributes.normal) g.computeVertexNormals(); if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2)); g.clearGroups();
+    const m = inv ? new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld) : o.matrixWorld; g.applyMatrix4(m);
+    if (m.determinant() < 0) { for (const k of ['position', 'normal', 'uv']) { const a = g.attributes[k], n = a.itemSize; for (let i = 0; i < a.count; i += 3) for (let c = 0; c < n; c++) { const t = a.array[(i + 1) * n + c]; a.array[(i + 1) * n + c] = a.array[(i + 2) * n + c]; a.array[(i + 2) * n + c] = t; } } }
+    return g; }
+  function mergeInto(G0, inv, filter) { const buckets = new Map();
+    const walk = o => { if (o !== G0 && live(o)) return; if (o.isMesh && !o.isInstancedMesh && !Array.isArray(o.material) && shown(o) && (!filter || filter(o))) { const g = geoOf(o, inv); if (g) { const key = o.material.uuid + '|' + (o.userData.info || '') + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0); let b = buckets.get(key); if (!b) buckets.set(key, b = {m: o.material, info: o.userData.info, cs: o.castShadow, rs: o.receiveShadow, g: [], src: []}); b.g.push(g); b.src.push(o); } }
+      for (const c of o.children) walk(c); };
+    walk(G0);
+    for (const b of buckets.values()) { if (b.src.length < 2) continue; let g; try { g = mergeGeometries(b.g, false); } catch (e) { g = null; } if (!g) continue;
+      const me = new THREE.Mesh(g, b.m); me.castShadow = b.cs; me.receiveShadow = b.rs; me.userData.info = b.info; me.userData.batch = true; me.visible = false; me.matrixAutoUpdate = false; G0.add(me); merged.push(me); for (const o of b.src) parts.push(o); }
+    for (const g of buckets.values()) for (const x of g.g) x.dispose(); }
+  function build() { built = true; root.updateMatrixWorld(true);
+    for (const k of LAY) mergeInto(G[k], null);
+    if (T2G && T2G.children.length) mergeInto(T2G, null);
+    // vehicles keep moving (drivable): merge inside each vehicle, wheels & forks stay live
+    for (const v of G.props.children) { v.updateMatrixWorld(true); mergeInto(v, new THREE.Matrix4().copy(v.matrixWorld).invert()); } }
+  function set(v) { if (v === on) return; if (v && !built) build(); on = v; for (const o of parts) o.visible = !v; for (const m of merged) m.visible = v;
+    if (!v) { for (const o of anims) o.userData.anim.t = -1; applyBuild(B); } renderer.shadowMap.needsUpdate = true; }
+  return {sync(want) { set(!!want); }, get on() { return on; }, stats: () => ({merged: merged.length, parts: parts.length})}; })();
+window.__BATCH = BATCH; window.__rinfo = () => ({calls: renderer.info.render.calls, tris: renderer.info.render.triangles, fps: +GFX.fps.toFixed(1)});
 /* ---------- path tracer (three-gpu-pathtracer), loaded on demand; progressive, fotoreal saat kamera diam ---------- */
 window.__ptCount = () => { let t = 0, n = 0, inst = 0; const sk = m => m.isLineSegments || m.isLine || m.isPoints || (m.material && (m.material.blending === THREE.AdditiveBlending || (m.material.isMeshBasicMaterial && m.material.toneMapped === false))); const sh = o => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; }; root.traverse(o => { if (!o.isMesh || sk(o) || !sh(o)) return; const g = o.geometry; const tri = (g.index ? g.index.count : g.attributes.position.count) / 3; if (o.isInstancedMesh) { if (o.count > 700) return; t += tri * o.count; inst += o.count; } else { t += tri; n++; } }); return {tri: Math.round(t), meshes: n, inst}; };
 window.__PT = (() => { let lib = null, pt = null, ptScene = null, ptCam = null, dirty = true, active = false, want = false, still = 0, loading = false, env = {}, badge = null, lastM = new THREE.Matrix4(), N = 0;
@@ -2465,7 +2498,7 @@ function heroPose(t, out) { // idle drift around key 0
   v.applyAxisAngle(V(0, 1, 0), a); out.copy(k.t).add(v); return out;
 }
 /* ---------- realism: wild meadow + mature treeline around the site (fog hazes them) ---------- */
-{ const S = P.site, n = {rendah: 2200, sedang: 5200, tinggi: 9000}[GFX.lvl]; let sd = 77; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+{ const S = P.site, n = SMALL ? 700 : ({rendah: 2200, sedang: 5200, tinggi: 9000, ultra: 9000}[GFX.lvl] || 2200); let sd = 77; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
   const geo = mergeGeometries([0, 1, 2].map(i => new THREE.PlaneGeometry(1.1, .95).translate(0, .45, 0).rotateY(i * Math.PI / 3)));
   const mm = new THREE.InstancedMesh(geo, mat.grassT, n); const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p3 = new THREE.Vector3(); let k = 0;
   for (let t = 0; t < n * 6 && k < n; t++) { const x = (S.x0 + S.x1) / 2 + (rnd() - .5) * (S.x1 - S.x0 + 70), z = (S.z0 + S.z1) / 2 + (rnd() - .5) * (S.z1 - S.z0 + 70);
@@ -2762,7 +2795,7 @@ $('#dSound').onclick = () => setSound(!SFX.on); { const hb = $('#btnSnd'); if (h
 const INFO = {
   g1: ['Bentang depan', 'Grid A–F · 108 m', [['Bentang', '30.00 m'], ['Panjang', '108.00 m'], ['Unit', '2.016 · 1.080 · 1.080 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '5 rolling door 4.60 × 4.60 m']]],
   g2: ['Bentang belakang', 'Grid F–K · 102 m', [['Bentang', '30.00 m'], ['Panjang', '102.00 m'], ['Unit', '720 · 720 · 540 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '6 rolling door 4.60 × 4.60 m']]],
-  steel: ['Struktur baja', 'Portal @ 6.00 m', [['Pedestal', 'beton K350, puncak +1.50'], ['Kolom', 'HB 300 × 300, zincromate'], ['Rafter', 'honeycomb 450'], ['Roof floor', '+9.50'], ['Bubungan', '± +13.70']]],
+  steel: ['Struktur baja', 'Portal @ 6.00 m', [['Pedestal', 'beton K350, puncak +1.50'], ['Kolom', 'HB 300 × 300, cat maroon'], ['Rafter', 'honeycomb 450'], ['Roof floor', '+9.50'], ['Bubungan', '± +13.70']]],
   door: ['Rolling door', 'Klik untuk buka/tutup', [['Ukuran', '± 4.60 × 4.60 m'], ['Sisi depan', '5 pintu'], ['Sisi belakang', '6 pintu']]],
   canopy: ['Kanopi', 'Di atas tiap rolling door', [['Lebar', '± 6.00 m'], ['Penutup', 'metal']]],
   office: ['Kantor', 'Dua lantai, grid 2–7', [['Lt. 1', 'Receptionist 144 m², QC 36 m², gudang 216 m²'], ['Lt. 2', 'FFL +6.00 · office, R. meeting besar, meeting kecil, R. tertutup'], ['Dinding', 'hebel double, cat']]],
@@ -2784,8 +2817,8 @@ $('#infoX').onclick = () => $('#info').hidden = true;
 
 /* ================= lighting presets ================= */
 const LIGHTS = {
-  day: {bg: '#E6E9E6', sun: [-70, 92, -64], sc: '#fff4e6', si: 3.0, hs: '#f4f6f8', hg: '#c9c6bc', hi: 1.1, exp: 1.0, lamp: 0, pt: 0, fog: [190, 520]},
-  dusk: {bg: '#E6D6C6', sun: [-130, 14, -40], sc: '#ffae74', si: 2.6, hs: '#d9c9dd', hg: '#8c7b6c', hi: .62, exp: 1.05, lamp: 1.6, pt: .5, fog: [150, 460]},
+  day: {bg: '#E6E9E6', sun: [-70, 92, -64], sc: '#fff1de', si: 3.7, hs: '#eef3f8', hg: '#b9b29c', hi: .55, exp: .95, lamp: 0, pt: 0, fog: [190, 520]},
+  dusk: {bg: '#E6D6C6', sun: [-130, 14, -40], sc: '#ffa868', si: 3.1, hs: '#d9c9dd', hg: '#8c7b6c', hi: .4, exp: 1.05, lamp: 1.6, pt: .5, fog: [150, 460]},
   night: {bg: '#121925', sun: [60, -3, 90], moon: [60, 80, 90], sc: '#8fa6d8', si: .3, hs: '#22304a', hg: '#0b0f16', hi: .3, exp: 1.0, lamp: 3, pt: 1, fog: [160, 460]},
 };
 let light = 'day';
@@ -2798,7 +2831,7 @@ function setLight(k) {
   sun.position.set(...L.sun).normalize().multiplyScalar(160); sun.color.set(L.sc); sun.intensity = L.si; buildEnv(sun.position); if (L.moon) sun.position.set(...L.moon).normalize().multiplyScalar(160);
   hemi.color.set(L.hs); hemi.groundColor.set(L.hg); hemi.intensity = L.hi; renderer.toneMappingExposure = L.exp;
   mat.lamp.emissiveIntensity = L.lamp; mat.glass.emissiveIntensity = L.lamp * .35; for (const m of LIGHTMATS) m.emissiveIntensity = L.lamp * .6; mat.beacon.emissiveIntensity = .6 + L.lamp * .5;
-  applyBayLights(L); const ei = {day: .8, dusk: .8, night: .6}[k]; scene.traverse(o => { if (o.material && 'envMapIntensity' in o.material && !o.material.userData.ei) { o.material.userData.ei = o.material.envMapIntensity || 1; } if (o.material && o.material.userData.ei) o.material.envMapIntensity = o.material.userData.ei * ei; }); if (bloom) bloom.strength = {day: 0, dusk: .25, night: .6}[k];
+  applyBayLights(L); const ei = {day: 1.05, dusk: .95, night: .6}[k]; scene.traverse(o => { if (o.material && 'envMapIntensity' in o.material && !o.material.userData.ei) { o.material.userData.ei = o.material.envMapIntensity || 1; } if (o.material && o.material.userData.ei) o.material.envMapIntensity = o.material.userData.ei * ei; }); if (bloom) bloom.strength = {day: 0, dusk: .25, night: .6}[k];
   if (!(mode === 'explore' && mat.ground.map && mat.grass && mat.ground.map === mat.grass.map)) mat.ground.color.set(k === 'night' ? '#2a3442' : k === 'dusk' ? '#e2dccb' : '#dfe2d4');
   mat.pave.color.set(k === 'night' ? '#4a5260' : '#dbd9d3'); mat.road.color.set(k === 'night' ? '#2d343e' : '#b7b9b6');
   document.body.classList.toggle('night', k === 'night');
@@ -3414,7 +3447,7 @@ const CON = (() => {
     pondasi: () => [['Pondasi plat', '2.20 / 1.80 × 0.50 m (indikatif)'], ['Sloof', 'di semua garis kolom'], ['Titik', `${COLS.length} kolom + ${MEZ.length} lantai 2`], ['Alat', 'excavator · truk mixer · pekerja']],
     pagar: () => [['Samping & belakang', 'dinding bata 2.5 m, kolom @ 3 m'], ['Depan', 'dinding rendah + besi'], ['Gerbang', '12.00 m, geser']],
     umpak: () => [['Pedestal', 'beton K350, besi 16, ring 10'], ['Tinggi', '+1.50 m'], ['Angkur', '4 baut + base plate'], ['Jumlah', `${COLS.length} pedestal`]],
-    kolom: () => [['Kolom', 'HB 300 × 300, finish zincromate'], ['Tinggi', 'pedestal +1.50 → roof floor +9.50'], ['Grid', '2–19 × A–K @ 6.00 m'], ['Alat', 'crane mobil · truk material']],
+    kolom: () => [['Kolom', 'HB 300 × 300, cat maroon'], ['Tinggi', 'pedestal +1.50 → roof floor +9.50'], ['Grid', '2–19 × A–K @ 6.00 m'], ['Alat', 'crane mobil · truk material']],
     kuda: () => [['Rafter', 'honeycomb 450'], ['Bentang', '2 × 30.00 m bebas'], ['Gording', 'C 125 @ 1.20 m'], ['Ikatan', 'trekstang + tali angin di bentang ujung']],
     seng: () => [['Penutup', 'metal corrugated'], ['Kemiringan', '± 16°'], ['Bubungan', '± +13.70'], ['Talang', 'stainless, lembah & tepi']],
     tembok: () => [['Dinding', 'hebel double, finish cat'], ['Pintu', 'rolling door 4.60 × 4.60 m'], ['Lantai', 'beton K400 + wiremesh M10'], ['Kanopi', 'baja ringan di tiap pintu']],
@@ -3423,7 +3456,7 @@ const CON = (() => {
   };
   const items = []; const wp = new THREE.Vector3(), bb = new THREE.Box3();
   function collect() { items.length = 0; root.updateMatrixWorld(true);
-    const add = (o, ph, kind, key, spec) => { o.updateMatrixWorld(true); bb.setFromObject(o); const c = bb.isEmpty() ? o.getWorldPosition(new THREE.Vector3()) : bb.getCenter(new THREE.Vector3()); items.push({o, ph, kind, key: key ?? (c.z * 1000 + c.x), spec, c, sz: bb.isEmpty() ? V(1, 1, 1) : bb.getSize(new THREE.Vector3()), pos: o.position.clone(), sc: o.scale.clone(), vis: o.visible}); };
+    const add = (o, ph, kind, key, spec) => { if (o.userData.batch) return; o.updateMatrixWorld(true); bb.setFromObject(o); const c = bb.isEmpty() ? o.getWorldPosition(new THREE.Vector3()) : bb.getCenter(new THREE.Vector3()); items.push({o, ph, kind, key: key ?? (c.z * 1000 + c.x), spec, c, sz: bb.isEmpty() ? V(1, 1, 1) : bb.getSize(new THREE.Vector3()), pos: o.position.clone(), sc: o.scale.clone(), vis: o.visible}); };
     const gp = o => o.geometry && o.geometry.parameters || {};
     for (const o of G.found.children) { const p = gp(o); if (o.material === mat.slab) add(o, 'tembok', 'grow', 5e5 + o.position.x, 'Cor lantai t = 15 cm');
       else if (p.height > 1.3) add(o, 'umpak', 'grow', null, 'Pedestal beton K350 · +1.50'); else if (p.width >= 1 && p.depth >= 1 && p.width < 2.5 && p.depth < 2.5) add(o, 'pondasi', 'grow', null, 'Pondasi plat ' + p.width.toFixed(2) + ' × 0.50');
@@ -3993,7 +4026,7 @@ const SHEETS = [
   function dCenter() { const W = dport.clientWidth, H = dport.clientHeight; dx = (W - dfit * dz) / 2; dy = (H - dfit * dz / 1.4142) / 2; }
   function dZoomAt(nz, px, py) { nz = Math.max(1, Math.min(10, nz)); const k = nz / dz; dx = px - (px - dx) * k; dy = py - (py - dy) * k; dz = nz; if (dz === 1) { dLayout(); dCenter(); } dClamp(); dLayout(); }
   window.openDwg = k => openDwg(k);
-  function openDwg(k) { dKey = k; const sh = SHEETS.find(x => x.k === k); dimg.src = `assets/dwg/${k}.svg`; $('#dvT').textContent = `${sh.c} · ${sh.t}`; dv.hidden = false; dz = 1; dLayout(); dCenter(); dLayout(); $('#dvClose').focus(); }
+  function openDwg(k) { dKey = k; const sh = SHEETS.find(x => x.k === k); dimg.src = SMALL ? `assets/dwgm/${k}.jpg` : `assets/dwg/${k}.svg`; $('#dvT').textContent = `${sh.c} · ${sh.t}`; dv.hidden = false; dz = 1; dLayout(); dCenter(); dLayout(); $('#dvClose').focus(); }
   function dStep(d) { const i = (DKEYS.indexOf(dKey) + d + DKEYS.length) % DKEYS.length; openDwg(DKEYS[i]); }
   $('#dvClose').onclick = () => { dv.hidden = true; const i = SP.findIndex(x => x.dwg === dKey); if (i >= 0) goSpread(i); };
   $('#dvIn').onclick = () => dZoomAt(dz * 1.5, dport.clientWidth / 2, dport.clientHeight / 2); $('#dvOut').onclick = () => dZoomAt(dz / 1.5, dport.clientWidth / 2, dport.clientHeight / 2);
