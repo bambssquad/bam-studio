@@ -15,9 +15,9 @@ Sumber: GDJS_CONCEPT_R3.pdf (Archicad, 23 lembar A3, Nov 2026). Template: bam-st
 - Timbangan jalan depan kantor (grid 2–6); mushalla + toilet pojok tenggara; rumah panel + pos dekat gerbang.
 - T2 (V2): 84×24, x -36..48 (grid 4–18), z 50..74 (jarak 20 m dari T1), FFL +0.5, eave 9.5, ridge 11.9, mezzanine kantor +6.5 grid 8–11, ground tank sisi timur.
 - Tapak: poligon dari siteplan AR.00.02 (vektor), titik level +0.067…+0.760 (utara), -0.2 (halaman), -1.2 (jalan umum).
-## Build 2026-11-09 (V1 + V2)
-- Template: gudang-makassar engine; model frame natural (x = grid 2→19, −z = sisi A/jalan), utara siteplan = +x model, peta diputar 3.5°.
-- Gambar: 23 lembar PDF → kop SAP (vektor ringan; lembar >1.5 MB dirasterisasi 260 dpi di dalam SVG).
-- Tapak: poligon dari vektor siteplan; DEM Copernicus/SRTM/ASTER grid 10 m; OSM jalan + bangunan sekitar (dilacak dari citra, indikatif).
-- Grafis: level Ultra RTX (TAA supersampling saat diam, render 0.7× saat bergerak + CAS, grading filmik), path tracer three-gpu-pathtracer 0.0.23 (bundle lokal assets/js) opt-in tombol RTX; HP: dinonaktifkan.
-- Ridge T1 +13.70 diukur dari skala (tidak berlabel di gambar).
+## Revisi recreate-tampak (2026-11-09, sesuai Tampak 1-1…1-4 + 3D View 1–5)
+- Dinding keliling dipindah ke sisi dalam kolom (as grid ±0.40): kolom HB 300 + pedestal menonjol di muka dinding.
+- Overhang atap 1.50 m (eave & rake), gording + kantilever rafter terekspos, lis tepi; ventilator turbin di bidang miring (puncak ±+15.1).
+- Rolling door ± 5.10 × 4.10 (skala tampak), kanopi pelat 3.00 m @ +4.95; gable grid 2: 4 pintu (bay J–I, H–G, F–E, D–C) + curtain wall & pintu lobby bay B–A + jendela lt.2 + kanopi lobby 4.9 m.
+- Fasad kantor (bay 2–7): jendela lt.2 kusen merah 1/bay (bay 3–5 + jendela sempit), list WF300 +6.00 + 18 AC outdoor, kap jendela, curtain wall bay 2–1, kanopi bay 4–7, kiosk timbangan (bay 3–4).
+- Annex timur (mushalla+KM) atap pelat miring satu arah; pos & rumah panel atap perisai.

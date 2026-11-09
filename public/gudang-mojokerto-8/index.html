@@ -1442,12 +1442,12 @@ const P = {
   spans: [{z0: -30, z1: 0, x0: -54, x1: 54, n: 'g1'}, {z0: 0, z1: 30, x0: -54, x1: 48, n: 'g2'}],
   bays: [{x0: -54, x1: 54, n: 'g1', dx: 3, side: -1}, {x0: -54, x1: 48, n: 'g2', dx: -3, side: 1}],
   lean: {x0: 54, x1: 54, hi: 9.5, lo: 9.5},
-  z0: -30, z1: 30, frame: 6, eave: 9.5, ridge: 13.7, floor: 0.15, pedestal: 1.5, over: 0.5, bata: 9.5,
-  door: {w: 4.6, h: 4.6}, canopy: {w: 6, d: 2.0, y: 5.0},
-  doorsA: [-9, 3, 15, 33, 45], doorsK: [-15, -3, 9, 21, 33, 45],
+  z0: -30, z1: 30, frame: 6, eave: 9.5, ridge: 13.7, floor: 0.15, pedestal: 1.5, over: 1.5, bata: 9.5,
+  door: {w: 5.1, h: 4.1}, canopy: {w: 5.65, d: 3.0, y: 4.95},
+  doorsA: [-9, 3, 15, 33, 45], doorsK: [-15, -3, 9, 21, 33, 45], doorsW: [21, 9, -3, -15],
   office: {x0: -54, x1: -18, z0: -30, z1: 0, lv: 6.0},
   kantor: {x0: 13.6, x1: 17.4, z0: -58.6, z1: -55.2, h: 3.0},
-  annex: {x0: 54.2, x1: 58.4, z0: -30, z1: -21},
+  annex: {x0: 54.3, x1: 58.6, z0: -33, z1: -21}, kiosk: {x0: -42.9, x1: -38.0, z0: -33.2, z1: -30.3},
   wb: {x0: -52.8, x1: -24.9, z0: -38.45, z1: -33.97},
   t2: {x0: -36, x1: 48, z0: 50, z1: 74, eave: 9.5, ridge: 11.9, ffl: .5, mz: {x0: -12, x1: 6, z0: 62, z1: 74, lv: 6.5}},
   site: {x0: -100, x1: 65.04, z0: -59.3, z1: 81.7}, gate: {x0: 22.2, x1: 34.0},
@@ -1702,11 +1702,13 @@ for (const s of P.spans) {
       G.steel.add(r); reg(r, 3, i / FR.length * .55 + (s.z0 + 30) / 60 * .2, 'drop');
     }
     reg(G.steel.add(box(.02, .35, .35, mat.dark, x, P.ridge - .52, zm)), 3, i / FR.length * .55 + .2, 'pop');
+    for (const ze of [s.z0, s.z1]) { if (Math.abs(ze) < .1) continue; const dir = Math.sign(ze - zm), A = V(x, P.eave - .25, ze), C = V(x, P.eave - .25 - P.over * Math.tan(SLOPE), ze + dir * P.over); const k = member(iGeo(.3, .15, A.distanceTo(C)), mat.steel, A, C); info(k, 'steel'); G.steel.add(k); reg(k, 3, i / FR.length * .55 + .25, 'drop'); }
   });
-  const Lx = s.x1 - s.x0 + .6, xc = (s.x0 + s.x1) / 2;
+  const Lx = s.x1 - s.x0 + 2 * P.over - .1, xc = (s.x0 + s.x1) / 2;
   const PURL = new THREE.ExtrudeGeometry(cShape(.125, .05, .004), {depth: Lx, bevelEnabled: false}); PURL.translate(0, 0, -Lx / 2); PURL.rotateY(Math.PI / 2);
   for (const ze of [s.z0, s.z1]) {
     const sg = slopeG(xc, ze, P.eave + .01, zm, P.ridge + .01);
+    if (Math.abs(ze) > .1) for (const zz of [-.55, -1.35]) { const pm = new THREE.Mesh(PURL, mat.steelLight); pm.position.set(0, -.07, zz); pm.rotation.x = Math.PI / 2; shadow(pm, true, false); info(pm, 'steel'); sg.add(pm); }
     for (let k = 0; k * 1.2 + .3 < SLL; k++) { const pm = new THREE.Mesh(PURL, mat.steelLight); pm.position.set(0, -.07, .3 + k * 1.2); pm.rotation.x = Math.PI / 2; shadow(pm, true, false); info(pm, 'steel'); sg.add(pm); }
     const wrap = new THREE.Group(); wrap.add(sg); wrap.position.x = -(Lx / 2 + 2); sg.position.x = xc + Lx / 2 + 2; G.purlin.add(wrap); reg(wrap, 3, .45 + (ze === s.z0 ? 0 : .08), 'x');
     // trekstang: sag rods at mid-bay, wind bracing X in the end bays
@@ -1722,10 +1724,11 @@ for (const s of P.spans) {
 /* ================= 4 · ROOF (metal corrugated) + talang stainless ================= */
 mat.ss = M({color: 0xd4d8da, metalness: 1, roughness: .22}); mat.skyl = M({color: 0xdfe8ea, roughness: .25, transparent: true, opacity: .55, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4});
 for (const s of P.spans) {
-  const zm = (s.z0 + s.z1) / 2, Lx = s.x1 - s.x0 + .8, xc = (s.x0 + s.x1) / 2;
+  const zm = (s.z0 + s.z1) / 2, Lx = s.x1 - s.x0 + 2 * P.over, xc = (s.x0 + s.x1) / 2;
   for (const ze of [s.z0, s.z1]) {
-    const dir = Math.sign(ze - zm), zE = ze + dir * P.over, yE = P.eave - P.over * Math.tan(SLOPE);
+    const ov = Math.abs(ze) < .1 ? .3 : P.over, dir = Math.sign(ze - zm), zE = ze + dir * ov, yE = P.eave - ov * Math.tan(SLOPE);
     const sg = slopeG(xc, zE, yE + .07, zm, P.ridge + .07); const sh = roofSheet(Lx, sg.userData.L, mat.roof); info(sh, s.n); sg.add(sh);
+    for (const sx of [-1, 1]) sg.add(box(.06, .32, sg.userData.L, mat.roofSmall, sx * Lx / 2, -.27, sg.userData.L / 2)); // lis tepi (barge)
     // skylight strips (polycarbonate) as in Rencana Atap
     for (let x = -Lx / 2 + 9; x < Lx / 2 - 6; x += 18) { const sk = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 6).rotateX(-Math.PI / 2).translate(0, .06, 0), mat.skyl); sk.position.set(x, 0, sg.userData.L * .45); sg.add(sk); }
     const wrap = new THREE.Group(); wrap.add(sg); wrap.position.x = -(Lx + 4); sg.position.x = xc + Lx + 4;
@@ -1735,17 +1738,17 @@ for (const s of P.spans) {
   const cg = new THREE.ExtrudeGeometry(rc, {depth: Lx, bevelEnabled: false}); cg.translate(0, 0, -Lx / 2); cg.rotateY(Math.PI / 2);
   const cap = new THREE.Mesh(cg, mat.roof); cap.position.set(xc, P.ridge + .09, zm); G.roof.add(cap); reg(cap, 4, .55, 'pop');
   // turbine ventilators on the ridge (Tampak: +15.10 top)
-  for (let x = s.x0 + 9; x < s.x1 - 3; x += 18) { const v = new THREE.Group(); const b = new THREE.Mesh(new THREE.CylinderGeometry(.18, .22, .5, 12), mat.ss); b.position.y = .25; const t = new THREE.Mesh(new THREE.SphereGeometry(.34, 14, 10, 0, Math.PI * 2, 0, Math.PI / 1.6), mat.ss); t.position.y = .62; t.scale.y = .9; v.add(b, t); v.position.set(x, P.ridge + .05, zm); shadow(v); G.roof.add(v); reg(v, 4, .7, 'pop'); }
+  for (const [x, z] of (s.n === 'g1' ? [[3, -19], [39, -19], [-21, -11], [21, -11]] : [[-39, 7.4], [-33, 10.9], [-3, 22.5], [15, 19], [39, 19]])) { const v = new THREE.Group(); const b = new THREE.Mesh(new THREE.CylinderGeometry(.18, .22, .5, 12), mat.ss); b.position.y = .25; const t = new THREE.Mesh(new THREE.SphereGeometry(.34, 14, 10, 0, Math.PI * 2, 0, Math.PI / 1.6), mat.ss); t.position.y = .62; t.scale.y = .9; b.scale.y = 2.4; b.position.y = .6; t.position.y = 1.32; v.add(b, t); v.position.set(x, roofY(s, z) + .02, z); shadow(v); G.roof.add(v); reg(v, 4, .7, 'pop'); }
 }
 // talang: valley (stainless box gutter) + eaves
 { const gv = box(108.6, .25, .6, mat.ss, 0, P.eave - .1, 0); G.roof.add(gv); reg(gv, 4, .1, 'x'); }
-for (const [x0, x1, z] of [[-54.4, 54.4, -30 - P.over - .1], [-54.4, 48.4, 30 + P.over + .1]]) { const g = box(x1 - x0, .22, .22, mat.ss, (x0 + x1) / 2, P.eave - .22 - P.over * Math.tan(SLOPE), z); G.roof.add(g); reg(g, 4, .15, 'pop'); }
+for (const [x0, x1, z] of [[-54 - P.over, 54 + P.over, -30 - P.over - .1], [-54 - P.over, 48 + P.over, 30 + P.over + .1]]) { const g = box(x1 - x0, .22, .22, mat.ss, (x0 + x1) / 2, P.eave - .22 - P.over * Math.tan(SLOPE), z); G.roof.add(g); reg(g, 4, .15, 'pop'); }
 
 // talang tegak (downpipe stainless) tiap 12 m + apron beton 1.0 m keliling gedung
 { const pg = new THREE.CylinderGeometry(.075, .075, 1, 10).translate(0, .5, 0); const yT = P.eave - .3 - P.over * Math.tan(SLOPE);
-  for (const [z, xs] of [[-30.62, [-48, -36, -24, -12, 0, 24, 39, 51]], [30.62, [-48, -36, -24, -12, 0, 12, 27, 39]]]) for (const x of xs) {
+  for (const [z, xs] of [[-30.45, [-48, -36, -24, -12, 0, 24, 39, 51]], [30.45, [-48, -36, -24, -12, 0, 12, 27, 39]]]) for (const x of xs) {
     const p = new THREE.Mesh(pg, mat.ss); p.position.set(x, .05, z); p.scale.y = yT; shadow(p); G.roof.add(p); reg(p, 4, .2, 'grow');
-    const e = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, .55, 10), mat.ss); e.rotation.x = Math.PI / 2; e.position.set(x, yT, z + Math.sign(z) * .25); G.roof.add(e); reg(e, 4, .2, 'pop');
+    const e = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, P.over - .3, 10), mat.ss); e.rotation.x = Math.PI / 2; e.position.set(x, yT, z + Math.sign(z) * (P.over - .3) / 2); G.roof.add(e); reg(e, 4, .2, 'pop');
     const sh = box(.5, .06, .5, mat.concrete, x, .02, z + Math.sign(z) * .35); G.site.add(sh); }
   for (const [x0, x1, z0, z1] of [[-55, 55, -31.3, -30.15], [-55, 49, 30.15, 31.3], [-55.3, -54.15, -30.15, 30.15], [54.15, 55.3, -30.15, 0], [48.15, 49.3, 0, 30.15]]) { const ap = box(x1 - x0, .08, z1 - z0, mat.concrete, (x0 + x1) / 2, 0, (z0 + z1) / 2); ap.receiveShadow = true; ap.castShadow = false; G.site.add(ap); reg(ap, 5, .1, 'grow'); } }
 /* ================= 5 · DINDING: hebel double, cat putih — keliling, garis F, partisi ================= */
@@ -1765,45 +1768,58 @@ function gableProfile(zA, zB) { const pts = [[0, 0], [zB - zA, 0]]; const top = 
   top.sort((a, b) => b[0] - a[0] || a[1] - b[1]); for (const [z, y] of top) { const q = [z - zA, y - .08], l = pts[pts.length - 1]; if (Math.abs(l[0] - q[0]) > 1e-3 || Math.abs(l[1] - q[1]) > 1e-3) pts.push(q); } return pts; }
 const WALLM = [];
 function addWall(o, k, d) { info(o, k); G.wall.add(o); reg(o, 4, d, 'grow'); WALLM.push(o); return o; }
-// depan (A, z=-30): rolling doors + office windows (bays 2–7)
-{ const holes = P.doorsA.map(x => [x - P.door.w / 2 + 54, 0, P.door.w, P.door.h]);
-  for (let x = -54; x < -18; x += 6) holes.push([x + 54 + .9, 6.9, 4.2, 1.6]); // jendela lt.2
-  holes.push([.6, .3, 4.8, 4.2], [7.2, .3, 4.2, 2.4], [13.2, .3, 4.2, 2.4], [24, 0, 1.0, 2.2], [19.4, .9, 1.8, 1.4]); // lobby kaca, QC, gudang
-  const w = vwall(-54, -30 - T_W / 2, 54, -30 - T_W / 2, [[0, 0], [108, 0], [108, P.eave], [0, P.eave]], holes); addWall(w, 'g1', .3);
-  window.__frontHoles = holes; }
-// belakang (K, z=+30): rolling doors
-{ const holes = P.doorsK.map(x => [x - P.door.w / 2 + 54, 0, P.door.w, P.door.h]);
-  addWall(vwall(-54, 30 + T_W / 2, 48, 30 + T_W / 2, [[0, 0], [102, 0], [102, P.eave], [0, P.eave]], holes), 'g2', .32); }
+// dinding keliling di sisi DALAM kolom (Tampak 1-1…1-4 & 3D View: kolom HB 300 + pedestal menonjol di muka dinding)
+const WI = .4, WO = WI - T_W / 2 - .01; // as dinding dari garis grid; muka luar = grid ± WO
+const FX0 = -54 + WO, FX1 = 54 - WO, KX1 = 48 - WO, zF = -30 + WI, zK = 30 - WI, xW = -54 + WI, xE = 54 - WI, xE2 = 48 - WI;
+const FZO = zF - T_W / 2, KZO = zK + T_W / 2, WXO = xW - T_W / 2; // muka luar dinding depan / belakang / gable barat
+// jendela lt.2 (Tampak 1-1): satu jendela 3 daun per bay grid 2–7; bay 3–4 & 4–5 + jendela sempit mengapit grid 4
+const LT2W = []; for (let b = 0; b < 6; b++) { const x0 = -54 + b * 6; if (b === 2) LT2W.push([x0 + .7, 2.4, 3], [x0 + 4.6, .9, 1]); else if (b === 3) LT2W.push([x0 + .5, .9, 1], [x0 + 3.0, 2.3, 3]); else LT2W.push([x0 + 1.75, 2.5, 3]); }
+{ const holes = P.doorsA.map(x => [x - P.door.w / 2 - FX0, 0, P.door.w, P.door.h]);
+  for (const [x, w] of LT2W) holes.push([x - FX0, 7.0, w, 1.5]);
+  holes.push([-53.6 - FX0, 1.2, 5.2, 3.7]); // curtain wall lobby bay 2–1
+  addWall(vwall(FX0, zF, FX1, zF, [[0, 0], [FX1 - FX0, 0], [FX1 - FX0, P.eave], [0, P.eave]], holes), 'g1', .3); }
+{ const holes = P.doorsK.map(x => [x - P.door.w / 2 - FX0, 0, P.door.w, P.door.h]);
+  addWall(vwall(FX0, zK, KX1, zK, [[0, 0], [KX1 - FX0, 0], [KX1 - FX0, P.eave], [0, P.eave]], holes), 'g2', .32); }
 // gable / partition walls along z (profile to the roof)
 const zwall = (x, zA, zB, k, d, holes = []) => { const w = vwall(x, zA, x, zB, gableProfile(zA, zB), holes); return addWall(w, k, d); };
-zwall(-54 - T_W / 2, -30, 30, 'g1', .34, [[1.2, .3, 3.6, 4.2], [7.2, 7.0, 3.6, 1.4], [13.2, 7.0, 3.6, 1.4]]);
-zwall(54 + T_W / 2, -30, 0, 'g1', .36, [[13, .9, 1.2, 1.2]]); zwall(48 + T_W / 2, 0, 30, 'g2', .36);
-zwall(-18, -30, 30, 'g1', .4); zwall(6, 0, 30, 'g2', .42); zwall(30, 0, 30, 'g2', .42); zwall(18, -30, 0, 'g1', .42);
+// gable barat grid 2 (Tampak 1-3): rolling door bay J–I, H–G, F–E, D–C + curtain wall lobby bay B–A + jendela lt.2
+zwall(xW, zF, zK, 'g1', .34, [...P.doorsW.map(z => [z - P.door.w / 2 - zF, 0, P.door.w, P.door.h]), [.35, 0, 5.3, 4.6], [1.4, 6.9, 2.3, 1.5]]);
+zwall(xE, zF, 0, 'g1', .36); zwall(xE2, 0, zK, 'g2', .36);
+zwall(-18, zF, zK, 'g1', .4); zwall(6, 0, zK, 'g2', .42); zwall(30, 0, zK, 'g2', .42); zwall(18, zF, 0, 'g1', .42);
 // garis F (z=0) dari grid 7 ke 19: dinding penuh setinggi talang lembah
-addWall(vwall(-18, 0, 54, 0, [[0, 0], [72, 0], [72, P.eave - .1], [0, P.eave - .1]], []), 'g1', .45);
+addWall(vwall(-18, 0, xE + T_W / 2 + .01, 0, [[0, 0], [xE + T_W / 2 + 18.01, 0], [xE + T_W / 2 + 18.01, P.eave - .1], [0, P.eave - .1]], []), 'g1', .45);
 // rolling door frames + curtains (roll up) + canopies (rangka kremona)
 mat.shutter = M({color: 0xd5d9db, map: doorTex, metalness: .6, roughness: .38, side: THREE.DoubleSide});
-function rollDoor(x, z, side, bay) {
-  const hw = P.door.w / 2, zo = z + side * .2, g = new THREE.Group();
-  const fr = new THREE.Group(); fr.add(box(.14, P.door.h + .1, .18, mat.dark, x - hw - .07, 0, zo), box(.14, P.door.h + .1, .18, mat.dark, x + hw + .07, 0, zo)); shadow(fr); G.door.add(fr); reg(fr, 4, .7, 'pop');
-  const hood = box(P.door.w + .5, .62, .62, mat.ss, x, P.door.h + .06, zo + side * .25); G.door.add(hood); reg(hood, 4, .72, 'pop');
-  const cur = new THREE.Group(); cur.position.set(x, P.door.h, zo); const leaf = new THREE.Mesh(new THREE.BoxGeometry(P.door.w, P.door.h, .05).translate(0, -P.door.h / 2, 0), mat.shutter); shadow(leaf); info(leaf, 'door'); cur.add(leaf);
-  cur.add(box(P.door.w, .1, .08, mat.dark, 0, -P.door.h, 0)); cur.userData.roll = true; cur.userData.bay = bay; leaf.userData.bay = bay; cur.userData.x0 = x; cur.userData.slide = 0; cur.userData.w = 0;
-  G.door.add(cur); reg(cur, 4, .75, 'pop'); DOORS.push(cur);
-  // canopy
-  const cg = new THREE.Group(); const W = P.canopy.w, D = P.canopy.d;
-  const cm = new THREE.Mesh(ribGeo(D + .3, W), mat.roofSmall); shadow(cm); cm.rotation.set(0, Math.PI / 2, 0); cm.position.set(-W / 2, 0, 0);
-  const sheet = new THREE.Group(); sheet.add(cm); sheet.rotation.x = -.08; cg.add(sheet);
-  for (const dx of [-W / 2 + .3, W / 2 - .3]) { const beam = member(iGeo(.15, .075, D), mat.steel, V(dx, -.12, 0), V(dx, -.12 - .2, -D)); cg.add(beam);
-    const A = V(dx, 1.4, -.02), B = V(dx, -.25, -D * .85); cg.add(member(new THREE.CylinderGeometry(.012, .012, A.distanceTo(B), 6).rotateX(Math.PI / 2).translate(0, 0, A.distanceTo(B) / 2), mat.dark, A, B)); }
-  cg.add(box(W + .1, .2, .05, mat.dark, 0, -.36, -D - .05));
-  const lampC = box(1.0, .05, .2, mat.lamp, 0, -.3, -1.0); cg.add(lampC);
-  cg.position.set(x, P.canopy.y, z + side * .15); cg.rotation.y = side < 0 ? 0 : Math.PI; info(cg, 'canopy'); G.door.add(cg); reg(cg, 4, .85, 'drop');
-  CANOPY_LAMPS.push(V(x, P.canopy.y - .6, z + side * 1.2));
+function canopy(par, x, W = P.canopy.w, D = P.canopy.d, y = P.canopy.y, lamp = true) { // kanopi pelat (3D View: pelat abu tebal, sedikit miring)
+  const cg = new THREE.Group(), s = new THREE.Group(); s.rotation.x = -.035;
+  s.add(box(W, .16, D, mat.roofSmall, 0, -.16, -D / 2), box(W + .04, .3, .06, mat.dark, 0, -.3, -D - .03));
+  for (const dx of [-W / 2 + .2, W / 2 - .2]) s.add(box(.1, .18, D, mat.steel, dx, -.34, -D / 2));
+  cg.add(s);
+  for (const dx of [-W / 2 + .2, W / 2 - .2]) { const A = V(dx, 1.5, -.02), B = V(dx, -.25, -D * .9); cg.add(member(new THREE.CylinderGeometry(.014, .014, A.distanceTo(B), 6).rotateX(Math.PI / 2).translate(0, 0, A.distanceTo(B) / 2), mat.dark, A, B)); }
+  if (lamp) cg.add(box(1.0, .04, .2, mat.lamp, 0, -.4, -1.0));
+  cg.position.set(x, y, 0); shadow(cg); info(cg, 'canopy'); par.add(cg); reg(cg, 4, .85, 'drop'); return cg; }
+function holder(x, z, ry) { const H = new THREE.Group(); H.position.set(x, 0, z); H.rotation.y = ry; G.door.add(H); return H; }
+function rollDoor(x, z, side, bay, axis = 'x') {
+  const hw = P.door.w / 2, DH = P.door.h, H = holder(x, z, axis === 'z' ? Math.PI / 2 : side < 0 ? 0 : Math.PI);
+  const fr = new THREE.Group(); fr.add(box(.14, DH + .1, .18, mat.dark, -hw - .07, 0, -.09), box(.14, DH + .1, .18, mat.dark, hw + .07, 0, -.09)); shadow(fr); H.add(fr); reg(fr, 4, .7, 'pop');
+  const hood = box(P.door.w + .5, .55, .5, mat.ss, 0, DH + .02, -.27); H.add(hood); reg(hood, 4, .72, 'pop');
+  const cur = new THREE.Group(); cur.position.set(0, DH, -.06); const leaf = new THREE.Mesh(new THREE.BoxGeometry(P.door.w, DH, .05).translate(0, -DH / 2, 0), mat.shutter); shadow(leaf); info(leaf, 'door'); cur.add(leaf);
+  cur.add(box(P.door.w, .1, .08, mat.dark, 0, -DH, 0)); cur.userData.roll = true; cur.userData.bay = bay; leaf.userData.bay = bay; cur.userData.x0 = 0; cur.userData.slide = 0; cur.userData.w = 0;
+  H.add(cur); reg(cur, 4, .75, 'pop'); DOORS.push(cur);
+  canopy(H, 0);
+  CANOPY_LAMPS.push(V(0, P.canopy.y - .6, -1.2).applyAxisAngle(V(0, 1, 0), H.rotation.y).add(H.position));
 }
-P.doorsA.forEach(x => rollDoor(x, -30 - T_W, -1, 0)); P.doorsK.forEach(x => rollDoor(x, 30 + T_W, 1, 1));
-// sun canopies over office windows (lt. 2) on the front
-for (let x = -51; x < -18; x += 6) { const c = box(5.2, .12, 1.2, mat.roofSmall, x, 8.7, -30.9); G.door.add(c); reg(c, 4, .8, 'pop'); }
+P.doorsA.forEach(x => rollDoor(x, FZO, -1, 0)); P.doorsK.forEach(x => rollDoor(x, KZO, 1, 1)); P.doorsW.forEach(z => rollDoor(WXO, z, -1, 0, 'z'));
+// fasad kantor (Tampak 1-1, 3D View 3): kanopi bay 4–7, kanopi lobby gable, list WF300 +6.00 + deretan AC outdoor, kap jendela lt.2
+{ const HF = holder(0, FZO, 0); for (const x of [-33, -27, -21]) canopy(HF, x);
+  const HW = holder(WXO, 0, Math.PI / 2); canopy(HW, -(-26.95), 6.2, 4.9, 5.25); // lobby gable (bay B–A), lokal x = −z
+  mat.acu = M({color: 0xe9ebe8, roughness: .5}); const fan = new THREE.CircleGeometry(.24, 18);
+  const led = box(36.3, .15, 1.2, mat.slab, -36.1, 5.88, FZO - .6); led.castShadow = true; G.door.add(led); reg(led, 4, .8, 'pop');
+  const wf = box(36.3, .32, .16, mat.steel, -36.1, 5.7, FZO - 1.18); G.door.add(wf); reg(wf, 4, .8, 'pop');
+  for (let b = 0; b < 6; b++) for (const dx of [1.1, 3.0, 4.9]) { const x = -54 + b * 6 + dx; const u = box(.82, .6, .3, mat.acu, x, 6.03, FZO - .45); const f = new THREE.Mesh(fan, mat.dark); f.position.set(x + .1, 6.33, FZO - .61); f.rotation.y = Math.PI; u.add(f); f.position.sub(u.position); G.door.add(u); reg(u, 4, .82, 'pop'); }
+  for (const [x, w] of LT2W) { const hd = box(w + .4, .08, .55, mat.white || mat.office, x + w / 2, 8.62, FZO - .27); G.door.add(hd); reg(hd, 4, .8, 'pop'); }
+  { const hd = box(.55, .08, 2.7, mat.office, WXO - .27, 8.52, -27.05); G.door.add(hd); reg(hd, 4, .8, 'pop'); }
+  const gb = box(.16, .3, 29.4, mat.steel, WXO - .1, 5.75, -14.85); G.door.add(gb); reg(gb, 4, .8, 'pop'); }
 // high-bay lamps
 mat.lampB = P.bays.map(() => mat.lamp.clone());
 for (const [bi, s] of P.spans.entries()) { const zm = (s.z0 + s.z1) / 2; for (const dz of [-7.5, 7.5]) for (let x = s.x0 + 6; x < s.x1; x += 12) { const y = roofY(s, zm + dz) - 1.6; const l = new THREE.Mesh(new THREE.CylinderGeometry(.28, .38, .22, 12), mat.lampB[bi]); l.position.set(x, y, zm + dz); G.door.add(l); reg(l, 4, .95, 'pop'); } }
@@ -1886,18 +1902,18 @@ mat.tile = M({color: 0xe7e5df, roughness: .35, map: noiseTex});
 { const ox = OF.x0, oz = OF.z0;
   // lantai 2 (+6.00): plat beton di atas balok WF
   // lantai 2 (+6.00) hanya strip depan A–C (12 m) di atas receptionist; grid C–F tetap void dua lantai
-  const slab = box(36 - .3, .2, 12 - .2, mat.tile, -36, OF.lv - .05, -24); officeLt2.add(slab);
-  for (const z of [-24, -18.1]) officeLt2.add(box(36 - .3, .35, .18, mat.steel, -36, OF.lv - .4, z));
+  const slab = box(35.3, .2, 11.4, mat.tile, -35.8, OF.lv - .05, -23.75); officeLt2.add(slab);
+  for (const z of [-24, -18.1]) officeLt2.add(box(35.3, .35, .18, mat.steel, -35.8, OF.lv - .4, z));
   // railing kaca di tepi void (z = −18)
-  for (let x = -53.5; x < -18.4; x += 1.2) officeLt2.add(box(.05, 1.05, .05, mat.dark, x, L2, -17.95));
+  for (let x = -53.3; x < -18.4; x += 1.2) officeLt2.add(box(.05, 1.05, .05, mat.dark, x, L2, -17.95));
   officeLt2.add(box(35.4, .06, .08, mat.dark, -36, L2 + 1.05, -17.95)); { const gr = new THREE.Mesh(new THREE.PlaneGeometry(35.4, .95), mat.glass); gr.position.set(-36, L2 + .52, -17.95); officeLt2.add(gr); }
   // lt.1 partitions (Receptionist 144, 36 m², QC 36 m², Gudang 216 m²)
-  pwall(officeLt1, -42, -30, -42, -18, [[2, 3]], L1, HM1); pwall(officeLt1, -36, -30, -36, -18, [[8, 9.2]], L1, HM1); pwall(officeLt1, -42, -24, -36, -24, [[2, 3]], L1, HM1);
-  pwall(officeLt1, -54, -18, -18, -18, [[4, 5.2], [16, 17], [26, 30]], L1, HM1);
+  pwall(officeLt1, -42, -29.45, -42, -18, [[1.55, 2.55]], L1, HM1); pwall(officeLt1, -36, -29.45, -36, -18, [[7.55, 8.75]], L1, HM1); pwall(officeLt1, -42, -24, -36, -24, [[2, 3]], L1, HM1);
+  pwall(officeLt1, -53.45, -18, -18, -18, [[3.45, 4.65], [15.45, 16.45], [25.45, 29.45]], L1, HM1);
   // lt.2 rooms (R. Tertutup, Meeting kecil ×4, Office ×2, R. Meeting besar, KM)
   // ruang lt.2 di strip depan: office, R. meeting besar, meeting kecil ×2, R. tertutup, KM; koridor z −22 … −18 menghadap void
   pwall(officeLt2, -50, -22, -24, -22, [[2, 3], [7, 8], [11, 12], [15, 16], [21, 22]], L2, HM2);
-  for (const x of [-48, -42, -38, -34, -28]) pwall(officeLt2, x, -30, x, -22, [], L2, HM2); pwall(officeLt2, -38, -26, -34, -26, [], L2, HM2); pwall(officeLt2, -54, -21, -50, -21, [[1.2, 2.2]], L2, HM2);
+  for (const x of [-48, -42, -38, -34, -28]) pwall(officeLt2, x, -29.45, x, -22, [], L2, HM2); pwall(officeLt2, -38, -26, -34, -26, [], L2, HM2); pwall(officeLt2, -53.45, -21, -50, -21, [[.65, 1.65]], L2, HM2);
   // tangga U (lobby → lt.2)
   { const n = 11, rise = OF.lv / 22; for (let i = 0; i < n; i++) officeLt1.add(box(1.2, rise * (i + 1), .28, mat.wood, -53.2, L1, -27.4 + i * .28));
     officeLt1.add(box(2.6, OF.lv / 2, 1.3, mat.wood, -52.6, L1, -23.75)); for (let i = 0; i < n; i++) officeLt1.add(box(1.2, OF.lv / 2 + rise * (i + 1), .28, mat.wood, -51.9, L1, -24.4 - i * .28)); }
@@ -1905,7 +1921,7 @@ mat.tile = M({color: 0xe7e5df, roughness: .35, map: noiseTex});
   desk(officeLt1, -46.5, -24, L1, Math.PI / 2, 2.4); chair(officeLt1, -45.6, -24, L1, -Math.PI / 2); sofa(officeLt1, -49.5, -28.5, L1, 3.0, Math.PI / 2); sofa(officeLt1, -43.4, -21, L1, 2.2, Math.PI);
   for (const [x, z] of [[-43, -29], [-52.8, -19], [-43, -19.2]]) plant(officeLt1, x, z, L1);
   for (const z of [-28.2, -26.2]) { desk(officeLt1, -39, z, L1, 0, 1.6); chair(officeLt1, -39, z + .75, L1, Math.PI); }
-  officeLt1.add(box(18, .05, 12, mat.tile, -45, .15, -24));
+  officeLt1.add(box(17.45, .05, 11.45, mat.tile, -44.725, .15, -23.725));
   // furniture lt.2: meeting tables, office desks
   const mt = (x, z, w, d) => { officeLt2.add(box(w, .04, d, mat.wood, x, L2 + .74, z)); for (const sx of [-1, 1]) officeLt2.add(box(.06, .72, d * .8, mat.dark, x + sx * (w / 2 - .3), L2, z)); for (let i = 0; i < Math.floor(w / .8); i++) { chair(officeLt2, x - w / 2 + .5 + i * .8, z - d / 2 - .45, L2, Math.PI); chair(officeLt2, x - w / 2 + .5 + i * .8, z + d / 2 + .45, L2, 0); } };
   mt(-45, -26, 3.6, 1.2); mt(-40, -28, 1.6, 1.0); mt(-36, -28, 1.6, 1.0); mt(-31, -26, 2.4, 1.0);
@@ -1914,22 +1930,36 @@ mat.tile = M({color: 0xe7e5df, roughness: .35, map: noiseTex});
   wc(officeLt2, -53.2, -19.4, L2, Math.PI / 2); wc(officeLt2, -51.8, -19.4, L2, Math.PI / 2);
   for (const [x, z] of [[-45, -26], [-36, -27], [-29, -26], [-23, -26], [-40, -20], [-28, -20]]) ceilLamp(officeLt2, x, z, L2 + HM2 - .04);
   for (const [x, z] of [[-48, -24], [-39, -27], [-27, -24], [-45, -20]]) ceilLamp(officeLt1, x, z, L1 + HM1 - .3);
-  // glazing for the front windows (lt.1 lobby + lt.2 band)
-  for (const [u, y, w, h] of window.__frontHoles) { if (y < .2 && h > 4) continue; if (w === P.door.w) continue; const gl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat.glass); gl.position.set(-54 + u + w / 2, y + h / 2, -30 - .02); GLASS.push(gl); (y > 5 ? officeLt2 : officeLt1).add(gl);
-    const n = Math.max(1, Math.round(w / 1.2)); for (let i = 1; i < n; i++) (y > 5 ? officeLt2 : officeLt1).add(box(.05, h, .06, mat.dark, -54 + u + i * w / n, y, -30 - .04));
-    (y > 5 ? officeLt2 : officeLt1).add(box(w + .1, .06, .25, mat.dark, -54 + u + w / 2, y - .03, -30 - .1)); }
+  // kaca + kusen merah (3D View 3): jendela lt.2, curtain wall lobby bay 2–1, curtain wall + pintu lobby gable barat
+  mat.frameR = M({color: 0x8f1d22, metalness: .3, roughness: .45});
+  const glaze = (par, ax, az, ux, uz, u, y, w, h, nc, nr) => { const g = new THREE.Group(); g.position.set(ax + ux * u, y, az + uz * u); g.rotation.y = -Math.atan2(uz, ux);
+    const gl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat.glass); gl.position.set(w / 2, h / 2, 0); GLASS.push(gl); g.add(gl); const fm = mat.frameR, t = .07;
+    g.add(box(w, t, .12, fm, w / 2, 0, 0), box(w, t, .12, fm, w / 2, h - t, 0), box(t, h, .12, fm, t / 2, 0, 0), box(t, h, .12, fm, w - t / 2, 0, 0));
+    for (let i = 1; i < nc; i++) g.add(box(.05, h, .1, fm, i * w / nc, 0, 0)); for (let j = 1; j < nr; j++) g.add(box(w, .05, .1, fm, w / 2, j * h / nr, 0)); par.add(g); return g; };
+  for (const [x, w, n] of LT2W) glaze(officeLt2, x, zF, 1, 0, 0, 7.0, w, 1.5, n, 1);
+  glaze(officeLt1, -53.6, zF, 1, 0, 0, 1.2, 5.2, 3.7, 3, 4);
+  glaze(officeLt2, xW, zF, 0, 1, 1.4, 6.9, 2.3, 1.5, 3, 1);
+  glaze(officeLt1, xW, zF, 0, 1, .35, 0, 1.65, 4.6, 2, 4); glaze(officeLt1, xW, zF, 0, 1, 3.9, 0, 1.75, 4.6, 2, 4); glaze(officeLt1, xW, zF, 0, 1, 2.0, 2.3, 1.9, 2.3, 2, 2);
 }
-const DOFF = smallDoor(officeLt1, -30, -30.1, 1.0, 'x', 1.4, 'pintu kantor');
+const DOFF = smallDoor(officeLt1, xW, -25.7, 1.9, 'z', 1.4, 'pintu lobby');
 for (const [g, d] of [[officeLt1, .1], [officeLt2, .2]]) { g.traverse(m => { if (m.isMesh && m.material !== mat.glass) { m.castShadow = true; m.receiveShadow = true; } }); info(g, 'office'); reg(g, 5, d, 'rise'); }
 G.office.add(officeLt1); G.officeUp.add(officeLt2); G.officeRoof.add(officeRoof);
 // mushalla + KM (annex timur, satu lantai, pelana) and pos jaga + rumah panel by the gate
 function hut(g, x0, z0, x1, z1, h, rot = 0, doorSide = -1) { const W = x1 - x0, D = z1 - z0, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, hg = new THREE.Group();
   hg.add(box(W + .3, .15, D + .3, mat.slab, 0, 0, 0));
-  const pts = [[0, 0], [W, 0], [W, h], [0, h]], gp = [[0, 0], [D, 0], [D, h], [D / 2, h + 1.2], [0, h]];
+  const pts = [[0, 0], [W, 0], [W, h], [0, h]], gp = [[0, 0], [D, 0], [D, h], [0, h]];
   const ws = [vwall(-W / 2, -D / 2, W / 2, -D / 2, pts, doorSide < 0 ? [[W / 2 - .5, .15, 1.0, 2.1], [.6, 1.0, 1.2, 1.0]] : [[.6, 1.0, 1.2, 1.0]], mat.office, .15), vwall(-W / 2, D / 2, W / 2, D / 2, pts, [], mat.office, .15), vwall(-W / 2, -D / 2, -W / 2, D / 2, gp, [], mat.office, .15), vwall(W / 2, -D / 2, W / 2, D / 2, gp, [[D / 2 - .6, 1, 1.2, 1]], mat.office, .15)]; hg.add(...ws);
-  for (const sd of [-1, 1]) { const L = Math.hypot(D / 2 + .5, 1.3); const r = new THREE.Mesh(new THREE.BoxGeometry(W + .8, .05, L), mat.roofSmall); r.position.set(0, h + .62, sd * (D / 4 + .1)); r.rotation.x = sd * Math.atan2(1.2, D / 2); shadow(r); hg.add(r); }
+  { const r = new THREE.Mesh(new THREE.ConeGeometry(Math.SQRT1_2, 1.2, 4).rotateY(Math.PI / 4), mat.roofSmall); r.scale.set(W + .8, 1, D + .8); r.position.y = h + .6; shadow(r); hg.add(r); hg.add(box(W + .9, .2, D + .9, mat.dark, 0, h - .02, 0)); }
   hg.position.set(cx, 0, cz); hg.rotation.y = rot; hg.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); g.add(hg); return hg; }
-{ const A = P.annex; const h = hut(officeRoof, A.x0, A.z0, A.x1, A.z1, 3.2, 0); info(h, 'pos'); prayer(officeRoof, (A.x0 + A.x1) / 2, -25.5, .16); prayer(officeRoof, (A.x0 + A.x1) / 2 - 1.2, -25.5, .16); }
+function shed(g, x0, z0, x1, z1, h, wins, door) { const W = x1 - x0, D = z1 - z0, hg = new THREE.Group(); hg.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2);
+  hg.add(box(W + .3, .15, D + .3, mat.slab, 0, 0, 0)); const pts = [[0, 0], [W, 0], [W, h], [0, h]], ps = [[0, 0], [D, 0], [D, h], [0, h]];
+  hg.add(vwall(-W / 2, -D / 2, W / 2, -D / 2, pts, wins.map(([u, w]) => [u, 1.0, w, 1.2]).concat(door ? [[door, .15, 1.0, 2.1]] : []), mat.office, .15), vwall(-W / 2, D / 2, W / 2, D / 2, pts, [], mat.office, .15), vwall(-W / 2, -D / 2, -W / 2, D / 2, ps, [], mat.office, .15), vwall(W / 2, -D / 2, W / 2, D / 2, ps, [[1.0, 1.0, 1.2, 1.2]], mat.office, .15));
+  for (const [u, w] of wins) { const f = new THREE.Group(); f.position.set(-W / 2 + u, 1.0, -D / 2); f.add(box(w, .07, .16, mat.frameR, w / 2, 0, 0), box(w, .07, .16, mat.frameR, w / 2, 1.13, 0), box(.07, 1.2, .16, mat.frameR, .035, 0, 0), box(.07, 1.2, .16, mat.frameR, w - .035, 0, 0), box(.05, 1.2, .14, mat.frameR, w / 2, 0, 0)); const gl = new THREE.Mesh(new THREE.PlaneGeometry(w, 1.2), mat.glass); gl.position.set(w / 2, .6, 0); GLASS.push(gl); f.add(gl); hg.add(f); }
+  if (door) hg.add(box(1.0, 2.1, .06, mat.frameR, -W / 2 + door + .5, .15, -D / 2));
+  const r = box(W + 1.4, .22, D + 1.4, mat.roofSmall, 0, h + .25, 0); r.rotation.z = -Math.atan2(.45, W); hg.add(r); hg.add(box(W + 1.44, .3, .06, mat.dark, 0, h + .12, -D / 2 - .72));
+  hg.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); g.add(hg); return hg; }
+{ const A = P.annex; const h = shed(officeRoof, A.x0, A.z0, A.x1, A.z1, 3.6, [[.7, 1.2], [2.6, 1.2]], 0); info(h, 'pos'); prayer(officeRoof, (A.x0 + A.x1) / 2, -25.5, .16); prayer(officeRoof, (A.x0 + A.x1) / 2 - 1.2, -25.5, .16); }
+{ const K = P.kiosk; const h = shed(G.office, K.x0, K.z0, K.x1, K.z1, 3.0, [[2.6, 1.3]], .8); info(h, 'pos'); reg(h, 5, .28, 'rise'); }
 { const K = P.kantor; const h = hut(G.office, K.x0, K.z0, K.x1, K.z1, 2.8, -P.front, -1); info(h, 'pos'); reg(h, 5, .3, 'rise'); desk(h, .6, .4, .15, Math.PI, 1.2); chair(h, .6, -.3, .15, 0); window.__DPOS = smallDoor(h, -.45, -1.85, .9, 'x', 1.4, 'pintu pos'); }
 { const h = hut(G.office, 58.3, -50.3, 63.6, -43.2, 3.0, -P.front, -1); info(h, 'pos'); reg(h, 5, .32, 'rise'); }
 info(officeRoof, 'pos'); reg(officeRoof, 5, .3, 'rise');
@@ -2114,7 +2144,7 @@ for (let i = 0; i <= 10; i++) { const s = new THREE.Mesh(new THREE.PlaneGeometry
 // timbangan jalan (truck scale 28 × 4.5 m): pit frame + steel deck
 { const W = P.wb, g = new THREE.Group(), cx = (W.x0 + W.x1) / 2, cz = (W.z0 + W.z1) / 2, L = W.x1 - W.x0, D = W.z1 - W.z0;
   g.add(box(L + .6, .2, D + .6, mat.concrete, 0, -.15, 0), box(L, .1, D, mat.steelLight, 0, .02, 0)); for (let x = -L / 2 + 1; x < L / 2; x += 2) g.add(box(.08, .02, D - .2, mat.dark, x, .12, 0));
-  g.add(box(L, .3, .3, mat.signal, 0, 0, -D / 2 - .3), box(L, .3, .3, mat.signal, 0, 0, D / 2 + .3)); g.add(box(1.4, 2.2, 1.0, mat.office, -L / 2 - 1.6, 0, -D / 2 - 1.2));
+  g.add(box(L, .3, .3, mat.signal, 0, 0, -D / 2 - .3), box(L, .3, .3, mat.signal, 0, 0, D / 2 + .3));
   g.position.set(cx, 0, cz); g.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } }); info(g, 'wb'); G.site.add(g); reg(g, 5, .2, 'rise'); }
 // pagar keliling: bata 2.5 m mengikuti batas tapak; depan: dinding rendah + besi; gerbang geser 12 m
 { const BP = P.bnd; const front = new Set([12, 13]); const barPos = []; const m4 = new THREE.Matrix4();
@@ -2302,7 +2332,7 @@ dim([60, 0, -30], [60, 0, 0], '30.00', [-1, 1.4], true); dim([60, 0, 0], [60, 0,
 dim([-58, 0, -30], [-58, 0, -24], '6.00', [1.2, 2.6], true); dim([-58, 0, -24], [-58, 0, -18], '6.00', [1.2, 2.6]);
 dim([-57.5, 0, -15], [-57.5, P.ridge, -15], '+13.70', [2.4, 3.9], true, 0);
 dim([-57.5, 0, 0], [-57.5, P.eave, 0], '+9.50', [2.4, 3.9], true);
-dim([0.7, P.floor, -31], [5.3, P.floor, -31], '4.60', [3.4, 4.4]); dim([5.8, P.floor, -31], [5.8, P.floor + P.door.h, -31], '4.60', [3.4, 4.4]);
+dim([.45, P.floor, -31], [5.55, P.floor, -31], '5.10', [3.4, 4.4]); dim([5.9, P.floor, -31], [5.9, P.floor + P.door.h, -31], '4.10', [3.4, 4.4]);
 dim([-99.98, 0, -63], [-10.83, 0, -63], '89.47', [4.3, 9]); dim([66, 0, -51.2], [66, 0, 30], '±81.20', [4.3, 9]);
 if (V2) { dim([-36, 0, 78], [48, 0, 78], '84.00', [-1, 1.4], true); dim([52, 0, 50], [52, 0, 74], '24.00', [-1, 1.4], true); dim([-38, 0, 30], [-38, 0, 50], '20.00', [.5, 1.4], true); }
 }
@@ -2568,14 +2598,15 @@ const WALLS = [];
 { const W = (a, b, c, d, f) => WALLS.push([a, b, c, d, f]);
   // wall line with door gaps: gaps = [[x, w, bayIndex]] along x
   const WX = (x0, x1, z, gaps) => { let c = x0; for (const [gx, gw, bi] of gaps.sort((p, q) => p[0] - q[0])) { W(c, z, gx - gw / 2, z); W(gx - gw / 2, z, gx + gw / 2, z, bi === 2 ? () => DOFF.t > .5 : () => doorO[bi] > .7); c = gx + gw / 2; } W(c, z, x1, z); };
-  WX(-54, 54, -30.1, [...P.doorsA.map(x => [x, P.door.w, 0]), [-30, 1.0, 2]]); WX(-54, 48, 30.1, P.doorsK.map(x => [x, P.door.w, 1]));
-  W(-54.1, -30, -54.1, 30); W(54.1, -30, 54.1, 0); W(48.1, 0, 48.1, 30); W(48, 0, 54, 0);
+  WX(-54, 54, -29.7, P.doorsA.map(x => [x, P.door.w, 0])); WX(-54, 48, 29.7, P.doorsK.map(x => [x, P.door.w, 1]));
+  { let c = -29.7; for (const [gz, gw, bi] of [...P.doorsW.map(z => [z, P.door.w, 0]), [-26.65, 1.9, 2]].sort((p, q) => p[0] - q[0])) { W(-53.7, c, -53.7, gz - gw / 2); W(-53.7, gz - gw / 2, -53.7, gz + gw / 2, bi === 2 ? () => DOFF.t > .5 : () => doorO[bi] > .7); c = gz + gw / 2; } W(-53.7, c, -53.7, 29.7); }
+  W(53.7, -30, 53.7, 0); W(47.7, 0, 47.7, 30); W(48, 0, 54, 0);
   W(-18, -30, -18, 30); W(6, 0, 6, 30); W(30, 0, 30, 30); W(18, -30, 18, 0); W(-18, 0, 54, 0);
   for (let i = 0; i < P.bnd.length; i++) { const [a, b] = P.bnd[i], [c, d] = P.bnd[(i + 1) % P.bnd.length]; if (i === 12) { W(a, b, P.gate.x0, frontZ(P.gate.x0)); W(P.gate.x1, frontZ(P.gate.x1), c, d); W(P.gate.x0, frontZ(P.gate.x0), P.gate.x1, frontZ(P.gate.x1), () => gateOpen > .7); } else W(a, b, c, d); }
   // kantor lt.1 partitions (doors as gaps)
   W(-42, -30, -42, -28); W(-42, -27, -42, -18); W(-36, -30, -36, -22); W(-36, -20.8, -36, -18); W(-54, -18, -50, -18); W(-48.8, -18, -38, -18); W(-37, -18, -28, -18); W(-24, -18, -18, -18);
   for (const h of [[P.annex.x0, P.annex.z0, P.annex.x1, P.annex.z1]]) OBST.push(h);
-  OBST.push([P.wb.x0 - 3.2, P.wb.z0 - 2, P.wb.x0 - 1.1, P.wb.z0 - .3]); }
+  OBST.push([P.kiosk.x0, P.kiosk.z0, P.kiosk.x1, P.kiosk.z1]); }
 function segX(ax, az, bx, bz, [cx, cz, dx, dz]) { const d = (bx - ax) * (dz - cz) - (bz - az) * (dx - cx); if (Math.abs(d) < 1e-9) return false;
   const t = ((cx - ax) * (dz - cz) - (cz - az) * (dx - cx)) / d, u = ((cx - ax) * (bz - az) - (cz - az) * (bx - ax)) / d; return t > 0 && t < 1 && u > 0 && u < 1; }
 function collide(pos, r = .3) {
@@ -2796,11 +2827,11 @@ $('#dSound').onclick = () => setSound(!SFX.on); { const hb = $('#btnSnd'); if (h
 
 /* ================= picking ================= */
 const INFO = {
-  g1: ['Bentang depan', 'Grid A–F · 108 m', [['Bentang', '30.00 m'], ['Panjang', '108.00 m'], ['Unit', '2.016 · 1.080 · 1.080 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '5 rolling door 4.60 × 4.60 m']]],
-  g2: ['Bentang belakang', 'Grid F–K · 102 m', [['Bentang', '30.00 m'], ['Panjang', '102.00 m'], ['Unit', '720 · 720 · 540 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '6 rolling door 4.60 × 4.60 m']]],
+  g1: ['Bentang depan', 'Grid A–F · 108 m', [['Bentang', '30.00 m'], ['Panjang', '108.00 m'], ['Unit', '2.016 · 1.080 · 1.080 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '5 rolling door ± 5.10 × 4.10 m + 4 di gable grid 2']]],
+  g2: ['Bentang belakang', 'Grid F–K · 102 m', [['Bentang', '30.00 m'], ['Panjang', '102.00 m'], ['Unit', '720 · 720 · 540 m²'], ['Lantai', 'beton K400 + wiremesh M10'], ['Pintu', '6 rolling door ± 5.10 × 4.10 m']]],
   steel: ['Struktur baja', 'Portal @ 6.00 m', [['Pedestal', 'beton K350, puncak +1.50'], ['Kolom', 'HB 300 × 300, cat maroon'], ['Rafter', 'honeycomb 450'], ['Roof floor', '+9.50'], ['Bubungan', '± +13.70']]],
-  door: ['Rolling door', 'Klik untuk buka/tutup', [['Ukuran', '± 4.60 × 4.60 m'], ['Sisi depan', '5 pintu'], ['Sisi belakang', '6 pintu']]],
-  canopy: ['Kanopi', 'Di atas tiap rolling door', [['Lebar', '± 6.00 m'], ['Penutup', 'metal']]],
+  door: ['Rolling door', 'Klik untuk buka/tutup', [['Ukuran', '± 5.10 × 4.10 m (skala Tampak)'], ['Sisi depan', '5 pintu'], ['Sisi belakang', '6 pintu'], ['Gable grid 2', '4 pintu']]],
+  canopy: ['Kanopi', 'Di atas tiap rolling door', [['Lebar', '± 6.00 m (antar kolom)'], ['Tonjolan', '± 3.00 m'], ['Penutup', 'metal']]],
   office: ['Kantor', 'Dua lantai, grid 2–7', [['Lt. 1', 'Receptionist 144 m², QC 36 m², gudang 216 m²'], ['Lt. 2', 'FFL +6.00 · office, R. meeting besar, meeting kecil, R. tertutup'], ['Dinding', 'hebel double, cat']]],
   gate: ['Gerbang pagar', 'Geser, klik untuk buka/tutup', [['Lebar', '12.00 m'], ['Tinggi', '2.00 m'], ['Material', 'besi hollow']]],
   pos: ['Bangunan penunjang', 'Pos jaga · mushalla · panel', [['Mushalla & KM', 'annex sisi timur'], ['Pos jaga', 'samping gerbang'], ['Rumah panel', 'sudut tenggara']]],
@@ -2927,7 +2958,7 @@ $('#swGate').addEventListener('change', e => setGate(e.target.checked ? 1 : 0));
 const STAGES = ['Pondasi', 'Kolom', 'Rangka atap', 'Atap & selubung', 'Tapak'];
 function setStage(v) { B = v; applyBuild(v); Bshown = v; $('#stage5').value = Math.round(v * 100); $('#stageval').textContent = v >= 4.99 ? 'selesai' : STAGES[Math.min(4, Math.floor(v))]; }
 $('#stage5').addEventListener('input', e => setStage(e.target.value / 100));
-window.__xpGo = o => xpGo(o); window.__G = G; window.__cam = (p, t) => { xpGo({view: 'iso'}); setTimeout(() => { tween = null; camera.position.set(...p); controls.target.set(...t); controls.update(); }, 60); }; window.__light = k => setLight(k); window.__camOnly = (p, t) => { tween = null; camera.position.set(...p); controls.target.set(...t); controls.update(); };
+window.__xpGo = o => xpGo(o); window.__G = G; window.__cam = (p, t) => { xpGo({view: 'iso'}); setTimeout(() => { tween = null; camera.position.set(...p); controls.target.set(...t); controls.update(); }, 60); }; window.__light = k => setLight(k); window.__fov = f => { camera.fov = f; camera.updateProjectionMatrix(); }; window.__camOnly = (p, t) => { tween = null; camera.position.set(...p); controls.target.set(...t); controls.update(); };
 function xpGo(o) {
   enterExplore(); if (nav !== 'orbit') enterOrbit();
   if (o.B !== undefined) setStage(o.B);
