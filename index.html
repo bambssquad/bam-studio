@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dak Mezzanine Makassar 15×18</title>
+<style>
+:root{--ink:#f3f1ea;--mut:#9a9890;--line:rgba(243,241,234,.16);--bg:#0c0d0f;--pan:rgba(14,15,17,.82);--f:"Helvetica Neue",Helvetica,Arial,sans-serif;--m:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+.top{position:fixed;left:20px;top:16px;z-index:5;pointer-events:none;max-width:min(560px,70vw)}
+.kop{font:600 10px/1.2 var(--f);letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+h1{font:700 clamp(26px,4.6vw,58px)/.92 var(--f);letter-spacing:-.035em;margin:8px 0 8px;text-transform:uppercase}
+h1 i{font-style:normal;color:transparent;-webkit-text-stroke:1px var(--ink)}
+.sub{font:500 11px/1.5 var(--m);color:var(--mut);letter-spacing:.02em}
+.acts{position:fixed;right:16px;top:16px;z-index:6;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:52vw}
+.b{height:36px;padding:0 14px;border:1px solid var(--line);background:var(--pan);font:600 11px/1 var(--f);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;transition:background .2s,color .2s}
+.b:hover{border-color:var(--ink)} .b[aria-pressed=true]{background:var(--ink);color:#0c0d0f;border-color:var(--ink)}
+.seg{display:flex}.seg .b+.b{border-left:0}
+.legend{position:fixed;right:16px;top:50%;transform:translateY(-46%);z-index:5;display:flex;flex-direction:column;gap:2px;width:228px}
+.lg{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;padding:9px 12px;background:var(--pan);border:1px solid transparent;border-left:1px solid var(--line);text-align:left;transition:.2s}
+.lg:hover,.lg.on{border-color:var(--ink)} .lg i{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 0 var(--c);transition:box-shadow .3s}
+body.hl .lg i,.lg.on i{box-shadow:0 0 12px 2px var(--c)}
+.lg b{font:600 12px/1.15 var(--f)} .lg em{font:500 10px/1 var(--m);color:var(--mut);font-style:normal}
+.lgh{font:600 10px/1 var(--f);letter-spacing:.2em;text-transform:uppercase;color:var(--mut);padding:0 0 8px 12px}
+.nav{position:fixed;left:20px;bottom:18px;z-index:6;display:flex}
+.tl{position:fixed;left:392px;right:16px;bottom:18px;z-index:5;background:var(--pan);border:1px solid var(--line);padding:10px 12px}
+.tlr{display:flex;align-items:center;gap:10px}
+.play{width:34px;height:34px;border:1px solid var(--ink);display:grid;place-items:center;flex:none}
+.play svg{width:12px;height:12px;fill:var(--ink)}
+.tlt{font:600 11px/1.2 var(--f);letter-spacing:.1em;text-transform:uppercase;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tlt span{color:var(--mut);font-family:var(--m);letter-spacing:0;margin-right:8px}
+.bar{position:relative;height:3px;background:var(--line);margin-top:10px;cursor:pointer}
+.bar u{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--ink)}
+.chips{display:flex;gap:4px;margin-top:8px;overflow-x:auto;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:600 10px/1 var(--f);letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--line);color:var(--mut)}
+.chip.on{color:#0c0d0f;background:var(--c);border-color:var(--c)} .chip.done{color:var(--ink)}
+.card{position:fixed;left:20px;top:50%;transform:translateY(-40%);z-index:7;width:330px;background:var(--pan);border:1px solid var(--line);border-top:3px solid var(--c,#fff);padding:16px 16px 14px;display:none}
+.card.on{display:block}
+.card .x{position:absolute;right:8px;top:6px;width:32px;height:32px;font-size:18px;color:var(--mut)}
+.card .k{font:600 10px/1 var(--f);letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.card h2{font:700 30px/1 var(--f);letter-spacing:-.02em;margin:8px 0 4px;color:var(--c,#fff);text-shadow:0 0 18px color-mix(in srgb,var(--c,#fff) 55%,transparent)}
+.card .mat{font:500 12px/1.35 var(--f);margin-bottom:10px}
+.card dl{display:grid;grid-template-columns:104px 1fr;border-top:1px solid var(--line)}
+.card dt,.card dd{padding:7px 0;border-bottom:1px solid var(--line);font:500 11px/1.35 var(--m)} .card dt{color:var(--mut)}
+.card dd.na{color:#e9a23b}
+.card .src{font:500 10px/1.4 var(--m);color:var(--mut);margin-top:9px}
+.lbl{position:fixed;left:0;top:0;z-index:4;pointer-events:none}
+.lb{position:absolute;transform:translate(-50%,-130%);white-space:nowrap;font:700 10px/1 var(--f);letter-spacing:.1em;text-transform:uppercase;padding:5px 7px 5px 18px;background:rgba(10,11,12,.86);border:1px solid var(--c);color:var(--ink);opacity:0;transition:opacity .25s;pointer-events:auto;cursor:pointer}
+.lb:before{content:"";position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--c);box-shadow:0 0 9px 2px var(--c)}
+.lb:after{content:"";position:absolute;left:50%;top:100%;width:1px;height:14px;background:var(--c)}
+.lb.on{opacity:1}
+.hint{position:fixed;left:20px;bottom:64px;z-index:5;font:500 10px/1.4 var(--m);color:var(--mut);max-width:300px}
+body.walk .top{opacity:0;transition:opacity .3s}
+.joy{position:fixed;left:26px;bottom:110px;width:112px;height:112px;border-radius:50%;border:1px solid var(--line);background:rgba(14,15,17,.5);z-index:6;display:none;touch-action:none}
+.joy i{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:var(--ink);opacity:.85}
+body.walk.touch .joy{display:block}
+.emo{position:fixed;left:392px;bottom:118px;z-index:6;display:none;gap:4px}
+body.third .emo{display:flex} .emo .b{padding:0 10px}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(6,7,8,.94);display:none;flex-direction:column}
+.modal.on{display:flex}
+.mh{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.mh b{font:600 11px/1 var(--f);letter-spacing:.16em;text-transform:uppercase;flex:1}
+.mb{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:16px;text-align:center}
+.mb img{background:#fff;width:100%;max-width:1100px;height:auto;transition:width .2s} .mb img.z{width:240%;max-width:none}
+.mb video{width:100%;max-width:1100px;max-height:78vh;background:#000}
+.notes{max-width:680px;margin:0 auto;text-align:left;font:500 13px/1.6 var(--f)} .notes h3{font:600 10px/1 var(--f);letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin:22px 0 8px}
+.notes li{margin:0 0 6px 18px} .notes .na{color:#e9a23b}
+.ld{position:fixed;inset:0;z-index:40;background:#0c0d0f;display:grid;place-items:center;transition:opacity .7s}
+.ld.off{opacity:0;pointer-events:none}
+.ld div{text-align:center}.ld h1{font-size:clamp(30px,7vw,72px)} .ld p{font:500 11px/1 var(--m);color:var(--mut);margin-top:14px}
+.ld s{display:block;width:220px;height:2px;background:var(--line);margin:18px auto 0;position:relative;text-decoration:none}
+.ld s u{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--ink);transition:width .2s}
+@media (max-width:860px){
+ .top{left:14px;top:12px;max-width:calc(100vw - 28px)} h1{font-size:30px;margin:6px 0 4px}.sub{font-size:10px}
+ .acts{left:0;right:0;top:auto;bottom:118px;max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 14px;scrollbar-width:none}.acts::-webkit-scrollbar{display:none}
+ .legend{left:0;right:0;top:auto;bottom:160px;transform:none;width:auto;flex-direction:row;overflow-x:auto;padding:0 14px;gap:4px;scrollbar-width:none}.legend::-webkit-scrollbar{display:none}
+ .lgh{display:none}.lg{flex:none;grid-template-columns:12px auto;border:1px solid var(--line);padding:8px 10px}.lg em{display:none}
+ .tl{left:14px;right:14px;bottom:56px;padding:8px 10px}.chips{display:none}
+ .nav{left:14px;right:14px;bottom:12px}.nav .b{flex:1;padding:0 6px}
+ .card{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;max-height:62vh;overflow:auto;z-index:15;padding-bottom:22px;background:rgba(12,13,15,.97)}
+ .hint{display:none}.joy{left:18px;bottom:210px}.emo{left:auto;right:14px;bottom:210px;flex-direction:column}
+ body.walk .legend,body.walk .acts{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="0" aria-label="Model 3D gudang dan dak mezzanine"></canvas>
+<div class="lbl" id="lbl"></div>
+
+<div class="top">
+  <div class="kop">PT Selaras Adhi Perkasa · Gambar teknik dak</div>
+  <h1>Dak Mezzanine <i>15×18</i></h1>
+  <div class="sub">Makassar · elev. +3.00 · WF 250 / WF 200 / UNP 100 @600 / Calsifloor 20 mm</div>
+</div>
+
+<div class="acts">
+  <div class="seg" id="state"><button class="b" data-s="0">Existing</button><button class="b" data-s="1" aria-pressed="true">+ Dak</button></div>
+  <button class="b" id="bHL" aria-pressed="false">Highlight</button>
+  <button class="b" id="bGam">Gamtek</button>
+  <button class="b" id="bVid">Video</button>
+  <button class="b" id="bInfo">Catatan</button>
+  <button class="b" id="bFX" aria-pressed="true" title="Bloom dan anti-alias">FX</button>
+</div>
+
+<div class="legend" id="legend"><div class="lgh">Legenda struktur</div></div>
+
+<div class="card" id="card" role="dialog" aria-label="Spesifikasi">
+  <button class="x" id="cardX" aria-label="Tutup">×</button>
+  <div class="k" id="cK"></div><h2 id="cP"></h2><div class="mat" id="cM"></div><dl id="cD"></dl><div class="src" id="cS"></div>
+</div>
+
+<div class="hint" id="hint">Seret untuk memutar · gulir/cubit untuk zoom · ketuk batang untuk spek.</div>
+<div class="nav seg" id="nav"><button class="b" data-n="orbit" aria-pressed="true">Orbit</button><button class="b" data-n="walk">Orang pertama</button><button class="b" data-n="third">Orang ketiga</button></div>
+<div class="joy" id="joy"><i id="knob"></i></div>
+<div class="emo" id="emo"><button class="b" data-e="wave">👋</button><button class="b" data-e="clap">👏</button><button class="b" data-e="dance">🕺</button><button class="b" data-e="jump">⤒</button><button class="b" data-e="salute">🫡</button></div>
+
+<div class="tl" id="tl">
+  <div class="tlr"><button class="play" id="play" aria-label="Putar timelapse pemasangan dak"><svg viewBox="0 0 12 12"><path id="playI" d="M2 1l9 5-9 5z"/></svg></button>
+    <div class="tlt" id="tlt"><span>TIMELAPSE</span>Existing → pasang dak</div></div>
+  <div class="bar" id="bar"><u id="barU"></u></div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="modal" id="mGam"><div class="mh"><b>Gambar teknik</b><div class="seg" id="gTab"><button class="b" data-g="denah-1" aria-pressed="true">Denah dak</button><button class="b" data-g="potongan-1">Potongan</button></div><button class="b" id="gZoom">Zoom</button><button class="b" data-close>Tutup</button></div><div class="mb"><img id="gImg" alt="Gambar teknik dak mezzanine" src=""></div></div>
+<div class="modal" id="mVid"><div class="mh"><b>Animasi bake Blender · timelapse pemasangan</b><button class="b" data-close>Tutup</button></div><div class="mb"><video id="vid" controls playsinline preload="none" poster="assets/poster.jpg"></video></div></div>
+<div class="modal" id="mInfo"><div class="mh"><b>Catatan sumber dan asumsi</b><button class="b" data-close>Tutup</button></div><div class="mb"><div class="notes">
+  <h3>Dari gambar teknik (berdimensi)</h3><ul>
+  <li>Dak 15,00 × 18,00 m, elevasi +3.00; railing sampai +4.20.</li>
+  <li>Balok induk WF 250 di as x = 5,00 / 10,00 dan y = 6,00 / 12,00; balok anak WF 200 di tengah modul; isian rangka UNP 100 @ 0,60 m; alas Calsifloor 20 mm di atas rangka UNP 100.</li>
+  <li>Tangga lebar 1,20 m, panjang datar 6,00 m; manual roller conveyor 1,20 × 6,00 m.</li>
+  <li>Gudang existing lebar 15,00 m, kolom tiap 6,00 m, enam bentang (36,00 m).</li></ul>
+  <h3>Asumsi tampilan (tidak ada dimensinya di gambar)</h3><ul>
+  <li class="na">Tinggi eave ±6,0 m dan bubungan ±8,4 m diukur dari potongan A-A.</li>
+  <li class="na">Kolom baru mengikuti denah (4 kolom) dan potongan A-A. Potongan B-B menggambar kolom di tengah bentang: perlu dicek perencana struktur.</li>
+  <li class="na">Ujung balok induk x = 5 / 10 di as y = 0 dan y = 18 tidak punya kolom di denah; di model menumpu balok tepi.</li>
+  <li class="na">Balok tepi, kolom baru, railing, tangga: profil dan material tidak tercantum. Jumlah anak tangga digambar 17 optrede; modul papan lantai 1,2 × 2,4 m.</li>
+  <li class="na">Pintu, isi gudang (palet, karton), skylight dan lampu mengikuti foto existing, posisinya ilustratif.</li></ul>
+  <h3>Render</h3><ul><li>Pencahayaan = lightmap path-traced Blender Cycles (headless), denoise OIDN, dua kondisi: existing dan dengan dak. Tekstur PBR Poly Haven (CC0).</li>
+  <li>Model ini visualisasi, bukan perhitungan struktur.</li></ul></div></div></div>
+
+<div class="ld" id="ld"><div><div class="kop">PT Selaras Adhi Perkasa</div><h1>Dak Mezzanine <i>15×18</i></h1><p id="ldP">memuat model…</p><s><u id="ldU"></u></s></div></div>
+
+<script id="meta" type="application/json">{"params":{"W":15.0,"L":36.0,"BAY":6.0,"EAVE":6.0,"RIDGE":8.4,"DL":18.0,"DZ":3.0,"TOS":2.98,"RAIL_H":1.2,"STAIR":{"x0":0.0,"x1":1.2,"y0":18.0,"y1":24.0,"risers":17},"CONV":{"x0":13.8,"x1":15.0,"y0":18.0,"y1":24.0,"z_low":0.55},"DOOR":{"x0":5.0,"x1":10.0,"h":4.5}},"obst":[[0.4,0.5,1.6,1.5],[1.7,0.5,2.9,1.5],[3.0,0.5,4.2,1.5],[5.5,0.5,6.7,1.5],[10.8,0.5,12.0,1.5],[12.1,0.5,13.3,1.5],[1.7,1.72,2.9,2.72],[3.0,1.72,4.2,2.72],[5.5,1.72,6.7,2.72],[8.3,1.72,9.5,2.72],[12.1,1.72,13.3,2.72],[13.4,1.72,14.6,2.72],[0.4,2.94,1.6,3.94],[1.7,2.94,2.9,3.94],[8.3,2.94,9.5,3.94],[10.8,2.94,12.0,3.94],[12.1,2.94,13.3,3.94],[13.4,2.94,14.6,3.94],[0.4,4.16,1.6,5.16],[1.7,4.16,2.9,5.16],[3.0,4.16,4.2,5.16],[8.3,4.16,9.5,5.16],[10.8,4.16,12.0,5.16],[12.1,4.16,13.3,5.16],[13.4,4.16,14.6,5.16],[0.4,5.38,1.6,6.38],[1.7,5.38,2.9,6.38],[3.0,5.38,4.2,6.38],[5.5,5.38,6.7,6.38],[8.3,5.38,9.5,6.38],[10.8,5.38,12.0,6.38],[12.1,5.38,13.3,6.38],[13.4,5.38,14.6,6.38],[0.4,6.6,1.6,7.6],[5.5,6.6,6.7,7.6],[10.8,6.6,12.0,7.6],[12.1,6.6,13.3,7.6],[13.4,6.6,14.6,7.6],[0.4,7.82,1.6,8.82],[1.7,7.82,2.9,8.82],[5.5,7.82,6.7,8.82],[8.3,7.82,9.5,8.82],[12.1,7.82,13.3,8.82],[13.4,7.82,14.6,8.82],[0.4,9.04,1.6,10.04],[3.0,9.04,4.2,10.04],[5.5,9.04,6.7,10.04],[8.3,9.04,9.5,10.04],[10.8,9.04,12.0,10.04],[12.1,9.04,13.3,10.04],[13.4,9.04,14.6,10.04],[0.4,10.26,1.6,11.26],[3.0,10.26,4.2,11.26],[5.5,10.26,6.7,11.26],[8.3,10.26,9.5,11.26],[10.8,10.26,12.0,11.26],[12.1,10.26,13.3,11.26],[0.4,11.48,1.6,12.48],[5.5,11.48,6.7,12.48],[8.3,11.48,9.5,12.48],[13.4,11.48,14.6,12.48],[0.4,12.7,1.6,13.7],[1.7,12.7,2.9,13.7],[3.0,12.7,4.2,13.7],[5.5,12.7,6.7,13.7],[8.3,12.7,9.5,13.7],[10.8,12.7,12.0,13.7],[12.1,12.7,13.3,13.7],[0.4,13.92,1.6,14.92],[1.7,13.92,2.9,14.92],[3.0,13.92,4.2,14.92],[5.5,13.92,6.7,14.92],[8.3,13.92,9.5,14.92],[10.8,13.92,12.0,14.92],[12.1,13.92,13.3,14.92],[1.7,15.14,2.9,16.14],[8.3,15.14,9.5,16.14],[10.8,15.14,12.0,16.14],[12.1,15.14,13.3,16.14],[13.4,15.14,14.6,16.14],[0.4,16.36,1.6,17.36],[5.5,16.36,6.7,17.36],[8.3,16.36,9.5,17.36],[12.1,16.36,13.3,17.36],[13.4,16.36,14.6,17.36],[3.0,21.24,4.2,22.24],[5.5,21.24,6.7,22.24],[12.1,21.24,13.3,22.24],[3.0,22.46,4.2,23.46],[5.5,22.46,6.7,23.46],[8.3,22.46,9.5,23.46],[10.8,22.46,12.0,23.46],[3.0,23.68,4.2,24.68],[5.5,23.68,6.7,24.68],[8.3,23.68,9.5,24.68],[10.8,23.68,12.0,24.68],[12.1,23.68,13.3,24.68],[3.0,24.9,4.2,25.9],[5.5,24.9,6.7,25.9],[8.3,24.9,9.5,25.9],[12.1,24.9,13.3,25.9],[0.4,26.12,1.6,27.12],[3.0,26.12,4.2,27.12],[5.5,26.12,6.7,27.12],[8.3,26.12,9.5,27.12],[10.8,26.12,12.0,27.12],[12.1,26.12,13.3,27.12],[0.4,27.34,1.6,28.34],[1.7,27.34,2.9,28.34],[3.0,27.34,4.2,28.34],[5.5,27.34,6.7,28.34],[8.3,27.34,9.5,28.34],[10.8,27.34,12.0,28.34],[13.4,27.34,14.6,28.34],[0.4,28.56,1.6,29.56],[1.7,28.56,2.9,29.56],[3.0,28.56,4.2,29.56],[5.5,28.56,6.7,29.56],[8.3,28.56,9.5,29.56],[10.8,28.56,12.0,29.56],[12.1,28.56,13.3,29.56],[13.4,28.56,14.6,29.56],[0.4,29.78,1.6,30.78],[1.7,29.78,2.9,30.78],[13.4,29.78,14.6,30.78],[0.4,31.0,1.6,32.0],[12.1,31.0,13.3,32.0],[0.4,32.22,1.6,33.22],[1.7,32.22,2.9,33.22],[12.1,32.22,13.3,33.22],[13.4,32.22,14.6,33.22]],"groups":{"floor":{"lm":2048,"texel":56.0,"faces":2,"pieces":0,"count":0,"length":0.0},"walls":{"lm":2048,"texel":56.0,"faces":11,"pieces":0,"count":0,"length":0.0},"exsteel":{"lm":1024,"texel":27.91,"faces":588,"pieces":0,"count":0,"length":0.0},"roof":{"lm":1024,"texel":37.76,"faces":12,"pieces":0,"count":0,"length":0.0},"sky":{"lm":64,"texel":5.0,"faces":24,"pieces":0,"count":0,"length":0.0},"outside":{"lm":64,"texel":56.0,"faces":1,"pieces":0,"count":0,"length":0.0},"props":{"lm":2048,"texel":44,"faces":2935,"pieces":0,"count":0,"length":0.0},"dk_col":{"lm":512,"texel":56.0,"faces":188,"pieces":4,"count":4,"length":10.84},"dk_wf250":{"lm":1024,"texel":56.0,"faces":216,"pieces":12,"count":12,"length":63.38},"dk_tepi":{"lm":1024,"texel":56.0,"faces":216,"pieces":12,"count":12,"length":63.92},"dk_wf200":{"lm":1024,"texel":56.0,"faces":486,"pieces":27,"count":27,"length":93.42},"dk_unp":{"lm":1024,"texel":40.91,"faces":1728,"pieces":288,"count":288,"length":726.24},"dk_floor":{"lm":2048,"texel":40,"faces":624,"pieces":104,"count":104,"length":0.0},"dk_rail":{"lm":256,"texel":56.0,"faces":60,"pieces":10,"count":7,"length":12.5},"dk_stair":{"lm":512,"texel":56.0,"faces":156,"pieces":19,"count":17,"length":0.0},"dk_conv":{"lm":512,"texel":56.0,"faces":484,"pieces":11,"count":40,"length":6.49}}}</script>
+<script type="importmap">{"imports":{"three":"./assets/three/three.module.min.js","three/addons/":"./assets/three/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = t => t * t * (3 - 2 * t);
+const PW = (x, y, h = 0) => new THREE.Vector3(x, h, -y);          // koordinat denah (x, y, tinggi) -> dunia three
+const QS = new URLSearchParams(location.search);
+const TOUCH = matchMedia('(pointer:coarse)').matches; document.body.classList.toggle('touch', TOUCH);
+const SMALL = innerWidth < 860;
+
+/* ---------- spesifikasi: hanya dari gamtek; yang tidak ada ditulis "tidak tercantum" ---------- */
+const NA = 'tidak tercantum di gamtek';
+const SPEC = {
+  dk_col:   {n: 'Kolom baru + skur', p: 'Kolom baja', c: '#ff4fd8', mat: 'Baja profil, dengan skur (knee brace) ke balok', at: [10, 6, 1.5],
+             rows: [['Jumlah', '4 kolom: (5;6) (10;6) (5;12) (10;12) m'], ['Tinggi', 'lantai ±0.00 sampai bawah balok'], ['Profil', NA], ['Base plate / angkur', NA]], src: 'Denah renc. dak · Pot. A-A',
+             cam: [7.5, 21.5, 1.7, 8.5, 8, 2.0]},
+  dk_wf250: {n: 'Balok induk', p: 'WF 250', c: '#ff2d55', mat: 'Baja profil WF (wide flange)', at: [5, 9, 2.86], len: 1,
+             rows: [['Posisi', 'as x = 5,00 & 10,00 m · as y = 6,00 & 12,00 m'], ['Elevasi', 'atas dak +3.00'], ['Seri / tebal', NA], ['Mutu baja', NA]], src: 'Denah renc. dak · Pot. A-A, B-B',
+             cam: [7.5, 22, 1.5, 7.5, 9, 2.95]},
+  dk_tepi:  {n: 'Balok tepi', p: 'Balok tepi', c: '#ff2d55', mat: 'Baja profil, digambar seperti WF 250', at: [7.5, 17.94, 2.86], len: 1,
+             rows: [['Posisi', 'keliling dak, menumpu kolom existing'], ['Profil', NA], ['Sambungan ke kolom existing', NA]], src: 'Pot. A-A, B-B (asumsi tampilan)',
+             cam: [9, 25.5, 2.4, 7.5, 18, 2.8]},
+  dk_wf200: {n: 'Balok anak', p: 'WF 200', c: '#2e9bff', mat: 'Baja profil WF (wide flange)', at: [7.5, 15, 2.9], len: 1,
+             rows: [['Posisi', 'x = 2,50 / 7,50 / 12,50 m · y = 3,00 / 9,00 / 15,00 m'], ['Elevasi', 'atas rata dengan balok induk'], ['Seri / tebal', NA], ['Mutu baja', NA]], src: 'Denah renc. dak · Pot. A-A, B-B',
+             cam: [3.5, 21, 1.5, 6.5, 10, 2.95]},
+  dk_unp:   {n: 'Isian rangka', p: 'UNP 100', c: '#ff8a1f', mat: 'Baja kanal UNP 100', at: [11.2, 13.8, 2.93], len: 1,
+             rows: [['Jarak', '@ 0,60 m, dua arah'], ['Fungsi', 'rangka penumpu Calsifloor'], ['Tebal / mutu', NA]], src: 'Denah renc. dak (keterangan)',
+             cam: [11.4, 17.2, 1.2, 9.5, 10.5, 3.0]},
+  dk_floor: {n: 'Alas dak', p: 'Calsifloor 20', c: '#e6dc3c', mat: 'Papan fiber semen Calsifloor, tebal 20 mm', at: [3.6, 3.6, 3.03],
+             rows: [['Pemasangan', 'di atas rangka UNP 100'], ['Luas', '15,00 × 18,00 = 270 m²'], ['Modul papan', 'digambar 1,2 × 2,4 m (asumsi)'], ['Sekrup / finishing', NA]], src: 'Denah renc. dak (keterangan)',
+             cam: [1.5, 27, 8.2, 7.5, 9, 3]},
+  dk_rail:  {n: 'Railing', p: 'Railing', c: '#ffe11f', mat: 'Railing tepi depan dak', at: [9.6, 17.95, 4.2], len: 1,
+             rows: [['Tinggi', '1,20 m (+3.00 sampai +4.20)'], ['Posisi', 'tepi y = 18,00 antara tangga dan conveyor'], ['Profil / material', NA]], src: 'Pot. A-A',
+             cam: [11.5, 23.5, 4.8, 8, 18, 3.6]},
+  dk_stair: {n: 'Tangga', p: 'Tangga', c: '#7dff3a', mat: 'Tangga lurus ke dak', at: [0.7, 21, 1.9],
+             rows: [['Lebar', '1,20 m'], ['Panjang datar', '6,00 m'], ['Naik ke', '+3.00'], ['Anak tangga', 'digambar 17 optrede (asumsi)'], ['Material', NA]], src: 'Denah · Pot. B-B',
+             cam: [5.2, 26.8, 3.0, 0.8, 21, 1.5]},
+  dk_conv:  {n: 'Conveyor', p: 'Roller conveyor', c: '#19f0d8', mat: 'Manual roller conveyor (gravitasi)', at: [14.4, 21, 1.9],
+             rows: [['Ukuran', '1,20 × 6,00 m'], ['Dari - ke', 'dak +3.00 ke lantai'], ['Tipe / kapasitas', NA]], src: 'Denah · Pot. A-A',
+             cam: [9.8, 26.8, 3.0, 14.3, 21, 1.6]},
+};
+const ORDER = ['dk_col', 'dk_wf250', 'dk_tepi', 'dk_wf200', 'dk_unp', 'dk_floor', 'dk_rail', 'dk_stair', 'dk_conv'];
+const STAGES = [
+  {k: 'Kolom', g: ['dk_col'], d: 3.0}, {k: 'Balok induk WF 250', g: ['dk_tepi', 'dk_wf250'], d: 4.2}, {k: 'Balok anak WF 200', g: ['dk_wf200'], d: 4.0},
+  {k: 'Isian UNP 100 @600', g: ['dk_unp'], d: 5.0}, {k: 'Calsifloor 20 mm', g: ['dk_floor'], d: 4.2}, {k: 'Railing', g: ['dk_rail'], d: 2.2},
+  {k: 'Tangga', g: ['dk_stair'], d: 3.0}, {k: 'Roller conveyor', g: ['dk_conv'], d: 2.8}];
+{ let t = 1.2; for (const s of STAGES) { s.t0 = t; t += s.d; } }
+const TL_TOTAL = STAGES.at(-1).t0 + STAGES.at(-1).d + 1.5;
+
+/* ---------- renderer ---------- */
+const canvas = $('#c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias: false, powerPreference: 'high-performance'});
+const PR = () => Math.min(devicePixelRatio || 1, SMALL ? 1.5 : 1.75);
+renderer.setPixelRatio(PR()); renderer.setSize(innerWidth, innerHeight, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+const SW = /swiftshader|llvmpipe|software/i.test((() => { try { const g = renderer.getContext(), e = g.getExtension('WEBGL_debug_renderer_info'); return e ? g.getParameter(e.UNMASKED_RENDERER_WEBGL) : ''; } catch (e) { return ''; } })());
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#0c0d0f');
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.08, 400);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = .08; controls.maxPolarAngle = Math.PI * .495; controls.minDistance = 1.2; controls.maxDistance = 95; controls.zoomSpeed = .8;
+const HOME = SMALL ? [[-17, 68, 31], [7.5, 17, 0]] : [[-10, 50, 15], [8.5, 14, 2]];
+camera.position.copy(PW(...HOME[0])); controls.target.copy(PW(...HOME[1]));
+
+let composer, bloom, FX = !SW && QS.get('fx') !== '0';
+function makeComposer() {
+  const rt = new THREE.WebGLRenderTarget(innerWidth * PR(), innerHeight * PR(), {type: THREE.HalfFloatType, samples: SMALL ? 2 : 4});
+  composer = new EffectComposer(renderer, rt); composer.setPixelRatio(PR()); composer.setSize(innerWidth, innerHeight);
+  composer.addPass(new RenderPass(scene, camera));
+  bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .5, .55, 1.0); composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+}
+makeComposer();
+addEventListener('resize', () => { renderer.setPixelRatio(PR()); renderer.setSize(innerWidth, innerHeight, false); composer.setPixelRatio(PR()); composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+
+/* ---------- loading ---------- */
+const LM = new THREE.LoadingManager();
+LM.onProgress = (u, a, b) => { $('#ldU').style.width = (a / b * 100) + '%'; };
+const TL = new THREE.TextureLoader(LM);
+const tex = (n, rep, srgb = true) => { const t = TL.load('assets/tex/' + n); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+const lmTex = (g, s) => { const t = TL.load(`assets/lm/${g}_${s}.jpg`); t.channel = 1; t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.minFilter = THREE.LinearFilter; return t; };
+const LMI = Math.PI * 0.5 * (+QS.get('e') || 1.25);
+const LFM = THREE.ShaderChunk.lights_fragment_maps
+  .replace(/texture2D\(\s*lightMap\s*,\s*vLightMapUv\s*\)/, 'mix( texture2D( lightMap, vLightMapUv ), texture2D( lightMapB, vLightMapUv ), uLmMix )')
+  .replace(/iblIrradiance\s*\+=\s*getIBLIrradiance\(\s*geometryNormal\s*\);/, '')
+  .replace(/lightMapTexel\.rgb\s*\*\s*lightMapIntensity/, '( lightMapTexel.rgb / max( vec3( 0.02 ), 1.0 - lightMapTexel.rgb ) ) * lightMapIntensity');
+console.assert(LFM.includes('max( vec3( 0.02 )') && LFM.includes('lightMapB') && !/iblIrradiance\s*\+=\s*getIBLIrradiance/.test(LFM), 'patch lightmap chunk');
+const MATS = {}, MESH = {};
+function lmMat(name, o, states) {
+  const m = new THREE.MeshStandardMaterial({envMapIntensity: .55, ...o});
+  const a = lmTex(name, states[0]); m.lightMap = a; m.lightMapIntensity = LMI;
+  const u = {lightMapB: {value: states[1] ? lmTex(name, states[1]) : a}, uLmMix: {value: 0}, uProg: {value: 1e6}, uSpan: {value: 1}, uDrop: {value: 2.4},
+    uHL: {value: 0}, uDim: {value: 0}, uCut: {value: 0}, uCol: {value: new THREE.Color(SPEC[name]?.c || '#ffffff')}};
+  m.userData.u = u; m.userData.two = !!states[1];
+  m.onBeforeCompile = sh => { Object.assign(sh.uniforms, u);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float _piece; uniform float uProg, uSpan, uDrop; varying float vT; varying vec2 vWp;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\n vT = clamp((uProg - _piece) / uSpan, 0.0, 1.0); { float e = 1.0 - vT; transformed.y += e * e * uDrop; } vWp = (modelMatrix * vec4(transformed, 1.0)).xz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D lightMapB; uniform float uLmMix, uHL, uDim, uCut; uniform vec3 uCol; varying float vT; varying vec2 vWp;')
+      .replace('#include <color_fragment>', '#include <color_fragment>\n if (vT <= 0.001) discard; if (uCut > 0.5 && !(vWp.x > 9.6 && vWp.y < -12.0)) discard; float hk = uHL; diffuseColor.rgb = mix(diffuseColor.rgb, uCol, hk * 0.9) * (1.0 - uDim * 0.72);')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += uCol * hk * (1.35 + 0.9 * (1.0 - vT));')
+      .replace('#include <lights_fragment_maps>', LFM); };
+  MATS[name] = m; return m;
+}
+const lin = (r, g, b) => new THREE.Color().setRGB(r, g, b);
+function materials() {
+  const cn = tex('brushed_concrete_nor.jpg', 1 / 3, false), rn = tex('box_profile_metal_sheet_nor.jpg', 1, false);
+  const pal = TL.load('assets/tex/palette.png'); pal.colorSpace = THREE.SRGBColorSpace; pal.magFilter = pal.minFilter = THREE.NearestFilter; pal.generateMipmaps = false;
+  lmMat('floor', {map: tex('brushed_concrete_diff.jpg', 1 / 3), normalMap: cn, normalScale: new THREE.Vector2(.5, .5), roughness: .42, color: '#f2f2f2', envMapIntensity: .9}, ['A', 'B']);
+  lmMat('walls', {map: tex('beige_wall_001_diff.jpg', 1 / 2.5), color: lin(1, .93, .70), roughness: .9, envMapIntensity: .2}, ['A', 'B']);
+  lmMat('roof', {map: tex('painted_metal_shutter_diff.jpg', 1), normalMap: rn, normalScale: new THREE.Vector2(.8, .8), roughness: .5, metalness: .25, envMapIntensity: .35}, ['A']);
+  lmMat('exsteel', {color: lin(.10, .22, .42), roughness: .45, envMapIntensity: .5}, ['A']);
+  lmMat('props', {map: pal, roughness: .85, envMapIntensity: .25}, ['A', 'B']);
+  const steel = {color: lin(.19, .20, .215), roughness: .48, metalness: .25, envMapIntensity: .8};
+  for (const g of ['dk_col', 'dk_wf250', 'dk_tepi', 'dk_wf200', 'dk_stair']) lmMat(g, steel, ['B']);
+  lmMat('dk_unp', {color: lin(.36, .37, .38), roughness: .5, metalness: .35, envMapIntensity: .8}, ['B']);
+  lmMat('dk_floor', {map: tex('brushed_concrete_diff.jpg', 1 / 2.4), color: lin(1.55, 1.55, 1.5), roughness: .85, envMapIntensity: .3}, ['B']);
+  lmMat('dk_rail', steel, ['B']);
+  lmMat('dk_conv', {color: lin(.5, .52, .55), roughness: .35, metalness: .6, envMapIntensity: 1}, ['B']);
+  MATS.sky = new THREE.MeshBasicMaterial({color: lin(5.5, 5.9, 6.4)}); MATS.outside = new THREE.MeshBasicMaterial({color: lin(3.2, 3.4, 3.6)});
+}
+materials();
+const root = new THREE.Group(); scene.add(root);
+{ const g = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshBasicMaterial({color: '#101114'})); g.rotation.x = -Math.PI / 2; g.position.y = -.04; scene.add(g); }
+let META = null, READY = false, glbDone; const pGlb = new Promise(r => glbDone = r);
+META = JSON.parse(document.getElementById('meta').textContent); const pMeta = Promise.resolve();
+{ const url = 'assets/mesh.json'; LM.itemStart(url);
+  const dec = (b, T) => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return new T(u.buffer); };
+  fetch(url).then(r => r.json()).then(J => {
+    for (const [n, m] of Object.entries(J)) { const g = new THREE.BufferGeometry(), A = (k, c) => new THREE.BufferAttribute(dec(m[k], Float32Array), c);
+      g.setAttribute('position', A('pos', 3)); g.setAttribute('normal', A('nor', 3)); g.setAttribute('uv', A('uv', 2)); g.setAttribute('uv1', A('uv1', 2)); g.setAttribute('_piece', A('piece', 1));
+      g.setIndex(new THREE.BufferAttribute(dec(m.idx, Uint32Array), 1));
+      const o = new THREE.Mesh(g, MATS[n] || MATS.floor); o.name = n; o.frustumCulled = false; MESH[n] = o; root.add(o);
+      const u = MATS[n]?.userData?.u; if (u && n.startsWith('dk_')) u.uSpan.value = Math.max(1, META.groups[n].pieces * .14); }
+    glbDone(); LM.itemEnd(url);
+  }).catch(e => { $('#ldP').textContent = 'gagal memuat model: ' + e.message; LM.itemError(url); }); }
+LM.onLoad = async () => { if (READY) return; await pGlb; READY = true; setTimeout(start, 60); };
+
+/* ---------- reflection capture: cube map dari scene yang sudah ber-lightmap -> IBL ---------- */
+const cubeRT = new THREE.WebGLCubeRenderTarget(128, {type: THREE.HalfFloatType}); const cubeCam = new THREE.CubeCamera(.1, 120, cubeRT); const pmrem = new THREE.PMREMGenerator(renderer);
+let envRT = null;
+function captureEnv() {
+  const vis = []; scene.traverse(o => { if (o.userData.dyn) { vis.push([o, o.visible]); o.visible = false; } });
+  scene.environment = null; cubeCam.position.copy(PW(7.5, 24.5, 1.7)); cubeCam.update(renderer, scene);
+  const rt = pmrem.fromCubemap(cubeRT.texture); scene.environment = rt.texture; if (envRT) envRT.dispose(); envRT = rt;
+  for (const [o, v] of vis) o.visible = v;
+}
+
+/* ---------- state: dak, highlight, timelapse ---------- */
+const S = {dak: 1, hl: false, focus: null, tl: false, tlT: TL_TOTAL, nav: 'orbit'};
+const HLV = Object.fromEntries(ORDER.map(k => [k, 0])), DIMV = {};
+function applyTL(T) {
+  S.tlT = T;
+  for (const s of STAGES) { const f = clamp((T - s.t0) / s.d);
+    for (const g of s.g) { const u = MATS[g].userData.u, n = META.groups[g].pieces; u.uProg.value = f >= 1 ? 1e6 : f <= 0 ? 0 : f * (n + u.uSpan.value); } }
+  const a = STAGES[3].t0, b = STAGES[4].t0 + STAGES[4].d; const mix = ease(clamp((T - a) / (b - a)));
+  for (const k in MATS) if (MATS[k].userData?.two) MATS[k].userData.u.uLmMix.value = mix;
+  const st = STAGES.findLast(s => T >= s.t0); S.stage = T >= TL_TOTAL - 1.5 || !st || T > st.t0 + st.d + .01 ? null : st;
+  $('#barU').style.width = (clamp(T / TL_TOTAL) * 100) + '%';
+  $$('.chip').forEach((c, i) => { const s = STAGES[i]; c.classList.toggle('on', S.stage === s); c.classList.toggle('done', T >= s.t0 + s.d); });
+  $('#tlt').innerHTML = S.stage ? `<span>${String(STAGES.indexOf(S.stage) + 1).padStart(2, '0')}/${String(STAGES.length).padStart(2, '0')}</span>${S.stage.k}` : `<span>TIMELAPSE</span>${T <= 0 ? 'Existing → pasang dak' : T >= TL_TOTAL ? 'Dak terpasang' : 'Existing'}`;
+}
+function setDak(v, quiet) { S.tl = false; S.dak = v; applyTL(v ? TL_TOTAL : 0); $$('#state .b').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === v)); playIcon(); if (!v) { closeCard(); setHL(false); } if (!quiet) setTimeout(captureEnv, 60); }
+function playIcon() { $('#playI').setAttribute('d', S.tl ? 'M2 1h3v10H2zM7 1h3v10H7z' : 'M2 1l9 5-9 5z'); }
+function playTL(from) { if (S.tl) { S.tl = false; playIcon(); return; } closeCard(); S.tl = true; S.dak = 1; applyTL(from ?? (S.tlT >= TL_TOTAL - .05 ? 0 : S.tlT)); $$('#state .b').forEach(b => b.setAttribute('aria-pressed', 'false')); playIcon();
+  if (S.nav === 'orbit') flyTo(SMALL ? [-9, 44, 16] : [-6, 37, 9.5], [7.5, 10, 2.2], 1.6); }
+function setHL(v) { S.hl = v; document.body.classList.toggle('hl', v); $('#bHL').setAttribute('aria-pressed', v); if (!v) S.focus = null; }
+
+/* ---------- UI: legend, spec card, labels, chips ---------- */
+const LBL = {};
+for (const k of ORDER) { const s = SPEC[k];
+  const b = document.createElement('button'); b.className = 'lg'; b.style.setProperty('--c', s.c); b.dataset.g = k; b.innerHTML = `<i></i><b>${s.p}</b><em>${s.n}</em>`; b.onclick = () => openCard(k, true); $('#legend').append(b);
+  const l = document.createElement('div'); l.className = 'lb'; l.style.setProperty('--c', s.c); l.textContent = s.p; l.onclick = () => openCard(k, true); $('#lbl').append(l); LBL[k] = l; }
+STAGES.forEach((s, i) => { const c = document.createElement('button'); c.className = 'chip'; c.style.setProperty('--c', SPEC[s.g.at(-1)].c); c.textContent = s.k; c.onclick = () => { S.tl = false; playIcon(); S.dak = 1; applyTL(s.t0 + s.d * .999); }; $('#chips').append(c); });
+function openCard(k, fly) { const s = SPEC[k]; if (!S.dak || S.tlT < TL_TOTAL - .01) setDak(1, true); setHL(true); S.focus = k;
+  const c = $('#card'); c.style.setProperty('--c', s.c); c.classList.add('on'); $('#cK').textContent = s.n; $('#cP').textContent = s.p; $('#cM').textContent = 'Material: ' + s.mat;
+  const rows = [...s.rows]; const g = META.groups[k];
+  if (s.len) rows.splice(1, 0, ['Panjang total', g.length.toFixed(1).replace('.', ',') + ' m (hitung dari model)']);
+  $('#cD').innerHTML = rows.map(([a, b]) => `<dt>${a}</dt><dd${b.includes('tidak tercantum') || b.includes('asumsi') ? ' class="na"' : ''}>${b}</dd>`).join('');
+  $('#cS').textContent = 'Sumber: ' + s.src; $$('.lg').forEach(b => b.classList.toggle('on', b.dataset.g === k));
+  if (fly && S.nav === 'orbit') { const q = s.cam; flyTo(q.slice(0, 3), q.slice(3), 1.3); } }
+function closeCard() { $('#card').classList.remove('on'); S.focus = null; $$('.lg').forEach(b => b.classList.remove('on')); }
+$('#cardX').onclick = closeCard;
+$$('#state .b').forEach(b => b.onclick = () => setDak(+b.dataset.s));
+$('#bHL').onclick = () => { if (!S.dak || S.tlT < TL_TOTAL - .01) setDak(1, true); setHL(!S.hl); if (!S.hl) closeCard(); };
+$('#play').onclick = () => playTL();
+$('#bar').onclick = e => { const r = e.currentTarget.getBoundingClientRect(); S.tl = false; playIcon(); S.dak = 1; applyTL(clamp((e.clientX - r.left) / r.width) * TL_TOTAL); };
+$('#bFX').onclick = () => { FX = !FX; $('#bFX').setAttribute('aria-pressed', FX); };
+const modal = (id, on) => $(id).classList.toggle('on', on);
+$('#bGam').onclick = () => { $('#gImg').src = 'assets/sheets/' + $('#gTab [aria-pressed=true]').dataset.g + '.jpg'; modal('#mGam', true); };
+$$('#gTab .b').forEach(b => b.onclick = () => { $$('#gTab .b').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#gImg').src = 'assets/sheets/' + b.dataset.g + '.jpg'; });
+$('#gZoom').onclick = () => $('#gImg').classList.toggle('z');
+$('#bVid').onclick = () => { const v = $('#vid'); if (!v.src) v.src = 'assets/dak-timelapse.mp4'; modal('#mVid', true); };
+$('#bInfo').onclick = () => modal('#mInfo', true);
+$$('[data-close]').forEach(b => b.onclick = () => { $$('.modal').forEach(m => m.classList.remove('on')); $('#vid').pause(); });
+
+/* ---------- camera fly ---------- */
+let fly = null;
+function flyTo(p, t, d = 1.2) { fly = {p0: camera.position.clone(), t0: controls.target.clone(), p1: PW(...p), t1: PW(...t), d, k: 0}; }
+
+/* ---------- avatar (dari template Gudang Ngoro: pengunjung berhelm + rompi, sendi pinggul/lutut/bahu/siku) ---------- */
+const M = o => new THREE.MeshStandardMaterial({envMapIntensity: 1.25, ...o});
+const box = (w, h, d, m, x = 0, y = 0, z = 0) => { const me = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); me.position.set(x, y, z); return me; };
+function makeAvatar(C) {
+  const avatar = new THREE.Group(); const AV = {};
+{ const skin = M({color: 0xc99f7c, roughness: .72}, false), shirt = M({color: C.shirt, roughness: .88}, false), pants = M({color: 0x3a4148, roughness: .9}, false),
+    vest = M({color: C.vest, roughness: .55}, false), refl = M({color: 0xdfe3e6, metalness: .7, roughness: .22, emissive: 0x777777, emissiveIntensity: .2}, false),
+    boot0 = M({color: 0x1f1d1b, roughness: .65}, false), hatM = M({color: C.hat, roughness: .35}, false), eye = M({color: 0x161a1d}, false), belt = M({color: 0x1b1d20, roughness: .5}, false);
+  const lathe = (pts, m, sz = .68) => { const g2 = new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), 28); const me = new THREE.Mesh(g2, m); me.scale.z = sz; return me; };
+  const limb = (r0, r1, L, m) => new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, L, 14).translate(0, -L / 2, 0), m);
+  const ball = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), m);
+  const body = new THREE.Group(); body.rotation.y = Math.PI; avatar.add(body); AV.body = body;
+  const pelvis = ball(.16, pants); pelvis.scale.set(1.08, .62, .74); pelvis.position.y = .95; body.add(pelvis);
+  const spine = new THREE.Group(); spine.position.y = .98; body.add(spine); AV.spine = spine;
+  const TP = [[.001, -.02], [.15, -.02], [.158, .06], [.162, .18], [.178, .3], [.195, .41], [.19, .47], [.15, .53], [.07, .565], [.001, .57]];
+  spine.add(lathe(TP, shirt));
+  const vestM = lathe([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]], vest); vestM.material = vest; vestM.geometry = new THREE.LatheGeometry([[.166, .02], [.172, .16], [.186, .29], [.202, .4], [.198, .46], [.17, .5]].map(([r, y]) => new THREE.Vector2(r, y)), 28); vestM.material.side = THREE.DoubleSide; spine.add(vestM);
+  for (const [y, r] of [[.14, .174], [.3, .19]]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(r + .004, r + .004, .028, 28, 1, true), refl); b.scale.z = .68; b.position.y = y; spine.add(b); }
+  const bl = new THREE.Mesh(new THREE.CylinderGeometry(.162, .162, .045, 24), belt); bl.scale.z = .7; bl.position.y = .0; spine.add(bl);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(.048, .055, .1, 12), skin); neck.position.y = .6; spine.add(neck);
+  const headJ = new THREE.Group(); headJ.position.y = .64; spine.add(headJ); AV.head = headJ;
+  const head = ball(.103, skin); head.scale.set(.9, 1.1, 1); head.position.y = .1; headJ.add(head);
+  const jaw = ball(.07, skin); jaw.scale.set(1, .7, .9); jaw.position.set(0, .045, .025); headJ.add(jaw);
+  const nose = ball(.016, skin); nose.position.set(0, .09, .098); headJ.add(nose);
+  for (const x of [-.034, .034]) { const e = ball(.011, eye); e.position.set(x, .118, .088); headJ.add(e); }
+  for (const x of [-.096, .096]) { const ear = ball(.021, skin); ear.scale.set(.5, 1, .8); ear.position.set(x, .1, 0); headJ.add(ear); }
+  const hat = new THREE.Mesh(new THREE.SphereGeometry(.118, 22, 10, 0, Math.PI * 2, 0, Math.PI / 2), hatM); hat.position.y = .16; hat.scale.set(1, .86, 1.08); headJ.add(hat);
+  const brim = new THREE.Mesh(new THREE.CylinderGeometry(.126, .134, .012, 24), hatM); brim.scale.z = 1.12; brim.position.set(0, .16, .03); headJ.add(brim);
+  headJ.add(box(.16, .012, .065, hatM, 0, .154, .145), box(.024, .026, .22, hatM, 0, .255, .01));
+  const joint = (parent, x, y, z = 0) => { const p = new THREE.Group(); p.position.set(x, y, z); parent.add(p); return p; };
+  for (const [s, k] of [[-1, 'l'], [1, 'r']]) {
+    // legs: hip ball, tapered thigh, knee ball, tapered shin, ankle, boot
+    const hip = joint(body, s * .088, .93); hip.add(ball(.082, pants), limb(.082, .062, .43, pants));
+    const knee = joint(hip, 0, -.43); knee.add(ball(.062, pants), limb(.062, .047, .41, pants));
+    const ank = joint(knee, 0, -.41); const boot = new THREE.Mesh(new THREE.CapsuleGeometry(.05, .13, 4, 12), boot0); boot.rotation.x = Math.PI / 2; boot.scale.set(1.2, 1, .85); boot.position.set(0, -.03, .045); ank.add(boot, ball(.05, boot0));
+    AV['h' + k] = hip; AV['k' + k] = knee; AV['f' + k] = ank;
+    // arms: shoulder ball inside the torso, sleeve, elbow, forearm, mitten hand
+    const shJ = joint(spine, s * .178, .46); shJ.add(ball(.064, shirt), limb(.058, .05, .27, shirt));
+    const el = joint(shJ, 0, -.27); el.add(ball(.046, skin), limb(.045, .036, .25, skin));
+    const hand = joint(el, 0, -.26); const palm = new THREE.Mesh(new THREE.CapsuleGeometry(.03, .045, 4, 10), skin); palm.scale.set(1.15, 1, .62); palm.position.y = -.045; hand.add(palm); for (let i = 0; i < 4; i++) { const fg = new THREE.Mesh(new THREE.CapsuleGeometry(.0085, .045 - Math.abs(i - 1.5) * .006, 3, 6), skin); fg.position.set(-.024 + i * .016, -.105, .006); fg.rotation.x = .25; hand.add(fg); } const th = new THREE.Mesh(new THREE.CapsuleGeometry(.01, .03, 3, 6), skin); th.position.set(-s * .034, -.05, .016); th.rotation.set(.5, 0, s * .6); hand.add(th);
+    AV['s' + k] = shJ; AV['e' + k] = el;
+  }
+  AV.ll = AV.hl; AV.lr = AV.hr; AV.al = AV.sl; AV.ar = AV.sr;
+  avatar.traverse(m => { if (m.isMesh) m.castShadow = true; });
+}
+  avatar.userData.dyn = true;
+  const sh = new THREE.Mesh(new THREE.CircleGeometry(.34, 20), new THREE.MeshBasicMaterial({color: 0, transparent: true, opacity: .42, depthWrite: false})); sh.rotation.x = -Math.PI / 2; sh.position.y = .012; avatar.add(sh);
+  return {g: avatar, AV, EMO: {k: null, t: 0, w: 0}, phase: 0};
+}
+function poseAvatar(A, phase, spd, dt = .016) { const AV = A.AV, EMO = A.EMO;
+  const a = Math.sin(phase) * .55 * spd, b = -a, br = Math.sin(performance.now() / 900) * .02 * (1 - spd);
+  const P = {hl: [a, 0], hr: [b, 0], kl: [Math.max(0, -Math.cos(phase)) * 1.0 * spd + .05, 0], kr: [Math.max(0, Math.cos(phase)) * 1.0 * spd + .05, 0],
+    sl: [-a * .85, -.15], sr: [-b * .85, .15], el: [-.2 - spd * .45, 0], er: [-.2 - spd * .45, 0], fl: [-Math.max(0, Math.cos(phase)) * .3 * spd, 0], fr: [-Math.max(0, -Math.cos(phase)) * .3 * spd, 0]};
+  let by = Math.abs(Math.sin(phase)) * .03 * spd, sx = .04 * spd + br, sy = Math.sin(phase) * .12 * spd, hx = 0, hy = 0;
+  if (EMO.k && spd > .25) { EMO.k = null; document.querySelectorAll('.emo b').forEach(b => b.classList.remove('on')); }
+  EMO.w += ((EMO.k ? 1 : 0) - EMO.w) * Math.min(1, dt * 8);
+  if (EMO.k) { EMO.t += dt; const t = EMO.t, E = {};
+    if (EMO.k === 'wave') { E.sr = [-.2, 2.6 + Math.sin(t * 9) * .25]; E.er = [-.3 + Math.sin(t * 9) * .3, 0]; hy = Math.sin(t * 2) * .15; if (t > 2.4) EMO.k = null; }
+    if (EMO.k === 'clap') { const c = Math.abs(Math.sin(t * 7)); E.sl = [-1.15, -.55 + c * .35]; E.sr = [-1.15, .55 - c * .35]; E.el = [-.9, 0]; E.er = [-.9, 0]; if (t > 2.4) EMO.k = null; }
+    if (EMO.k === 'dance') { const w = Math.sin(t * 6); E.sl = [-.4, -1.9 - w * .5]; E.sr = [-.4, 1.9 - w * .5]; E.el = [-.8, 0]; E.er = [-.8, 0]; E.hl = [.15 + w * .25, 0]; E.hr = [.15 - w * .25, 0]; E.kl = [.35 + Math.max(0, w) * .5, 0]; E.kr = [.35 + Math.max(0, -w) * .5, 0]; by = -.06 + Math.abs(Math.sin(t * 6)) * .07; sy = w * .35; sx = .05; hx = Math.sin(t * 12) * .08; if (t > 4) EMO.k = null; }
+    if (EMO.k === 'jump') { const u = Math.min(1, t / .9), h = Math.sin(u * Math.PI); by = h * .55 - (u < .15 ? (1 - u / .15) * .1 : 0); E.kl = [h * 1.1, 0]; E.kr = [h * 1.1, 0]; E.hl = [-h * .6, 0]; E.hr = [-h * .6, 0]; E.sl = [-.3, -1.2 * h - .2]; E.sr = [-.3, 1.2 * h + .2]; if (t > 1.1) { EMO.t = 0; } if (t > 3.0) EMO.k = null; }
+    if (EMO.k === 'salute') { E.sr = [-1.2, 1.25]; E.er = [-2.1, 0]; sx = -.03; if (t > 2.6) EMO.k = null; }
+    for (const k in E) P[k] = [P[k][0] + (E[k][0] - P[k][0]) * EMO.w, P[k][1] + (E[k][1] - P[k][1]) * EMO.w];
+    if (!EMO.k) document.querySelectorAll('.emo b').forEach(b => b.classList.remove('on')); }
+  for (const k of ['hl', 'hr', 'kl', 'kr', 'fl', 'fr']) AV[k].rotation.x = P[k][0];
+  for (const k of ['sl', 'sr']) AV[k].rotation.set(P[k][0], 0, P[k][1]);
+  for (const k of ['el', 'er']) AV[k].rotation.x = P[k][0];
+  AV.body.position.y = by; AV.spine.rotation.set(sx, sy, 0); AV.head.rotation.set(hx - sx * .5, hy - sy * .6, 0);
+}
+const meA = makeAvatar({vest: 0xf4f4f1, hat: 0xf7f7f4, shirt: 0x2c3238}); meA.g.visible = false; scene.add(meA.g);
+function emote(k) { if (S.nav !== 'third') return; meA.EMO.k = k; meA.EMO.t = 0; }
+$$('#emo .b').forEach(b => b.onclick = () => emote(b.dataset.e));
+
+/* pekerja gudang (kondisi existing dan sesudah dak): berjalan bolak-balik di gang */
+const NPC = [
+  {c: {vest: 0xff7a1a, hat: 0xffd21f, shirt: 0x39424a}, path: [[7.5, 33], [7.5, 3]], v: 1.25, h: 0},
+  {c: {vest: 0xd7ff3a, hat: 0xf7f7f4, shirt: 0x24303a}, path: [[2.2, 19.6], [12.9, 19.6]], v: 1.05, h: 0},
+  {c: {vest: 0xff7a1a, hat: 0x2e7bff, shirt: 0x4a3a30}, path: [[8.1, 30], [8.1, 21.4], [11.6, 19.9]], v: 1.35, h: 0},
+  {c: {vest: 0xd7ff3a, hat: 0xffd21f, shirt: 0x2c3238}, path: [[3, 15.5], [12, 4.5], [12, 15]], v: 1.1, h: 3, dak: true},
+].map((n, i) => { const A = makeAvatar(n.c); scene.add(A.g); n.A = A; n.len = []; let L = 0; for (let j = 1; j < n.path.length; j++) { const d = Math.hypot(n.path[j][0] - n.path[j - 1][0], n.path[j][1] - n.path[j - 1][1]); n.len.push(d); L += d; } n.L = L; n.s = L * (.15 + .2 * i); n.dir = 1; n.wait = 0; return n; });
+function tickNPC(dt) {
+  for (const n of NPC) { const A = n.A; A.g.visible = n.dak ? S.tlT >= TL_TOTAL - 1.4 : true;
+    let spd = 1;
+    if (n.wait > 0) { n.wait -= dt; spd = 0; } else { n.s += n.dir * n.v * dt; if (n.s > n.L) { n.s = n.L; n.dir = -1; n.wait = 1.6; } if (n.s < 0) { n.s = 0; n.dir = 1; n.wait = 1.6; } }
+    let s = n.s, j = 0; while (j < n.len.length - 1 && s > n.len[j]) { s -= n.len[j]; j++; }
+    const a = n.path[j], b = n.path[j + 1], f = clamp(s / n.len[j]); const x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f;
+    A.g.position.copy(PW(x, y, n.h)); const dx = (b[0] - a[0]) * n.dir, dy = (b[1] - a[1]) * n.dir; const yaw = Math.atan2(-dx, dy);
+    let d = yaw - A.g.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); A.g.rotation.y += d * Math.min(1, dt * 6);
+    n.sp = (n.sp ?? 0) + ((spd ? .62 : 0) - (n.sp ?? 0)) * Math.min(1, dt * 6); A.phase += dt * 6.2 * n.v * (spd ? 1 : 0); poseAvatar(A, A.phase, n.sp, dt); }
+}
+
+/* ---------- first / third person ---------- */
+const keys = {f: 0, b: 0, l: 0, r: 0, run: 0}, joy = {x: 0, y: 0};
+let yaw = 0, pitch = 0, camYaw = 0, camPitch = .28, camDist = 4.4;
+const me = {x: 7.5, y: 31.5, h: 0, foot: 0, head: 0, phase: 0, speed: 0};
+const dakOn = () => S.dak && S.tlT >= STAGES[6].t0 + STAGES[6].d - .01;
+function solve(o) {     // tabrakan + tinggi lantai, koordinat denah
+  const P = META.params, r = .3, on = dakOn(), up = o.h > 1.5;
+  const W = [];
+  if (on) { W.push([1.2, 18, 1.2, 24.1]); if (!up) W.push([0, 18, 1.2, 18]); else { W.push([1.2, 18, 15, 18]); } }
+  const B = [];
+  if (!up) { for (const b of META.obst) B.push(b); if (on) { for (const [cx, cy] of [[5, 6], [10, 6], [5, 12], [10, 12]]) B.push([cx - .18, cy - .18, cx + .18, cy + .18]); B.push([13.8, 18, 15, 24.2]); } }
+  for (let it = 0; it < 2; it++) {
+    for (const [a, b, c, d] of W) { const vx = c - a, vy = d - b, L2 = vx * vx + vy * vy, t = clamp(((o.x - a) * vx + (o.y - b) * vy) / L2), qx = a + vx * t, qy = b + vy * t, dx = o.x - qx, dy = o.y - qy, dd = Math.hypot(dx, dy); if (dd < r && dd > 1e-6) { o.x = qx + dx / dd * r; o.y = qy + dy / dd * r; } }
+    for (const [x0, y0, x1, y1] of B) { const qx = clamp(o.x, x0, x1), qy = clamp(o.y, y0, y1), dx = o.x - qx, dy = o.y - qy, dd = Math.hypot(dx, dy);
+      if (dd < r) { if (dd > 1e-6) { o.x = qx + dx / dd * r; o.y = qy + dy / dd * r; } else { const e = [o.x - x0, x1 - o.x, o.y - y0, y1 - o.y], m = Math.min(...e); if (m === e[0]) o.x = x0 - r; else if (m === e[1]) o.x = x1 + r; else if (m === e[2]) o.y = y0 - r; else o.y = y1 + r; } } }
+  }
+  const door = o.x > P.DOOR.x0 + .35 && o.x < P.DOOR.x1 - .35;
+  o.y = clamp(o.y, .4, door && !up ? P.L + 5 : P.L - .4); if (o.y > P.L - .4) o.x = clamp(o.x, P.DOOR.x0 + .36, P.DOOR.x1 - .36);
+  o.x = clamp(o.x, .5, P.W - .5);
+  const stair = on && o.x < 1.2 && o.y >= 18 && o.y <= 24.1;
+  o.h = stair ? clamp(3 * (24 - o.y) / 6, 0, 3) : (on && up && o.y < 18.01 ? 3 : 0);
+}
+function setNav(k) {
+  const prev = S.nav; S.nav = k; document.body.classList.toggle('walk', k !== 'orbit'); document.body.classList.toggle('third', k === 'third');
+  $$('#nav .b').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === k)); controls.enabled = k === 'orbit'; fly = null;
+  if (k === 'orbit') { meA.g.visible = false; if (prev !== 'orbit') { camera.fov = 42; camera.updateProjectionMatrix(); flyTo(HOME[0], HOME[1], 1.2); }
+    $('#hint').textContent = 'Seret untuk memutar · gulir/cubit untuk zoom · ketuk batang untuk spek.'; return; }
+  if (prev === 'orbit') { me.x = 7.5; me.y = 31.5; me.h = 0; me.foot = 0; yaw = Math.PI; pitch = 0; camYaw = yaw; me.head = yaw; closeCard(); }
+  camera.fov = k === 'walk' ? 68 : 55; camera.updateProjectionMatrix(); meA.g.visible = k === 'third';
+  $('#hint').textContent = k === 'third' ? 'WASD / joystick berjalan · seret putar kamera · gulir jarak · tangga di kanan menuju dak.' : 'WASD / joystick berjalan · seret melihat · Shift berlari · tangga di kanan menuju dak.';
+}
+$$('#nav .b').forEach(b => b.onclick = () => setNav(b.dataset.n));
+const KM = {KeyW: 'f', ArrowUp: 'f', KeyS: 'b', ArrowDown: 'b', KeyA: 'l', ArrowLeft: 'l', KeyD: 'r', ArrowRight: 'r', ShiftLeft: 'run', ShiftRight: 'run'};
+addEventListener('keydown', e => { if (KM[e.code]) { keys[KM[e.code]] = 1; if (S.nav !== 'orbit') e.preventDefault(); } if (e.code === 'Escape') { $$('.modal').forEach(m => m.classList.remove('on')); closeCard(); } });
+addEventListener('keyup', e => { if (KM[e.code]) keys[KM[e.code]] = 0; });
+{ let drag = null, moved = 0; const pts = new Map(); let pinch = 0;
+  canvas.addEventListener('pointerdown', e => { pts.set(e.pointerId, [e.clientX, e.clientY]); drag = [e.clientX, e.clientY]; moved = 0; if (S.nav !== 'orbit') canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; const p = pts.get(e.pointerId), dx = e.clientX - p[0], dy = e.clientY - p[1]; pts.set(e.pointerId, [e.clientX, e.clientY]); moved += Math.abs(dx) + Math.abs(dy);
+    if (S.nav === 'orbit') return;
+    if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) camDist = clamp(camDist * pinch / d, 1.8, 9); pinch = d; return; }
+    if (S.nav === 'walk') { yaw -= dx * .0046; pitch = clamp(pitch - dy * .004, -1.2, 1.2); } else { camYaw -= dx * .0052; camPitch = clamp(camPitch + dy * .004, -.15, 1.25); } });
+  const up = e => { pts.delete(e.pointerId); pinch = 0; if (e.type === 'pointerup' && moved < 6 && S.nav === 'orbit') pick(e); };
+  canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+  canvas.addEventListener('wheel', e => { if (S.nav === 'third') { camDist = clamp(camDist * (1 + Math.sign(e.deltaY) * .1), 1.8, 9); e.preventDefault(); } }, {passive: false});
+  const J = $('#joy'), K = $('#knob'); let jid = null;
+  const jm = e => { const r = J.getBoundingClientRect(); let x = (e.clientX - r.left - r.width / 2) / (r.width / 2), y = (e.clientY - r.top - r.height / 2) / (r.height / 2); const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; } joy.x = x; joy.y = y; K.style.transform = `translate(${x * 33}px,${y * 33}px)`; };
+  J.addEventListener('pointerdown', e => { jid = e.pointerId; J.setPointerCapture(jid); jm(e); });
+  J.addEventListener('pointermove', e => { if (e.pointerId === jid) jm(e); });
+  const je = () => { jid = null; joy.x = joy.y = 0; K.style.transform = ''; }; J.addEventListener('pointerup', je); J.addEventListener('pointercancel', je);
+}
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pick(e) { if (S.tlT < TL_TOTAL - .01 || !S.dak) return; ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, camera);
+  const cut = MATS.dk_floor.userData.u.uCut.value > .5;
+  const hit = ray.intersectObjects(ORDER.map(k => MESH[k]).filter(Boolean), false).find(h => !(cut && h.object.name === 'dk_floor' && !(h.point.x > 9.6 && h.point.z < -12))); if (hit) openCard(hit.object.name, false); else if (S.focus) closeCard(); }
+
+function tickWalk(dt) {
+  let mx = keys.r - keys.l + joy.x, my = keys.f - keys.b - joy.y; const ml = Math.hypot(mx, my); if (ml > 1) { mx /= ml; my /= ml; }
+  const ref = S.nav === 'third' ? camYaw : yaw, sp = (keys.run ? 4.3 : 1.95) * Math.min(1, ml);
+  const fx = -Math.sin(ref), fz = -Math.cos(ref), rx = Math.cos(ref), rz = -Math.sin(ref);
+  const wx = (fx * my + rx * mx), wz = (fz * my + rz * mx);
+  const o = {x: me.x + wx * sp * dt, y: me.y - wz * sp * dt, h: me.h}; solve(o); me.x = o.x; me.y = o.y; me.h = o.h;
+  me.foot += (me.h - me.foot) * Math.min(1, dt * 12);
+  me.speed += ((ml > .05 ? (keys.run ? 1 : .62) : 0) - me.speed) * Math.min(1, dt * 8); me.phase += dt * (keys.run ? 11 : 7.2) * Math.min(1, ml);
+  const p = PW(me.x, me.y, me.foot);
+  if (S.nav === 'walk') { camera.position.set(p.x, p.y + 1.62 + Math.abs(Math.sin(me.phase)) * .025 * me.speed, p.z); camera.rotation.order = 'YXZ'; camera.rotation.set(pitch, yaw, 0); }
+  else { if (ml > .05) { const t = Math.atan2(-wx, -wz); let d = t - me.head; d = Math.atan2(Math.sin(d), Math.cos(d)); me.head += d * Math.min(1, dt * 10); }
+    meA.g.position.copy(p); meA.g.rotation.y = me.head; poseAvatar(meA, me.phase, me.speed, dt);
+    const tg = new THREE.Vector3(p.x, p.y + 1.45, p.z), cp = Math.cos(camPitch); const c = new THREE.Vector3(tg.x + Math.sin(camYaw) * cp * camDist, tg.y + Math.sin(camPitch) * camDist, tg.z + Math.cos(camYaw) * cp * camDist);
+    const P = META.params; c.x = clamp(c.x, .35, P.W - .35); c.z = -clamp(-c.z, .35, c.x > 5.3 && c.x < 9.7 ? P.L + 8 : P.L - .35); c.y = clamp(c.y, me.foot + .35, 7.6 - Math.abs(c.x - 7.5) * .2);
+    if (dakOn() && me.foot < 1.5 && -c.z < 18) c.y = Math.min(c.y, 2.55);
+    camera.position.copy(c); camera.lookAt(tg); }
+}
+
+/* ---------- frame ---------- */
+const v3 = new THREE.Vector3(); let last = performance.now(), frames = 0;
+function frame(now) {
+  requestAnimationFrame(frame); const dt = Math.min(.08, (now - last) / 1000); last = now; if (!META || !READY) return;
+  if (S.tl) { applyTL(Math.min(TL_TOTAL, S.tlT + dt)); if (S.tlT >= TL_TOTAL) { S.tl = false; playIcon(); $$('#state .b').forEach(b => b.setAttribute('aria-pressed', +b.dataset.s === 1)); captureEnv(); } }
+  for (const k of ORDER) { const u = MATS[k].userData.u; const act = S.stage && S.stage.g.includes(k);
+    const t = act ? 1 : S.hl ? (S.focus && S.focus !== k ? .1 : 1) : 0; HLV[k] += (t - HLV[k]) * Math.min(1, dt * 5); u.uHL.value = HLV[k];
+    const dm = S.hl && S.focus && S.focus !== k ? 1 : 0; DIMV[k] = (DIMV[k] ?? 0) + (dm - (DIMV[k] ?? 0)) * Math.min(1, dt * 5); u.uDim.value = DIMV[k]; }
+  if (S.nav === 'orbit') { if (fly) { fly.k = Math.min(1, fly.k + dt / fly.d); const e = ease(fly.k); camera.position.lerpVectors(fly.p0, fly.p1, e); controls.target.lerpVectors(fly.t0, fly.t1, e); if (fly.k >= 1) fly = null; }
+    else if (S.tl) { const a = dt * .045; const o = camera.position.clone().sub(controls.target); o.applyAxisAngle(THREE.Object3D.DEFAULT_UP, a); camera.position.copy(controls.target).add(o); }
+    controls.update(); } else tickWalk(dt);
+  tickNPC(dt);
+  MATS.dk_floor.userData.u.uCut.value = S.hl && S.focus !== 'dk_floor' && !S.stage ? 1 : 0;
+  const showL = (S.hl || S.stage) && S.nav !== 'walk';
+  for (const k of ORDER) { const el = LBL[k]; const on = showL && (S.stage ? S.stage.g.includes(k) : (!S.focus || S.focus === k)) && MATS[k].userData.u.uProg.value > 0;
+    if (on) { v3.copy(PW(...SPEC[k].at)).project(camera); const vis = v3.z < 1 && Math.abs(v3.x) < 1.05 && Math.abs(v3.y) < 1.05; el.classList.toggle('on', vis); if (vis) el.style.transform = `translate(${(v3.x * .5 + .5) * innerWidth}px,${(-v3.y * .5 + .5) * innerHeight}px) translate(-50%,-130%)`; } else el.classList.remove('on'); }
+  if (FX) composer.render(dt); else renderer.render(scene, camera);
+  frames++;
+}
+function start() {
+  applyTL(TL_TOTAL); captureEnv(); requestAnimationFrame(frame);
+  $('#ld').classList.add('off'); setTimeout(() => $('#ld').remove(), 900);
+  if (QS.get('auto') !== '0') setTimeout(() => playTL(0), 900);
+}
+window.__app = {S, setDak, setHL, playTL, applyTL, setNav, openCard, closeCard, flyTo, me, MATS, camera, controls, TL_TOTAL, STAGES, captureEnv, get frames() { return frames; }, set(k, v) { if (k === 'yaw') yaw = v; if (k === 'pitch') pitch = v; if (k === 'camYaw') camYaw = v; if (k === 'fx') FX = v; }};
+</script>
+</body>
+</html>
