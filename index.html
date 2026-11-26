@@ -142,7 +142,7 @@ body.third .emo{display:flex} .emo .b{padding:0 10px}
   <div class="chips" id="chips"></div>
 </div>
 
-<div class="modal" id="mGam"><div class="mh"><b>Gambar teknik</b><div class="seg" id="gTab"><button class="b" data-g="denah-1" aria-pressed="true">Denah dak</button><button class="b" data-g="potongan-1">Potongan</button></div><button class="b" id="gZoom">Zoom</button><button class="b" data-close>Tutup</button></div><div class="mb"><img id="gImg" alt="Gambar teknik dak mezzanine" src=""></div></div>
+<div class="modal" id="mGam"><div class="mh"><b>Gambar teknik</b><div class="seg" id="gTab"><button class="b" data-g="denah-1" aria-pressed="true">Denah dak</button><button class="b" data-g="potongan-1">Potongan</button></div><button class="b" id="gZoom">Zoom</button><button class="b" data-close>Tutup</button></div><div class="mb"><img id="gImg" alt="Gambar teknik dak mezzanine"></div></div>
 <div class="modal" id="mVid"><div class="mh"><b>Animasi bake Blender · timelapse pemasangan</b><button class="b" data-close>Tutup</button></div><div class="mb"><video id="vid" controls playsinline preload="none" poster="assets/poster.jpg"></video></div></div>
 <div class="modal" id="mInfo"><div class="mh"><b>Catatan sumber dan asumsi</b><button class="b" data-close>Tutup</button></div><div class="mb"><div class="notes">
   <h3>Dari gambar teknik (berdimensi)</h3><ul>
@@ -198,7 +198,7 @@ window.sapSeek = function (t, prog) {
 <script>
 /* pesan gagal muat yang jelas: error skrip, file gagal dimuat, atau WebGL2 tidak ada */
 (function(){var say=function(t){var p=document.getElementById('ldP');if(p){p.textContent=t;p.style.color='#e9a23b';}};
-window.addEventListener('error',function(e){var t=e.target;if(t&&t!==window&&(t.src||t.href))say('Gagal memuat: '+(t.src||t.href).split('/').slice(-2).join('/'));else say('Error: '+(e.message||'skrip gagal'));},true);
+window.addEventListener('error',function(e){var t=e.target,u=t&&t!==window&&t.getAttribute&&(t.getAttribute('src')||t.getAttribute('href'));if(t&&t!==window){if(u&&t.id!=='vid')say('Gagal memuat: '+u.split('/').slice(-2).join('/'));}else say('Error: '+(e.message||'skrip gagal'));},true);
 window.addEventListener('unhandledrejection',function(e){say('Error: '+((e.reason&&e.reason.message)||e.reason));});
 try{var c=document.createElement('canvas');if(!(c.getContext('webgl2')))say('Browser ini tidak mendukung WebGL2, model 3D tidak bisa tampil. Buka di Chrome/Safari terbaru.');}catch(_){say('WebGL2 tidak tersedia di browser ini.');}})();
 </script>
