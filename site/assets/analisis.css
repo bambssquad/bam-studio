@@ -56,7 +56,7 @@
 /* kartu cek */
 .checks{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink);border-left:1px solid var(--line)}
 .chk{padding:16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper);display:flex;flex-direction:column;gap:10px}
-.chk .top{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.chk .ctop{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
 .chk .st{font-weight:600;color:#1d7a3a}.chk .st.ng{color:var(--red)}
 .chk h4{font:400 26px/1 var(--serif)}
 .chk .pct{font:500 40px/1 var(--sans);letter-spacing:-.03em}

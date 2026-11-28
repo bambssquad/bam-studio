@@ -167,8 +167,8 @@ export function analysisHTML(d, chips) {
       <h2>Hasil cek, satu per satu</h2>
       <p class="lead">Persen = seberapa banyak kemampuan yang terpakai pada beban rencana. Di bawah 100% berarti aman.</p>
       <div class="checks">${checks.map(c => c.u == null
-        ? `<div class="chk"><div class="top"><span>${c.h}</span><span class="st ng">BELUM DICEK</span></div><h4>${c.h}</h4><p>${c.say}</p><div class="num">${c.num}</div></div>`
-        : `<div class="chk"><div class="top"><span>${c.h}</span><span class="st ${c.u > 1 ? "ng" : ""}">${c.u > 1 ? "LEWAT" : "AMAN"}</span></div>
+        ? `<div class="chk"><div class="ctop"><span>${c.h}</span><span class="st ng">BELUM DICEK</span></div><h4>${c.h}</h4><p>${c.say}</p><div class="num">${c.num}</div></div>`
+        : `<div class="chk"><div class="ctop"><span>${c.h}</span><span class="st ${c.u > 1 ? "ng" : ""}">${c.u > 1 ? "LEWAT" : "AMAN"}</span></div>
           <div class="pct">${f0(c.u * 100)}%<small>terpakai</small></div>
           <div class="bar"><i style="width:${Math.min(100, c.u * 100)}%;background:${band(c.u).c}"></i><u></u></div>
           <p>${c.say}</p><div class="num">${c.num}</div></div>`).join("")}</div>
