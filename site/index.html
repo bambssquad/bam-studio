@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>adighanilham — arsitektur, struktur baja, PBG/SLF</title>
+<meta name="description" content="Portofolio adighanilham: jurnal 3D, gambar teknik, paket PBG/SLF, dan studi desain struktur baja reklame dengan analisis SNI.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%23e0261b'/></svg>">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./">adighanilham<i></i></a>
+  <p class="intro">Arsitek dan drafter struktur. Gambar teknik, jurnal 3D, PBG/SLF, baja.</p>
+  <nav><a href="#porto">Portofolio</a><a href="#reklame">Studi reklame</a><a href="#pbg">PBG/SLF</a><a href="#metode">Metode</a></nav>
+</header>
+
+<section class="hero">
+  <p class="claim">Bangunan yang <em>dihitung</em>,<br>digambar, lalu bisa diputar di layar.</p>
+  <div class="collage"></div>
+  <ul class="side"></ul>
+  <p class="scroll mono">↓ gulir · klik kartu untuk 3D</p>
+  <div class="wordmark">adighan<span>ilham</span></div>
+</section>
+
+<section class="slider" id="porto">
+  <div class="head"><b>01</b> · PORTOFOLIO PROYEK · geser →</div>
+  <div class="track"></div>
+  <div class="ctl"><button data-d="-1" aria-label="Sebelumnya">←</button><div class="bar"><i></i></div><span class="cnt">01</span><button data-d="1" aria-label="Berikutnya">→</button></div>
+</section>
+
+<section class="sec" id="reklame">
+  <div class="sec-h"><span class="n">02 · STUDI DESAIN</span><h2>Reklame <em class="serif red">baja</em></h2><p>Tiga tipe dan tiga ukuran papan, masing-masing dihitung, digambar dan dimodelkan. Studi portofolio, bukan dokumen perizinan.</p></div>
+  <div class="book">
+    <div class="lead">
+      <p class="big">Sembilan varian, satu lokasi ilustratif di Waru, Sidoarjo. Angin dihitung per SNI 1727, batang dicek per SNI 1729.</p>
+      <p>Setiap varian punya gambar struktur dan lembar ala PBG (PDF dan DXF), model 3D, daftar material, serta ekspor model SAP2000 (.s2k) dan IFC untuk Tekla.</p>
+      <p>Warna batang di gambar dan 3D menunjukkan rasio kapasitas: makin merah, makin dekat batas.</p>
+      <p class="note">Kecepatan angin, daya dukung tanah dan parameter gempa adalah asumsi studi. File SAP2000 dan IFC disiapkan di sini, tetapi belum dijalankan di SAP2000 atau Tekla.</p>
+    </div>
+    <div class="vgrid"></div>
+  </div>
+</section>
+
+<section class="sec" id="pbg">
+  <div class="sec-h"><span class="n">03 · PERIZINAN</span><h2>PBG &amp; SLF</h2><p>Gambar teknik untuk persetujuan bangunan gedung dan sertifikat laik fungsi, dari ruko kecil sampai gedung sekolah.</p></div>
+  <div class="pgrid"></div>
+</section>
+
+<section class="sec" id="metode">
+  <div class="sec-h"><span class="n">04 · METODE</span><h2>Cara hitung</h2><p>Semua angka di studi reklame keluar dari satu mesin hitung berbasis Python yang sama dengan gambar dan modelnya.</p></div>
+  <div class="method">
+    <div><span class="mono red">A</span><b>Angin SNI 1727</b><p>Beban angin papan reklame (ASCE 7-16 bab 29): qz, Kz eksposur C, Cf per rasio papan, kasus A, B (eksentris) dan C.</p></div>
+    <div><span class="mono red">B</span><b>Cek SNI 1729</b><p>Rangka 3D diselesaikan dengan metode kekakuan, lalu tiap batang dicek LRFD (aksial, lentur, geser, interaksi) dan profil dinaikkan sampai lolos.</p></div>
+    <div><span class="mono red">C</span><b>Base plate &amp; pondasi</b><p>Pelat dasar, angkur F1554, telapak beton: tekanan tanah, guling, geser, geser satu arah dan pons, serta tulangan lentur.</p></div>
+    <div><span class="mono red">D</span><b>Ekspor model</b><p>Model yang sama diekspor ke SAP2000 (.s2k) dan IFC4 untuk Tekla. Disiapkan untuk verifikasi, belum dijalankan di kedua program itu.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wm">adighan<span>ilham</span></div>
+  <p>Portofolio pribadi. Nama klien hanya disebut sebagai atribusi desain. Studi reklame bersifat ilustratif dan bukan dokumen perizinan resmi.</p>
+  <p class="mono" style="text-align:right">© 2026 adighanilham</p>
+</footer>
+<script type="module" src="assets/home.js"></script>
+</body>
+</html>

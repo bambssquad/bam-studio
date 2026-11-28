@@ -1,0 +1,164 @@
+[
+{
+"id": "unipole-4x8",
+"typ": "unipole",
+"typ_name": "Unipole (tiang tunggal)",
+"size": "4x8",
+"B": 8.0,
+"S": 4.0,
+"zt": 12.0,
+"col": "CHS 558.8x12",
+"steel_kg": 3338.4,
+"max_ratio": 0.906,
+"defl": {
+"dmax": 109.2,
+"dlim": 120.0
+},
+"footing": "3.25x3.25x0.5 m",
+"qh": 0.702
+},
+{
+"id": "unipole-5x10",
+"typ": "unipole",
+"typ_name": "Unipole (tiang tunggal)",
+"size": "5x10",
+"B": 10.0,
+"S": 5.0,
+"zt": 13.0,
+"col": "CHS 609.6x14",
+"steel_kg": 5301.6,
+"max_ratio": 0.827,
+"defl": {
+"dmax": 120.7,
+"dlim": 130.0
+},
+"footing": "3.75x3.75x0.5 m",
+"qh": 0.714
+},
+{
+"id": "unipole-6x12",
+"typ": "unipole",
+"typ_name": "Unipole (tiang tunggal)",
+"size": "6x12",
+"B": 12.0,
+"S": 6.0,
+"zt": 14.0,
+"col": "CHS 711.2x16",
+"steel_kg": 8049.1,
+"max_ratio": 0.846,
+"defl": {
+"dmax": 133.4,
+"dlim": 140.0
+},
+"footing": "4.25x4.25x0.6 m",
+"qh": 0.726
+},
+{
+"id": "doublepole-4x8",
+"typ": "doublepole",
+"typ_name": "Tiang ganda",
+"size": "4x8",
+"B": 8.0,
+"S": 4.0,
+"zt": 12.0,
+"col": "CHS 457.2x12",
+"steel_kg": 4677.6,
+"max_ratio": 0.65,
+"defl": {
+"dmax": 84.4,
+"dlim": 120.0
+},
+"footing": "7.5x2.25x0.5 m",
+"qh": 0.702
+},
+{
+"id": "doublepole-5x10",
+"typ": "doublepole",
+"typ_name": "Tiang ganda",
+"size": "5x10",
+"B": 10.0,
+"S": 5.0,
+"zt": 13.0,
+"col": "CHS 508x12",
+"steel_kg": 6170.7,
+"max_ratio": 0.748,
+"defl": {
+"dmax": 112.7,
+"dlim": 130.0
+},
+"footing": "8.6x2.5x0.8 m",
+"qh": 0.714
+},
+{
+"id": "doublepole-6x12",
+"typ": "doublepole",
+"typ_name": "Tiang ganda",
+"size": "6x12",
+"B": 12.0,
+"S": 6.0,
+"zt": 14.0,
+"col": "CHS 609.6x14",
+"steel_kg": 9095.7,
+"max_ratio": 0.69,
+"defl": {
+"dmax": 101.7,
+"dlim": 140.0
+},
+"footing": "9.9x3.0x0.5 m",
+"qh": 0.726
+},
+{
+"id": "rooftop-4x8",
+"typ": "rooftop",
+"typ_name": "Di atas atap (rooftop)",
+"size": "4x8",
+"B": 8.0,
+"S": 4.0,
+"zt": 13.5,
+"col": "SHS 100x100x4",
+"steel_kg": 950.5,
+"max_ratio": 0.94,
+"defl": {
+"dmax": 6.1,
+"dlim": 55.0
+},
+"footing": "angkur kimia",
+"qh": 0.72
+},
+{
+"id": "rooftop-5x10",
+"typ": "rooftop",
+"typ_name": "Di atas atap (rooftop)",
+"size": "5x10",
+"B": 10.0,
+"S": 5.0,
+"zt": 14.5,
+"col": "SHS 100x100x4",
+"steel_kg": 1488.0,
+"max_ratio": 0.865,
+"defl": {
+"dmax": 10.2,
+"dlim": 65.0
+},
+"footing": "angkur kimia",
+"qh": 0.731
+},
+{
+"id": "rooftop-6x12",
+"typ": "rooftop",
+"typ_name": "Di atas atap (rooftop)",
+"size": "6x12",
+"B": 12.0,
+"S": 6.0,
+"zt": 15.5,
+"col": "SHS 125x125x5",
+"steel_kg": 2278.2,
+"max_ratio": 0.829,
+"defl": {
+"dmax": 9.6,
+"dlim": 75.0
+},
+"footing": "angkur kimia",
+"qh": 0.741
+}
+]

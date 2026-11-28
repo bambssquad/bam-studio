@@ -1,0 +1,12 @@
+Kelompok,Uraian,Profil/Spesifikasi,Panjang (m),Berat (kg),Rasio LRFD
+Profil baja,BRACE Bracing,CHS 60.5x3.2,31.49,144.8,0.674
+Profil baja,POST Kolom rooftop,SHS 100x100x4,27.5,338.2,0.482
+Profil baja,RAIL Rel horizontal papan,RHS 100x50x3.2,24.0,177.6,0.067
+Profil baja,STRUT Strut belakang,CHS 60.5x3.2,24.93,114.7,0.94
+Pelat/baut,Angkur kimia M12 kelas 5.8 (kolom),20 bh,,,
+Pelat/baut,Angkur kimia M12 kelas 5.8 (strut),20 bh,,,
+Pelat/baut,Pelat dasar PL 250x250x12 (BJ41),10 bh,,58.9,
+Pelat/baut,"Pelat sambung, baut, las (taksiran 15%)",ls,,116.3,
+Total baja,,,,950.5,
+Panel,Bidang reklame (m2),,,32.0,
+Finishing,Luas cat profil (m2),,,28.9,

@@ -1,0 +1,17 @@
+Kelompok,Uraian,Profil/Spesifikasi,Panjang (m),Berat (kg),Rasio LRFD
+Profil baja,ARM Lengan kolom-rangka,RHS 300x200x8,1.4,86.8,0.803
+Profil baja,COL Kolom utama,CHS 711.2x16,12.5,3495.0,0.562
+Profil baja,KICK Kicker diagonal,CHS 165.2x6,17.13,411.0,0.783
+Profil baja,RAIL Rel horizontal papan,RHS 250x150x6,36.0,1342.8,0.846
+Profil baja,STUD Tiang rangka papan,RHS 200x100x6,42.0,1163.4,0.372
+Pelat/baut,Base plate PL D1060 t55 (BJ41),1 bh,,381.0,
+Pelat/baut,Pengaku PL t33 (20/kolom),20 bh,,194.3,
+Pelat/baut,"Angkur M36 ASTM F1554 Gr.55, L=790 mm",20 bh,,,
+Pelat/baut,"Pelat sambung, baut, las (taksiran 15%)",ls,,974.8,
+Total baja,,,,8049.1,
+Pondasi,beton,,,13.78,
+Pondasi,lantai_kerja,,,0.9,
+Pondasi,tulangan_kg,,,458.0,
+Pondasi,galian,,,42.3,
+Panel,Bidang reklame (m2),,,72.0,
+Finishing,Luas cat profil (m2),,,92.2,
