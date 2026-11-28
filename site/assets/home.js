@@ -1,8 +1,8 @@
+import { initHero, initPills } from "./hero-book.js";
 import { PROJECTS, PBG, el, $, $$, fmt, elevSVG, projSVG, openModal, reveal, getJSON } from "./common.js";
 
 const TYPES = [["unipole", "Unipole", "tiang tunggal"], ["doublepole", "Double pole", "dua tiang"], ["rooftop", "Rooftop", "di atas atap"]];
 const SIZES = ["4x8", "5x10", "6x12"];
-const SHORT = { unipole: "Unipole", doublepole: "Double pole", rooftop: "Rooftop" };
 
 async function quick3D(d) {
   const host = el("div");
@@ -28,30 +28,8 @@ async function main() {
   const idx = await getJSON("data/index.json");
   const all = Object.fromEntries(await Promise.all(idx.map(async r => [r.id, await getJSON(`data/${r.id}.json`)])));
 
-  // ---------- hero collage ----------
-  const col = $(".collage");
-  const cards = [
-    { k: "v", id: "unipole-6x12", x: 15, y: 50, w: 170, r: -4 },
-    { k: "p", p: PROJECTS[2], x: 31, y: 24, w: 230, r: 2 },
-    { k: "v", id: "doublepole-5x10", x: 48, y: 7, w: 200, r: -2 },
-    { k: "p", p: PROJECTS[1], x: 65, y: 33, w: 210, r: 3 },
-    { k: "v", id: "rooftop-6x12", x: 81, y: 58, w: 160, r: -3, blur: 1 },
-    { k: "pb", p: PBG[0], x: 32, y: 60, w: 150, r: -6, blur: 1 },
-    { k: "v", id: "unipole-4x8", x: 54, y: 52, w: 140, r: 5 },
-    { k: "p", p: PROJECTS[0], x: 86, y: 30, w: 150, r: -2, blur: 1 },
-  ];
-  cards.forEach((c, i) => {
-    const n = el("a", { class: "card-f" + (c.blur ? " blur" : ""), style: `left:${c.x}%;top:${c.y}%;--w:${c.w}px;transform:rotate(${c.r}deg)`, href: "#" });
-    if (c.k === "v") { const d = all[c.id]; n.innerHTML = `<span class="tag">${String(i + 1).padStart(2, "0")}</span>${elevSVG(d, { ratio: true })}<div class="lab"><b>${SHORT[d.typ]} ${d.S}×${d.B}</b><span>${fmt(d.bill.baja_kg / 1000, 1)} t</span></div>`; n.onclick = e => { e.preventDefault(); quick3D(d); }; }
-    else { const p = c.p; n.innerHTML = `<span class="tag">${String(i + 1).padStart(2, "0")}</span>${projSVG(p.kind)}<div class="lab"><b>${p.title}</b><span>${(p.loc || "").split(",")[0]}</span></div>`; n.onclick = e => { e.preventDefault(); (c.k === "p" && p.url) ? openProject(p) : document.getElementById(c.k === "pb" ? "pbg" : "porto").scrollIntoView({ behavior: "smooth" }); }; }
-    col.append(n);
-    // drift halus
-    n.animate([{ translate: "0 0" }, { translate: `0 ${(i % 2 ? -1 : 1) * 10}px` }], { duration: 5000 + i * 700, iterations: Infinity, direction: "alternate", easing: "ease-in-out" });
-  });
-  const side = $(".hero .side");
-  side.innerHTML = [["Portofolio", PROJECTS.length, "#porto"], ["Studi reklame", idx.length, "#reklame"], ["PBG / SLF", PBG.length, "#pbg"], ["Metode", 4, "#metode"]]
-    .map(([a, b, h]) => `<li data-h="${h}"><span>${a}</span><b>${String(b).padStart(2, "0")}</b></li>`).join("");
-  side.onclick = e => { const li = e.target.closest("li"); if (li) $(li.dataset.h).scrollIntoView({ behavior: "smooth" }); };
+  initPills();
+  initHero({ all, openProject, quick3D });
 
   // ---------- slider proyek ----------
   const tr = $(".slider .track");
