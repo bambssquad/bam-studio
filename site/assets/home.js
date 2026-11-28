@@ -27,7 +27,7 @@ function openProject(p) {
 function openDoc(p, di) {
   const d = p.docs[di];
   let pg = 1, zoom = false;
-  const host = el("div", { class: "dv" });
+  const host = el("div", { class: d.n > 1 ? "dv multi" : "dv" });
   host.innerHTML = `<div class="stage"><img alt=""></div>
     <button class="nav prev" aria-label="Halaman sebelumnya">←</button><button class="nav next" aria-label="Halaman berikutnya">→</button>
     ${d.n > 1 ? `<div class="strip">${Array.from({ length: d.n }, (_, i) => `<button data-pg="${i + 1}" aria-label="Halaman ${i + 1}">${i + 1}</button>`).join("")}</div>` : ""}`;
