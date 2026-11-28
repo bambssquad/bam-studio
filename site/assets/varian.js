@@ -52,21 +52,9 @@ async function main() {
   const dlinks = [["Gambar struktur", "STR-01 · PDF A2", d.files.str_pdf], ["Gambar struktur", "STR-01 · DXF", d.files.str_dxf], ["Lembar ala PBG", "PBG-01 · PDF A2", d.files.pbg_pdf], ["Lembar ala PBG", "PBG-01 · DXF", d.files.pbg_dxf],
     ["SAP2000", ".s2k teks", d.files.s2k], ["Tekla / BIM", "IFC4", d.files.ifc], ["Material", "CSV", d.files.csv]];
 
-  $("#app").innerHTML = `
-  <div class="vp-hero">
-    <div class="vp-title"><h1>${nm} <span>${d.S}×${d.B}</span></h1><div class="chips">${chips}</div></div>
-    <div class="vp-stage"><div class="v3" id="v3"></div>
-      <aside>
-        <div class="big-n">${fmt(B.baja_kg)}<small>KG BAJA TOTAL (TERMASUK SAMBUNGAN 15%)</small></div>
-        <div class="kv"><span>Papan</span><span>${d.B} × ${d.S} m (${f1(d.B * d.S)} m²)</span><span>Tinggi puncak</span><span>+${f2(d.zt)} m</span>
-        <span>Bawah papan</span><span>+${f2(d.zb)} m</span><span>Profil utama</span><span>${(d.sections.COL || d.sections.POST).name}</span>
-        <span>Rasio maks</span><span>${f2(rmax)} ${okc(rmax, 1)}</span><span>Defleksi puncak</span><span>${f1(d.defl.dmax)} / ${f1(d.defl.dlim)} mm</span>
-        <span>qh angin</span><span>${f3(W.qh)} kPa</span><span>Iterasi profil</span><span>${d.iter}×</span></div>
-        <div class="ratio-bar"><i class="${rmax > .85 ? "hot" : ""}" style="width:${Math.min(100, rmax * 100)}%"></i></div>
-        <p class="warn">Studi desain portofolio. V = ${P.WIND.V} m/s, qa = ${P.SOIL.qa} kPa dan SDS = ${P.SDS} adalah asumsi. Model SAP2000/IFC disiapkan tetapi belum dijalankan di SAP2000 atau Tekla.</p>
-        <div class="btns"><a class="btn fill" href="${d.files.str_pdf}" target="_blank">Gambar PDF</a><a class="btn" href="#r-unduh">Semua unduhan</a></div>
-      </aside></div>
-  </div>
+  const { analysisHTML, wireAnalysis } = await import("./analisis-ui.js");
+  $("#app").innerHTML = `${analysisHTML(d, chips)}
+  <details class="tech" id="teknis"><summary>Detail teknis untuk insinyur<span>LAPORAN LENGKAP · BUKA</span></summary>
   <div class="rep">
     <nav>${[["data", "Data & asumsi"], ["angin", "Angin"], ["kombinasi", "Kombinasi"], ["profil", "Profil & rasio"], ["defleksi", "Defleksi"], ["reaksi", "Reaksi"], [roof ? "tumpuan" : "baseplate", roof ? "Angkur atap" : "Base plate"], ...(roof ? [] : [["pondasi", "Pondasi"]]), ["sambungan", "Sambungan"], ["material", "Material"], ["unduh", "Unduhan"]].map(([a, b], i) => `<a href="#r-${a}">${String(i + 1).padStart(2, "0")} ${b}</a>`).join("")}</nav>
     <div>
@@ -96,15 +84,17 @@ F = qh · G · Cf · As = ${f3(W.qh)} · ${P.WIND.G} · ${f3(W.Cf)} · ${f1(W.As
       <span>Tarik baut T / φT</span><span>${f1(c.T)} / ${f1(c.phiT)} kN</span><span>Pelat ujung</span><span>t${c.tp} mm</span><span>Rasio</span><span>${f2(c.ratio)} ${okc(c.ratio, 1)}</span></div>`)}
     ${sec("material", String(roof ? 9 : 10).padStart(2, "0"), "Material", `<p>Panel ${f1(B.panel_m2)} m², luas cat ${f1(B.cat_m2)} m².${B.beton && B.beton.beton ? ` Beton ${f2(B.beton.beton)} m³, lantai kerja ${f2(B.beton.lantai_kerja)} m³, galian ${f1(B.beton.galian)} m³, besi ${fmt(B.beton.tulangan_kg)} kg.` : ""}</p>`,
       tbl(["Grup", "Item", "Panjang / qty", "kg/m", "kg"], billRows, [2, 3, 4]) + `<p class="mono" style="margin-top:8px">TOTAL BAJA ${fmt(B.baja_kg)} kg (profil ${fmt(B.profil_kg)} kg)</p>`)}
+    </div>
+  </div>
+  </details>
+  <div class="rep rep-dl"><div>
     <section id="r-unduh" class="reveal"><div><h3><small>${String(roof ? 10 : 11).padStart(2, "0")}</small>Unduhan</h3><div class="txt"><p>File .s2k bisa diimpor ke SAP2000 (File › Import › Text). IFC4 bisa dibuka di Tekla, Revit atau penampil IFC. Keduanya belum dijalankan di program aslinya.</p></div></div>
       <div class="dl">${dlinks.map(([a, b, u]) => `<a href="${u}" download><span><b>${a}</b><br>${b}</span><span>↓</span></a>`).join("")}</div>
       <div class="sheets"><iframe src="${d.files.str_pdf}#view=FitH" title="STR-01" loading="lazy"></iframe><iframe src="${d.files.pbg_pdf}#view=FitH" title="PBG-01" loading="lazy"></iframe></div>
     </section>
-    </div>
-  </div>`;
+  </div></div>`;
 
   reveal();
-  const { mount } = await import("./viewer.js");
-  mount($("#v3"), d);
+  await wireAnalysis($("#app"), d);
 }
 main().catch(e => { console.error(e); $("#app").innerHTML = `<p class="warn" style="margin:120px 24px">${e.message}. <a href="./#reklame">Kembali ke daftar varian</a></p>`; });
