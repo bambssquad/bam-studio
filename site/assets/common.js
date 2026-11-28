@@ -22,13 +22,24 @@ export const PROJECTS = [
 export const PBG = [
   { id:"kludan", title:"Apotek Kludan", loc:"Tanggulangin, Sidoarjo", k:"PBG · revisi dinas", kind:"ruko1",
     desc:"Gambar PBG ruko apotek satu lantai. Revisi dari dinas: parkir depan tanpa atap, tambahan denah atap dan tabel komposisi lahan, GSB 3 m.",
-    li:[["Lahan","± 60 m²"],["Bangunan","1 lantai"],["GSB","3 m"],["Kertas","A1"]] },
+    li:[["Lahan","± 60 m²"],["Bangunan","1 lantai"],["GSB","3 m"],["Kertas","A1"]],
+    docs:[{ t:"Gambar PBG revisi 2 · A1", f:"pbg-apotek-kludan-rev2", n:1 }] },
   { id:"wage", title:"Apotek Alam Hijau Wage", loc:"Wage, Sidoarjo", k:"PBG perubahan fungsi · SLF", kind:"ruko2",
     desc:"Alih fungsi ruko dua lantai menjadi apotek: paket PBG perubahan fungsi dan SLF berisi gambar, perhitungan struktur, spesifikasi teknis dan RAB.",
-    li:[["Bangunan","ruko 2 lantai"],["Rute","alih fungsi"],["Paket","PBG + SLF + RAB"]] },
+    li:[["Bangunan","ruko 2 lantai"],["Rute","alih fungsi"],["Paket","PBG + SLF + RAB"]],
+    docs:[{ t:"Gambar PBG · A2", f:"pbg-apotek-alam-hijau-wage", n:1 }, { t:"Perhitungan teknis struktur · A4", f:"perhitungan-struktur-apotek-wage", n:17 }] },
+  { id:"kebonagung", title:"Apotek Kebonagung", loc:"Kebonagung, Sukodono, Sidoarjo", k:"PBG · ARS/STR/MEP", kind:"ruko1",
+    desc:"Gambar PBG bangunan apotek dalam satu lembar A1: layout, denah, pondasi, sloof, kolom, instalasi air dan listrik, tampak, potongan dan rangka atap.",
+    li:[["Bangunan","18,27 m²"],["KDB","64,28%"],["Kertas","A1, 1 lembar"]],
+    docs:[{ t:"Gambar PBG V3 · A1", f:"pbg-apotek-kebonagung", n:1 }] },
+  { id:"alamhijau", title:"Apotek Alam Hijau Sukodono", loc:"Klopo Sepuluh, Sukodono, Sidoarjo", k:"PBG · komposisi lahan", kind:"ruko1",
+    desc:"Gambar PBG apotek satu lembar A1 lengkap arsitektur, struktur dan MEP, ditambah lembar rincian komposisi lahan.",
+    li:[["Lahan","145 m²"],["Bangunan","93 m² (64,14%)"],["Kertas","A1 + tabel lahan"]],
+    docs:[{ t:"Gambar PBG + komposisi lahan", f:"pbg-apotek-alam-hijau-sukodono", n:2 }] },
   { id:"huda", title:"SD Huda Center", loc:"Genuk, Semarang", k:"Masterplan · DED LOD 300", kind:"school",
     desc:"Masterplan tiga lot dan set gambar lengkap gedung kelas: 3 lantai, 24 kelas, atap dak dengan kelas luar ruang dan kulit louver lipat.",
-    li:[["Lahan","1.610 m²"],["Gedung kelas","933 m², 3 lt"],["Model","Revit + IFC"]] },
+    li:[["Lahan","1.610 m²"],["Gedung kelas","933 m², 3 lt"],["Model","Revit + IFC"]],
+    docs:[{ t:"Gambar rencana teknis PBG · A1", f:"pbg-sd-huda-center", n:6 }] },
 ];
 
 const NS = "http://www.w3.org/2000/svg";

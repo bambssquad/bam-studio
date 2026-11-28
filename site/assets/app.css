@@ -110,6 +110,27 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pcard ul{list-style:none;font:11px var(--mono);border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
 .pcard li{display:flex;justify-content:space-between;padding:3px 0;gap:12px}
 .pcard li span:last-child{text-align:right}
+.pcard .vis.doc{display:block;position:relative;padding:0;border:0;border-bottom:1px solid var(--line);cursor:zoom-in;overflow:hidden;width:100%}
+.pcard .vis.doc img{width:100%;height:100%;object-fit:contain;transition:transform .4s}
+.pcard .vis.doc:hover img{transform:scale(1.03)}
+.pcard .vis.doc span{position:absolute;left:10px;bottom:10px;font:10px var(--mono);text-transform:uppercase;background:var(--ink);color:#fff;padding:4px 7px}
+.pcard .docs{border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px}
+.pcard .drow{display:flex;justify-content:space-between;gap:10px;font:11px var(--mono);align-items:baseline}
+.pcard .drow>span:last-child{display:flex;gap:10px;white-space:nowrap}
+.pcard .lk{font:500 11px var(--mono);text-transform:uppercase;color:var(--red);background:none;border:0;padding:0;cursor:pointer;border-bottom:1px solid transparent}
+.pcard .lk:hover{border-color:var(--red)}
+.dv{position:absolute;inset:0;background:#fff}
+.dv .stage{position:absolute;inset:0;overflow:auto;display:flex;align-items:center;justify-content:center}
+.dv .stage img{max-width:100%;max-height:100%;cursor:zoom-in}
+.dv.zoom .stage{display:block}
+.dv.zoom .stage img{max-width:none;max-height:none;width:240%;cursor:zoom-out}
+.dv .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border:1px solid var(--ink);background:var(--paper);font:16px var(--mono);cursor:pointer}
+.dv .nav:disabled{opacity:.25;cursor:default}
+.dv .prev{left:12px}.dv .next{right:12px}
+.dv .strip{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:90%}
+.dv .strip button{min-width:26px;height:26px;border:1px solid var(--line);background:var(--paper);font:10px var(--mono);cursor:pointer}
+.dv .strip button.on{background:var(--red);border-color:var(--red);color:#fff}
+.modal .mf .btns .btn{padding:7px 10px}
 
 /* method */
 .method{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink)}
