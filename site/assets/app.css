@@ -38,9 +38,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero .side li{list-style:none;padding:5px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--mute);cursor:pointer}
 .hero .side li:hover{color:var(--red)}
 .hero .side li b{color:var(--ink);font-weight:500}
-.hero .claim{position:absolute;left:24px;top:110px;font:400 34px/1.02 var(--serif);max-width:360px}
+.hero .claim{position:absolute;z-index:6;left:24px;top:110px;font:400 34px/1.02 var(--serif);max-width:360px}
 .hero .claim em{color:var(--red);font-style:italic}
-.hero .scroll{position:absolute;left:24px;bottom:26vw;font:11px var(--mono);color:var(--mute)}
+.hero .scroll{position:absolute;z-index:6;left:24px;bottom:26vw;font:11px var(--mono);color:var(--mute)}
 
 /* section heads */
 .sec{padding:110px 24px 90px;position:relative}

@@ -88,7 +88,7 @@ export function mount(host, d, opt = {}) {
     g.fillStyle = "#121212"; g.font = `600 ${cv.height * .26}px Inter Tight, Arial`; g.textBaseline = "alphabetic";
     g.fillText("adighanilham", cv.width * .05, cv.height * .5);
     g.fillStyle = "#fff"; g.font = `${cv.height * .1}px JetBrains Mono, monospace`;
-    g.fillText(`${d.typ_name.split(" ")[0].toUpperCase()} ${d.S}×${d.B} M · STUDI`, cv.width * .05, cv.height * .86);
+    g.fillText(`${({unipole:"UNIPOLE",doublepole:"DOUBLE POLE",rooftop:"ROOFTOP"})[d.typ]} ${d.S}×${d.B} M · STUDI`, cv.width * .05, cv.height * .86);
     const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
     const art = new THREE.Mesh(new THREE.PlaneGeometry(d.B, d.S), new THREE.MeshStandardMaterial({ map: tex, roughness: .8 }));
     art.position.copy(face.position); art.position.z += .021;

@@ -2,6 +2,7 @@ import { PROJECTS, PBG, el, $, $$, fmt, elevSVG, projSVG, openModal, reveal, get
 
 const TYPES = [["unipole", "Unipole", "tiang tunggal"], ["doublepole", "Double pole", "dua tiang"], ["rooftop", "Rooftop", "di atas atap"]];
 const SIZES = ["4x8", "5x10", "6x12"];
+const SHORT = { unipole: "Unipole", doublepole: "Double pole", rooftop: "Rooftop" };
 
 async function quick3D(d) {
   const host = el("div");
@@ -30,18 +31,18 @@ async function main() {
   // ---------- hero collage ----------
   const col = $(".collage");
   const cards = [
-    { k: "v", id: "unipole-6x12", x: 7, y: 54, w: 170, r: -4 },
-    { k: "p", p: PROJECTS[2], x: 23, y: 16, w: 230, r: 2 },
-    { k: "v", id: "doublepole-5x10", x: 44, y: 9, w: 200, r: -2 },
-    { k: "p", p: PROJECTS[1], x: 63, y: 34, w: 210, r: 3 },
-    { k: "v", id: "rooftop-6x12", x: 80, y: 60, w: 160, r: -3, blur: 1 },
-    { k: "pb", p: PBG[0], x: 31, y: 48, w: 150, r: -6, blur: 1 },
-    { k: "v", id: "unipole-4x8", x: 54, y: 54, w: 140, r: 5 },
-    { k: "p", p: PROJECTS[0], x: 2, y: 20, w: 150, r: -2, blur: 1 },
+    { k: "v", id: "unipole-6x12", x: 15, y: 50, w: 170, r: -4 },
+    { k: "p", p: PROJECTS[2], x: 31, y: 24, w: 230, r: 2 },
+    { k: "v", id: "doublepole-5x10", x: 48, y: 7, w: 200, r: -2 },
+    { k: "p", p: PROJECTS[1], x: 65, y: 33, w: 210, r: 3 },
+    { k: "v", id: "rooftop-6x12", x: 81, y: 58, w: 160, r: -3, blur: 1 },
+    { k: "pb", p: PBG[0], x: 32, y: 60, w: 150, r: -6, blur: 1 },
+    { k: "v", id: "unipole-4x8", x: 54, y: 52, w: 140, r: 5 },
+    { k: "p", p: PROJECTS[0], x: 86, y: 30, w: 150, r: -2, blur: 1 },
   ];
   cards.forEach((c, i) => {
     const n = el("a", { class: "card-f" + (c.blur ? " blur" : ""), style: `left:${c.x}%;top:${c.y}%;--w:${c.w}px;transform:rotate(${c.r}deg)`, href: "#" });
-    if (c.k === "v") { const d = all[c.id]; n.innerHTML = `<span class="tag">${String(i + 1).padStart(2, "0")}</span>${elevSVG(d, { ratio: true })}<div class="lab"><b>${d.typ_name.split(" ")[0]} ${d.S}×${d.B}</b><span>${fmt(d.bill.baja_kg / 1000, 1)} t</span></div>`; n.onclick = e => { e.preventDefault(); quick3D(d); }; }
+    if (c.k === "v") { const d = all[c.id]; n.innerHTML = `<span class="tag">${String(i + 1).padStart(2, "0")}</span>${elevSVG(d, { ratio: true })}<div class="lab"><b>${SHORT[d.typ]} ${d.S}×${d.B}</b><span>${fmt(d.bill.baja_kg / 1000, 1)} t</span></div>`; n.onclick = e => { e.preventDefault(); quick3D(d); }; }
     else { const p = c.p; n.innerHTML = `<span class="tag">${String(i + 1).padStart(2, "0")}</span>${projSVG(p.kind)}<div class="lab"><b>${p.title}</b><span>${(p.loc || "").split(",")[0]}</span></div>`; n.onclick = e => { e.preventDefault(); (c.k === "p" && p.url) ? openProject(p) : document.getElementById(c.k === "pb" ? "pbg" : "porto").scrollIntoView({ behavior: "smooth" }); }; }
     col.append(n);
     // drift halus
@@ -77,10 +78,10 @@ async function main() {
       const d = all[`${t}-${sz}`], r = idx.find(x => x.id === d.id);
       const main = d.sections.COL || d.sections.POST;
       const c = el("div", { class: "vcard reveal" });
-      c.innerHTML = `<div class="hd"><b>${d.id.toUpperCase()}</b><span>+${d.zt.toFixed(1)} m</span></div>${elevSVG(d, { ratio: true, dims: true })}
+      c.innerHTML = `<div class="hd"><b>${d.id.toUpperCase()}</b><span>+${fmt(d.zt, 1)} m</span></div>${elevSVG(d, { ratio: true, dims: true })}
         <h4>${nm} ${d.S}×${d.B}</h4>
         <div class="sp"><span>Profil utama</span><span><b>${main.name}</b></span><span>Baja total</span><span><b>${fmt(d.bill.baja_kg)} kg</b></span>
-        <span>${t === "rooftop" ? "Tumpuan" : "Pondasi"}</span><span><b>${t === "rooftop" ? "angkur kimia" : r.footing}</b></span><span>Rasio maks</span><span><b>${r.max_ratio.toFixed(2)}</b></span></div>
+        <span>${t === "rooftop" ? "Tumpuan" : "Pondasi"}</span><span><b>${t === "rooftop" ? "angkur kimia" : r.footing.replace(/x/g, "×").replace(/\./g, ",")}</b></span><span>Rasio maks</span><span><b>${fmt(r.max_ratio, 2)}</b></span></div>
         <div class="ratio-bar"><i class="${r.max_ratio > .85 ? "hot" : ""}" style="width:${Math.min(100, r.max_ratio * 100)}%"></i></div>
         <div class="btns"><button class="btn" data-q="${d.id}">3D cepat</button><a class="btn fill" href="varian.html?id=${d.id}">Detail →</a></div>`;
       g.append(c);
